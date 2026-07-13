@@ -35,7 +35,7 @@ namespace Clidapos.Wpf.ViewModels
             }
         }
 
-        public string MaskedPin => new string('●', _pin.Length);
+        public string MaskedPin => string.IsNullOrEmpty(_pin) ? "ENTER PIN" : new string('●', _pin.Length);
 
         private string _errorMessage = string.Empty;
         public string ErrorMessage
