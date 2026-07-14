@@ -1,0 +1,235 @@
+<Window x:Class="Clidapos.Wpf.Views.ItemsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Clidapos - Items &amp; Ingredients"
+        WindowStyle="None"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        Background="#121212">
+
+    <Window.Resources>
+        <Style x:Key="RoundTopButton" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,10,0,4"/>
+        </Style>
+
+        <Style x:Key="FormInput" TargetType="TextBox">
+            <Setter Property="Background" Value="#1E1E24"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#3A3A42"/>
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+
+        <Style x:Key="IconActionButton" TargetType="Button">
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#1E1E24"/>
+            <Setter Property="Foreground" Value="#F3A123"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8"
+                                BorderBrush="#F3A123" BorderThickness="1">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="IconLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Image Source="pack://application:,,,/Assets/gateway.jpeg" Stretch="UniformToFill" Grid.RowSpan="2"/>
+        <Rectangle Fill="#CC121212" Grid.RowSpan="2"/>
+
+        <Border Grid.Row="0" Background="#1E1E24">
+            <Grid>
+                <TextBlock x:Name="HeaderText" Text="ITEMS &amp; INGREDIENTS REGISTRY" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,15,0">
+
+                    <Button Click="BackToOffice_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="0,0,10,0" ToolTip="Back to Back Office">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFD98F" Offset="0"/>
+                                                <GradientStop Color="#F3A123" Offset="0.5"/>
+                                                <GradientStop Color="#B5741A" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
+                            ToolTip="Minimize">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFE9A6" Offset="0"/>
+                                                <GradientStop Color="#E8B830" Offset="0.4"/>
+                                                <GradientStop Color="#B8860B" Offset="0.85"/>
+                                                <GradientStop Color="#8A6408" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FF7B8C" Offset="0"/>
+                                                <GradientStop Color="#DC143C" Offset="0.5"/>
+                                                <GradientStop Color="#8F0C25" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <Viewbox Width="16" Height="16">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <!-- CENTER: Form card -->
+                <Border Background="#1A1A1F" CornerRadius="10" Padding="24" Width="380">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="4" Opacity="0.5"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock x:Name="FormTitle" Text="New Item" Foreground="#F3A123" FontSize="18" FontWeight="Bold"/>
+
+                        <TextBlock Text="Product Code" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="CodeInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Product Name" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="NameInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Category" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="CategoryInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Unit" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="UnitInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Price" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="PriceInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Quantity" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="QuantityInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Reorder Point" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="ReorderInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock Text="Supplier" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="SupplierInput" Style="{StaticResource FormInput}"/>
+
+                        <TextBlock x:Name="ErrorText" Foreground="#D93838" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- RIGHT: Vertical icon action panel -->
+                <StackPanel Margin="20,0,0,0" VerticalAlignment="Center">
+                    <Button Style="{StaticResource IconActionButton}" Click="NewItem_Click">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="➕" FontSize="20" HorizontalAlignment="Center"/>
+                            <TextBlock Text="New" Style="{StaticResource IconLabel}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource IconActionButton}" Click="Save_Click">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="💾" FontSize="20" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Save" Style="{StaticResource IconLabel}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource IconActionButton}" Click="Save_Click">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="✎" FontSize="20" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Update" Style="{StaticResource IconLabel}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource IconActionButton}" Click="Delete_Click">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="🗑" FontSize="20" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Delete" Style="{StaticResource IconLabel}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource IconActionButton}" Click="GetData_Click">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="🔍" FontSize="20" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Get Data" Style="{StaticResource IconLabel}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

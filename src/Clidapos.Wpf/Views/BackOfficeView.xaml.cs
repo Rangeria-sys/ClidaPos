@@ -19,11 +19,18 @@ namespace Clidapos.Wpf.Views
         {
             var tag = ((Button)sender).Tag?.ToString() ?? "";
 
+            if (tag == "Items")
+            {
+                var itemsView = new ItemsView(_currentUser);
+                itemsView.Show();
+                Close();
+                return;
+            }
+
             var sectionName = tag switch
             {
                 "MasterSettings" => "Master Settings",
                 "Peripherals" => "Peripherals & Hardware",
-                "Items" => "Items & Ingredients Registry",
                 "Inventory" => "Inventory Audit",
                 "Warehouse" => "Warehouse Management",
                 "Purchasing" => "Purchasing & Suppliers",
@@ -53,6 +60,11 @@ namespace Clidapos.Wpf.Views
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
         }
     }
 }

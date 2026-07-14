@@ -31,17 +31,6 @@
             </Setter>
         </Style>
 
-        <Style x:Key="TopBarButton" TargetType="Button">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-
         <Style x:Key="TileIcon" TargetType="TextBlock">
             <Setter Property="FontSize" Value="40"/>
             <Setter Property="Foreground" Value="#F3A123"/>
@@ -55,6 +44,13 @@
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+
+        <Style x:Key="RoundTopButton" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
     </Window.Resources>
 
@@ -79,10 +75,85 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="0,0,15,0">
-                    <Button Content="⌂ Gateway" Click="BackToGateway_Click" Style="{StaticResource TopBarButton}"
-                            Width="90" Margin="0,0,10,0" ToolTip="Back to Gateway"/>
-                    <Button Content="✕" Click="Exit_Click" Style="{StaticResource TopBarButton}"
-                            ToolTip="Close"/>
+
+                    <!-- Back to Gateway (amber) -->
+                    <Button Click="BackToGateway_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="0,0,10,0" ToolTip="Back to Gateway">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFD98F" Offset="0"/>
+                                                <GradientStop Color="#F3A123" Offset="0.5"/>
+                                                <GradientStop Color="#B5741A" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Minimize (gold) -->
+                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
+                            ToolTip="Minimize">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFE9A6" Offset="0"/>
+                                                <GradientStop Color="#E8B830" Offset="0.4"/>
+                                                <GradientStop Color="#B8860B" Offset="0.85"/>
+                                                <GradientStop Color="#8A6408" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Exit (red) -->
+                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FF7B8C" Offset="0"/>
+                                                <GradientStop Color="#DC143C" Offset="0.5"/>
+                                                <GradientStop Color="#8F0C25" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <Viewbox Width="16" Height="16">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>

@@ -1,0 +1,86 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Clidapos.Wpf.Data;
+using Clidapos.Wpf.Entities;
+
+namespace Clidapos.Wpf.Services
+{
+    public class ProductService
+    {
+        public async Task<List<Product>> GetAllAsync()
+        {
+            using var db = new ClidaposDbContext();
+            return await db.Products.OrderBy(p => p.ProductName).ToListAsync();
+        }
+
+        public async Task<int> GetNextIdAsync()
+        {
+            using var db = new ClidaposDbContext();
+            var maxId = await db.Products.Select(p => (int?)p.PID).MaxAsync();
+            return (maxId ?? 0) + 1;
+        }
+
+        public async Task<decimal> GetQuantityAsync(int productId)
+        {
+            using var db = new ClidaposDbContext();
+            return await db.ProductOpeningStocks
+                .Where(s => s.ProductID == productId)
+                .SumAsync(s => (decimal?)s.Qty) ?? 0;
+        }
+
+        public async Task SetQuantityAsync(int productId, decimal qty)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.ProductOpeningStocks
+                .FirstOrDefaultAsync(s => s.ProductID == productId && s.Warehouse == "Main Store");
+
+            if (existing != null)
+            {
+                existing.Qty = qty;
+            }
+            else
+            {
+                db.ProductOpeningStocks.Add(new ProductOpeningStock
+                {
+                    ProductID = productId,
+                    Warehouse = "Main Store",
+                    Qty = qty,
+                    HasExpiryDate = "N"
+                });
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task AddAsync(Product product)
+        {
+            using var db = new ClidaposDbContext();
+            db.Products.Add(product);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Product product)
+        {
+            using var db = new ClidaposDbContext();
+            db.Products.Update(product);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int pid)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Products.FindAsync(pid);
+            if (existing != null)
+            {
+                db.Products.Remove(existing);
+            }
+
+            var stockRows = await db.ProductOpeningStocks.Where(s => s.ProductID == pid).ToListAsync();
+            db.ProductOpeningStocks.RemoveRange(stockRows);
+
+            await db.SaveChangesAsync();
+        }
+    }
+}

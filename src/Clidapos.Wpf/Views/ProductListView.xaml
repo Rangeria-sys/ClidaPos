@@ -1,0 +1,101 @@
+<Window x:Class="Clidapos.Wpf.Views.ProductListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Clidapos - Product Data"
+        WindowStyle="None"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        Background="#121212">
+
+    <Window.Resources>
+        <Style x:Key="RoundTopButton" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="SearchInput" TargetType="TextBox">
+            <Setter Property="Background" Value="#1E1E24"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#F3A123"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Image Source="pack://application:,,,/Assets/gateway.jpeg" Stretch="UniformToFill" Grid.RowSpan="2"/>
+        <Rectangle Fill="#CC121212" Grid.RowSpan="2"/>
+
+        <Border Grid.Row="0" Background="#1E1E24">
+            <Grid>
+                <TextBlock Text="PRODUCT DATA" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,15,0">
+
+                    <Button Click="Close_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="0,0,10,0" ToolTip="Back">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFD98F" Offset="0"/>
+                                                <GradientStop Color="#F3A123" Offset="0.5"/>
+                                                <GradientStop Color="#B5741A" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBox x:Name="SearchBox" Grid.Row="0" Style="{StaticResource SearchInput}"
+                     Margin="0,0,0,12" TextChanged="SearchBox_TextChanged"
+                     Tag="Search by name, code, or category..."/>
+
+            <Border Grid.Row="1" Background="#1A1A1F" CornerRadius="8" Padding="16">
+                <DataGrid x:Name="ProductGrid" AutoGenerateColumns="False"
+                          Background="#1A1A1F" Foreground="White" BorderThickness="0"
+                          RowBackground="#1A1A1F" AlternatingRowBackground="#22222A"
+                          HeadersVisibility="Column" GridLinesVisibility="None"
+                          IsReadOnly="True" SelectionMode="Single"
+                          MouseDoubleClick="ProductGrid_MouseDoubleClick">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding PID}" Width="60"/>
+                        <DataGridTextColumn Header="Code" Binding="{Binding ProductCode}" Width="100"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding ProductName}" Width="*"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="140"/>
+                        <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="80"/>
+                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="90"/>
+                        <DataGridTextColumn Header="Reorder At" Binding="{Binding ReorderPoint}" Width="90"/>
+                        <DataGridTextColumn Header="Supplier" Binding="{Binding P_Supplier}" Width="140"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

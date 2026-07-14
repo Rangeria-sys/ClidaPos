@@ -10,6 +10,11 @@ namespace Clidapos.Wpf.Data
         public DbSet<Registration> Registrations => Set<Registration>();
         public DbSet<WorkPeriodStart> WorkPeriodStarts => Set<WorkPeriodStart>();
         public DbSet<WorkPeriodEnd> WorkPeriodEnds => Set<WorkPeriodEnd>();
+        public DbSet<Product> Products => Set<Product>();
+        public DbSet<ProductOpeningStock> ProductOpeningStocks => Set<ProductOpeningStock>();
+        public DbSet<Supplier> Suppliers => Set<Supplier>();
+        public DbSet<Purchase> Purchases => Set<Purchase>();
+        public DbSet<PurchaseJoin> PurchaseJoins => Set<PurchaseJoin>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -48,6 +53,69 @@ namespace Clidapos.Wpf.Data
                 b.ToTable("WorkPeriodEnd", "dbo");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.WPEnd).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<Product>(b =>
+            {
+                b.ToTable("Product", "dbo");
+                b.HasKey(x => x.PID);
+                b.Property(x => x.PID).ValueGeneratedNever();
+                b.Property(x => x.ProductCode).HasColumnType("nchar(30)");
+                b.Property(x => x.ProductName).HasColumnType("nchar(200)");
+                b.Property(x => x.Category).HasColumnType("nchar(150)");
+                b.Property(x => x.Description).HasColumnType("nvarchar(max)");
+                b.Property(x => x.Unit).HasColumnType("nchar(50)");
+                b.Property(x => x.Price).HasColumnType("decimal(18,2)");
+                b.Property(x => x.P_Supplier).HasColumnType("nchar(150)");
+            });
+
+            modelBuilder.Entity<ProductOpeningStock>(b =>
+            {
+                b.ToTable("Product_OpeningStock", "dbo");
+                b.HasKey(x => x.PS_ID);
+                b.Property(x => x.Warehouse).HasColumnType("nchar(250)");
+                b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
+                b.Property(x => x.HasExpiryDate).HasColumnType("nchar(10)");
+                b.Property(x => x.ExpiryDate).HasColumnType("nchar(50)");
+            });
+
+            modelBuilder.Entity<Supplier>(b =>
+            {
+                b.ToTable("Supplier", "dbo");
+                b.HasKey(x => x.ID);
+                b.Property(x => x.ID).ValueGeneratedNever();
+                b.Property(x => x.SupplierID).HasColumnType("nchar(30)");
+                b.Property(x => x.Name).HasColumnType("nchar(200)");
+            });
+
+            modelBuilder.Entity<Purchase>(b =>
+            {
+                b.ToTable("Purchase", "dbo");
+                b.HasKey(x => x.ST_ID);
+                b.Property(x => x.ST_ID).ValueGeneratedNever();
+                b.Property(x => x.InvoiceNo).HasColumnType("nchar(30)");
+                b.Property(x => x.PurchaseType).HasColumnType("nchar(20)");
+                b.Property(x => x.SubTotal).HasColumnType("decimal(18,2)");
+                b.Property(x => x.DiscountPer).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Discount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PreviousDue).HasColumnType("decimal(18,2)");
+                b.Property(x => x.FreightCharges).HasColumnType("decimal(18,2)");
+                b.Property(x => x.OtherCharges).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Total).HasColumnType("decimal(18,2)");
+                b.Property(x => x.RoundOff).HasColumnType("decimal(18,2)");
+                b.Property(x => x.GrandTotal).HasColumnType("decimal(18,2)");
+                b.Property(x => x.TotalPayment).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PaymentDue).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<PurchaseJoin>(b =>
+            {
+                b.ToTable("Purchase_Join", "dbo");
+                b.HasKey(x => x.SP_ID);
+                b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Price).HasColumnType("decimal(18,2)");
+                b.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Warehouse).HasColumnType("nchar(250)");
             });
         }
     }
