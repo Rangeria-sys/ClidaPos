@@ -16,7 +16,7 @@ namespace Clidapos.Wpf.ViewModels
 
         private readonly LoginService _loginService = new();
 
-        private const int PinLength = 4;
+        public const int PinLength = 4;
 
         private string _pin = string.Empty;
         public string Pin
@@ -27,11 +27,6 @@ namespace Clidapos.Wpf.ViewModels
                 _pin = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(MaskedPin));
-
-                if (_pin.Length == PinLength)
-                {
-                    _ = LoginAsync();
-                }
             }
         }
 
@@ -44,9 +39,12 @@ namespace Clidapos.Wpf.ViewModels
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
+        public Clidapos.Wpf.Entities.Registration? LoggedInUser { get; private set; }
+
         public async System.Threading.Tasks.Task LoginAsync()
         {
             ErrorMessage = string.Empty;
+            LoggedInUser = null;
 
             if (string.IsNullOrWhiteSpace(Pin))
             {
@@ -65,9 +63,8 @@ namespace Clidapos.Wpf.ViewModels
                     return;
                 }
 
-                MessageBox.Show($"Welcome, {user.Name.Trim()}! Role: {user.UserType.Trim()}",
-                    "Login Successful");
                 Pin = string.Empty;
+                LoggedInUser = user;
             }
             catch (System.Exception ex)
             {

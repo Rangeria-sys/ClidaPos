@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Clidapos.Wpf.Entities;
@@ -9,6 +8,8 @@ namespace Clidapos.Wpf.Data
     public class ClidaposDbContext : DbContext
     {
         public DbSet<Registration> Registrations => Set<Registration>();
+        public DbSet<WorkPeriodStart> WorkPeriodStarts => Set<WorkPeriodStart>();
+        public DbSet<WorkPeriodEnd> WorkPeriodEnds => Set<WorkPeriodEnd>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -32,6 +33,21 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Password).HasColumnType("nchar(50)");
                 b.Property(x => x.Name).HasColumnType("nchar(150)");
                 b.Property(x => x.Active).HasColumnType("nchar(10)");
+            });
+
+            modelBuilder.Entity<WorkPeriodStart>(b =>
+            {
+                b.ToTable("WorkPeriodStart", "dbo");
+                b.HasKey(x => x.ID);
+                b.Property(x => x.WPStart).HasColumnType("datetime");
+                b.Property(x => x.Status).HasColumnType("nchar(20)");
+            });
+
+            modelBuilder.Entity<WorkPeriodEnd>(b =>
+            {
+                b.ToTable("WorkPeriodEnd", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.WPEnd).HasColumnType("datetime");
             });
         }
     }

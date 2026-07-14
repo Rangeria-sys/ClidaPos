@@ -29,6 +29,11 @@
 		<Resource Include="Assets\login.jpg" />
 		<Resource Include="Assets\sop.png" />
 		<Resource Include="Assets\back.jpg" />
+		<Resource Include="Assets\pos.jpg" />
+		<Resource Include="Assets\Logo.jpg" />
+		<Resource Include="Assets\back.png" />
+		<Resource Include="Assets\front.png" />
+		<Resource Include="Assets\gateway.jpeg" />
 	</ItemGroup>
 
 </Project>
