@@ -15,6 +15,10 @@ namespace Clidapos.Wpf.Data
         public DbSet<Supplier> Suppliers => Set<Supplier>();
         public DbSet<Purchase> Purchases => Set<Purchase>();
         public DbSet<PurchaseJoin> PurchaseJoins => Set<PurchaseJoin>();
+        public DbSet<UnitMaster> UnitMasters => Set<UnitMaster>();
+        public DbSet<RMCategory> RMCategories => Set<RMCategory>();
+        public DbSet<Warehouse> Warehouses => Set<Warehouse>();
+        public DbSet<WarehouseType> WarehouseTypes => Set<WarehouseType>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -112,10 +116,42 @@ namespace Clidapos.Wpf.Data
             {
                 b.ToTable("Purchase_Join", "dbo");
                 b.HasKey(x => x.SP_ID);
+                b.Property(x => x.SP_ID).ValueGeneratedOnAdd();
                 b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Price).HasColumnType("decimal(18,2)");
                 b.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Warehouse).HasColumnType("nchar(250)");
+            });
+
+            modelBuilder.Entity<UnitMaster>(b =>
+            {
+                b.ToTable("UnitMaster", "dbo");
+                b.HasKey(x => x.Unit);
+                b.Property(x => x.Unit).HasColumnType("nchar(50)");
+            });
+
+            modelBuilder.Entity<RMCategory>(b =>
+            {
+                b.ToTable("RMCategory", "dbo");
+                b.HasKey(x => x.CategoryName);
+                b.Property(x => x.CategoryName).HasColumnType("nchar(150)");
+            });
+
+            modelBuilder.Entity<Warehouse>(b =>
+            {
+                b.ToTable("Warehouse", "dbo");
+                b.HasKey(x => x.WarehouseName);
+                b.Property(x => x.WarehouseName).HasColumnType("nchar(250)");
+                b.Property(x => x.Address).HasColumnType("nvarchar(250)");
+                b.Property(x => x.WarehouseType).HasColumnType("nchar(200)");
+                b.Property(x => x.City).HasColumnType("nchar(200)");
+            });
+
+            modelBuilder.Entity<WarehouseType>(b =>
+            {
+                b.ToTable("WarehouseType", "dbo");
+                b.HasKey(x => x.Type);
+                b.Property(x => x.Type).HasColumnType("nchar(200)");
             });
         }
     }

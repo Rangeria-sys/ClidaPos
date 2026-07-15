@@ -27,6 +27,14 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            if (tag == "CategoryUnit")
+            {
+                var categoryUnitView = new CategoryUnitView(_currentUser);
+                categoryUnitView.Show();
+                Close();
+                return;
+            }
+
             var sectionName = tag switch
             {
                 "MasterSettings" => "Master Settings",

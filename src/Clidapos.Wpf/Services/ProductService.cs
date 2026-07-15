@@ -9,6 +9,8 @@ namespace Clidapos.Wpf.Services
 {
     public class ProductService
     {
+        private readonly WarehouseService _warehouseService = new();
+
         public async Task<List<Product>> GetAllAsync()
         {
             using var db = new ClidaposDbContext();
@@ -32,9 +34,11 @@ namespace Clidapos.Wpf.Services
 
         public async Task SetQuantityAsync(int productId, decimal qty)
         {
+            await _warehouseService.EnsureDefaultWarehouseAsync();
+
             using var db = new ClidaposDbContext();
             var existing = await db.ProductOpeningStocks
-                .FirstOrDefaultAsync(s => s.ProductID == productId && s.Warehouse == "Main Store");
+                .FirstOrDefaultAsync(s => s.ProductID == productId && s.Warehouse == WarehouseService.DefaultWarehouseName);
 
             if (existing != null)
             {
@@ -45,7 +49,7 @@ namespace Clidapos.Wpf.Services
                 db.ProductOpeningStocks.Add(new ProductOpeningStock
                 {
                     ProductID = productId,
-                    Warehouse = "Main Store",
+                    Warehouse = WarehouseService.DefaultWarehouseName,
                     Qty = qty,
                     HasExpiryDate = "N"
                 });

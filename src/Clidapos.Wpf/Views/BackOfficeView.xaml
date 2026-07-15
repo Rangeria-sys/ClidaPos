@@ -7,273 +7,277 @@
         ResizeMode="NoResize"
         Background="#121212">
 
-    <Window.Resources>
-        <Style x:Key="TileButton" TargetType="Button">
-            <Setter Property="Width" Value="150"/>
-            <Setter Property="Height" Value="150"/>
-            <Setter Property="Margin" Value="12"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Base" Background="#1E1E24" CornerRadius="10"
+	<Window.Resources>
+		<Style x:Key="TileButton" TargetType="Button">
+			<Setter Property="Width" Value="150"/>
+			<Setter Property="Height" Value="150"/>
+			<Setter Property="Margin" Value="12"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="Base" Background="#1E1E24" CornerRadius="10"
                                 BorderBrush="#F3A123" BorderThickness="1.5">
-                            <ContentPresenter/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Base" Property="Background" Value="#2A2A32"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+							<ContentPresenter/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="Base" Property="Background" Value="#2A2A32"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="TileIcon" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="40"/>
-            <Setter Property="Foreground" Value="#F3A123"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
+		<Style x:Key="TileIcon" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="40"/>
+			<Setter Property="Foreground" Value="#F3A123"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+		</Style>
 
-        <Style x:Key="TileLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-            <Setter Property="Margin" Value="0,10,0,0"/>
-        </Style>
+		<Style x:Key="TileLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="Margin" Value="0,10,0,0"/>
+		</Style>
 
-        <Style x:Key="RoundTopButton" TargetType="Button">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="RoundTopButton" TargetType="Button">
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+	</Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-        <Image Source="pack://application:,,,/Assets/gateway.jpeg" Stretch="UniformToFill"
+		<Image Source="pack://application:,,,/Assets/gateway.jpeg" Stretch="UniformToFill"
                Grid.RowSpan="2"/>
-        <Rectangle Fill="#CC121212" Grid.RowSpan="2"/>
+		<Rectangle Fill="#CC121212" Grid.RowSpan="2"/>
 
-        <Border Grid.Row="0" Background="#1E1E24">
-            <Grid>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                    <TextBlock Text="CLIDA POS - BACK OFFICE" Foreground="#F3A123" FontSize="16" FontWeight="Bold"
+		<Border Grid.Row="0" Background="#1E1E24">
+			<Grid>
+				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+					<TextBlock Text="CLIDA POS - BACK OFFICE" Foreground="#F3A123" FontSize="16" FontWeight="Bold"
                                VerticalAlignment="Center"/>
-                    <TextBlock x:Name="WelcomeText" Foreground="#CCCCCC" FontSize="13"
+					<TextBlock x:Name="WelcomeText" Foreground="#CCCCCC" FontSize="13"
                                VerticalAlignment="Center" Margin="20,0,0,0"/>
-                </StackPanel>
+				</StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="0,0,15,0">
 
-                    <!-- Back to Gateway (amber) -->
-                    <Button Click="BackToGateway_Click" Style="{StaticResource RoundTopButton}"
+					<Button Click="BackToGateway_Click" Style="{StaticResource RoundTopButton}"
                             Margin="0,0,10,0" ToolTip="Back to Gateway">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFD98F" Offset="0"/>
-                                                <GradientStop Color="#F3A123" Offset="0.5"/>
-                                                <GradientStop Color="#B5741A" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FFD98F" Offset="0"/>
+												<GradientStop Color="#F3A123" Offset="0.5"/>
+												<GradientStop Color="#B5741A" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+										<Ellipse.Effect>
+											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+										</Ellipse.Effect>
+									</Ellipse>
+									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
 
-                    <!-- Minimize (gold) -->
-                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
+					<Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
                             ToolTip="Minimize">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFE9A6" Offset="0"/>
-                                                <GradientStop Color="#E8B830" Offset="0.4"/>
-                                                <GradientStop Color="#B8860B" Offset="0.85"/>
-                                                <GradientStop Color="#8A6408" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FFE9A6" Offset="0"/>
+												<GradientStop Color="#E8B830" Offset="0.4"/>
+												<GradientStop Color="#B8860B" Offset="0.85"/>
+												<GradientStop Color="#8A6408" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+										<Ellipse.Effect>
+											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+										</Ellipse.Effect>
+									</Ellipse>
+									<TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
 
-                    <!-- Exit (red) -->
-                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FF7B8C" Offset="0"/>
-                                                <GradientStop Color="#DC143C" Offset="0.5"/>
-                                                <GradientStop Color="#8F0C25" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Viewbox Width="16" Height="16">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
+					<Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FF7B8C" Offset="0"/>
+												<GradientStop Color="#DC143C" Offset="0.5"/>
+												<GradientStop Color="#8F0C25" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+										<Ellipse.Effect>
+											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+										</Ellipse.Effect>
+									</Ellipse>
+									<Viewbox Width="16" Height="16">
+										<Canvas Width="24" Height="24">
+											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
                                                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                        </Canvas>
-                                    </Viewbox>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
+										</Canvas>
+									</Viewbox>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
+				</StackPanel>
+			</Grid>
+		</Border>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <WrapPanel HorizontalAlignment="Center" Margin="30" Orientation="Horizontal">
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+			<WrapPanel HorizontalAlignment="Center" Margin="30" Orientation="Horizontal">
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSettings">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="⚙" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Master Settings" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSettings">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="⚙" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Master Settings" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Peripherals">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🖨" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Peripherals &amp; Hardware" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Peripherals">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🖨" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Peripherals &amp; Hardware" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🏷" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Items &amp; Ingredients" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🏷" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Items &amp; Ingredients" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Inventory">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="📋" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Inventory Audit" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CategoryUnit">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="📁" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Category &amp; Unit Setup" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="📦" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Inventory">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="📋" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Inventory Audit" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Purchasing">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🛒" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Purchasing &amp; Suppliers" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="📦" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="👥" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Purchasing">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🛒" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Purchasing &amp; Suppliers" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🧑‍💼" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="👥" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🤝" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Customers Ledger" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🧑‍💼" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="⭐" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🤝" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Customers Ledger" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🎟" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="⭐" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🏦" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🎟" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="💰" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🏦" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="TableLayout">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🍽" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Table Layout Setup" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="💰" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Reports">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="📊" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="Reports &amp; Analytics" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="TableLayout">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🍽" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Table Layout Setup" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-                <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🗒" Style="{StaticResource TileIcon}"/>
-                        <TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
-                    </StackPanel>
-                </Button>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Reports">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="📊" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="Reports &amp; Analytics" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
 
-            </WrapPanel>
-        </ScrollViewer>
-    </Grid>
+				<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="🗒" Style="{StaticResource TileIcon}"/>
+						<TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
+					</StackPanel>
+				</Button>
+
+			</WrapPanel>
+		</ScrollViewer>
+	</Grid>
 </Window>

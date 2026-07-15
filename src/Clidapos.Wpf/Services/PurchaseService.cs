@@ -10,11 +10,8 @@ namespace Clidapos.Wpf.Services
     public class PurchaseService
     {
         private const string DefaultSupplierCode = "SUPP-DEFAULT";
+        private readonly WarehouseService _warehouseService = new();
 
-        /// <summary>
-        /// Ensures a hidden default supplier exists, so Purchase.Supplier_ID
-        /// always has a valid row to point to without any UI for supplier picking.
-        /// </summary>
         public async Task<int> EnsureDefaultSupplierAsync()
         {
             using var db = new ClidaposDbContext();
@@ -39,16 +36,13 @@ namespace Clidapos.Wpf.Services
             return newSupplier.ID;
         }
 
-        /// <summary>
-        /// Records a buying-price entry for a product as a real Purchase + Purchase_Join
-        /// transaction, so it feeds the same tables the Purchasing module will use later.
-        /// </summary>
         public async Task RecordBuyingPriceAsync(int productId, decimal qty, decimal buyingPrice)
         {
             if (buyingPrice <= 0)
                 return;
 
             var supplierId = await EnsureDefaultSupplierAsync();
+            await _warehouseService.EnsureDefaultWarehouseAsync();
 
             using var db = new ClidaposDbContext();
 
@@ -76,26 +70,20 @@ namespace Clidapos.Wpf.Services
             };
             db.Purchases.Add(purchase);
 
-            var maxJoinId = await db.PurchaseJoins.Select(j => (int?)j.SP_ID).MaxAsync() ?? 0;
-
             var line = new PurchaseJoin
             {
-                SP_ID = maxJoinId + 1,
                 PurchaseID = purchase.ST_ID,
                 ProductID = productId,
                 Qty = qty,
                 Price = buyingPrice,
                 TotalAmount = total,
-                Warehouse = "Main Store"
+                Warehouse = WarehouseService.DefaultWarehouseName
             };
             db.PurchaseJoins.Add(line);
 
             await db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Gets the most recent buying price recorded for a product, if any.
-        /// </summary>
         public async Task<decimal?> GetLatestBuyingPriceAsync(int productId)
         {
             using var db = new ClidaposDbContext();

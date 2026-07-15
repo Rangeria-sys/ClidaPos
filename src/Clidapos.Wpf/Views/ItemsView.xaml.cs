@@ -9,6 +9,9 @@ namespace Clidapos.Wpf.Views
     {
         private readonly Registration _currentUser;
         private readonly ProductService _productService = new();
+        private readonly PurchaseService _purchaseService = new();
+        private readonly UnitService _unitService = new();
+        private readonly CategoryService _categoryService = new();
         private Product? _editingProduct;
 
         public ItemsView(Registration currentUser, Product? productToEdit = null)
@@ -16,10 +19,27 @@ namespace Clidapos.Wpf.Views
             InitializeComponent();
             _currentUser = currentUser;
 
-            if (productToEdit != null)
+            Loaded += async (s, e) =>
             {
-                Loaded += async (s, e) => await LoadForEditing(productToEdit);
-            }
+                await LoadUnits();
+                await LoadCategories();
+                if (productToEdit != null)
+                {
+                    await LoadForEditing(productToEdit);
+                }
+            };
+        }
+
+        private async System.Threading.Tasks.Task LoadUnits()
+        {
+            var units = await _unitService.GetAllAsync();
+            UnitInput.ItemsSource = units;
+        }
+
+        private async System.Threading.Tasks.Task LoadCategories()
+        {
+            var categories = await _categoryService.GetAllAsync();
+            CategoryInput.ItemsSource = categories;
         }
 
         private async System.Threading.Tasks.Task LoadForEditing(Product product)
@@ -36,6 +56,9 @@ namespace Clidapos.Wpf.Views
 
             var qty = await _productService.GetQuantityAsync(product.PID);
             QuantityInput.Text = qty.ToString("0.##");
+
+            var latestBuyingPrice = await _purchaseService.GetLatestBuyingPriceAsync(product.PID);
+            BuyingPriceInput.Text = latestBuyingPrice?.ToString("0.00") ?? "";
         }
 
         private void NewItem_Click(object sender, RoutedEventArgs e)
@@ -47,6 +70,7 @@ namespace Clidapos.Wpf.Views
             CategoryInput.Text = "";
             UnitInput.Text = "";
             PriceInput.Text = "";
+            BuyingPriceInput.Text = "";
             QuantityInput.Text = "";
             ReorderInput.Text = "";
             SupplierInput.Text = "";
@@ -57,32 +81,66 @@ namespace Clidapos.Wpf.Views
         {
             ErrorText.Text = "";
 
-            if (string.IsNullOrWhiteSpace(NameInput.Text) || string.IsNullOrWhiteSpace(CodeInput.Text))
+            if (string.IsNullOrWhiteSpace(NameInput.Text))
             {
-                ErrorText.Text = "Product Code and Name are required.";
+                ErrorText.Text = "Product Name is required.";
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(CategoryInput.Text))
+            {
+                ErrorText.Text = "Category is required.";
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(UnitInput.Text))
+            {
+                ErrorText.Text = "Unit is required.";
                 return;
             }
 
             if (!decimal.TryParse(PriceInput.Text, out var price))
             {
-                ErrorText.Text = "Price must be a valid number.";
+                ErrorText.Text = "Selling Price must be a valid number.";
+                return;
+            }
+            if (!decimal.TryParse(BuyingPriceInput.Text, out var buyingPrice))
+            {
+                ErrorText.Text = "Buying Price must be a valid number.";
+                return;
+            }
+
+            if (price <= buyingPrice)
+            {
+                ErrorText.Text = "Selling Price must be higher than Buying Price.";
+                return;
+            }
+
+            if (!int.TryParse(ReorderInput.Text, out var reorderPoint))
+            {
+                ErrorText.Text = "Reorder Point must be a valid number.";
                 return;
             }
 
             decimal.TryParse(QuantityInput.Text, out var quantity);
-            int.TryParse(ReorderInput.Text, out var reorderPoint);
 
             try
             {
+                await _unitService.EnsureExistsAsync(UnitInput.Text.Trim());
+                await _categoryService.EnsureExistsAsync(CategoryInput.Text.Trim());
+
                 int productId;
 
                 if (_editingProduct == null)
                 {
                     productId = await _productService.GetNextIdAsync();
+
+                    var code = string.IsNullOrWhiteSpace(CodeInput.Text)
+                        ? $"ITM-{productId}"
+                        : CodeInput.Text.Trim();
+
                     var newProduct = new Product
                     {
                         PID = productId,
-                        ProductCode = CodeInput.Text.Trim(),
+                        ProductCode = code,
                         ProductName = NameInput.Text.Trim(),
                         Category = CategoryInput.Text.Trim(),
                         Unit = UnitInput.Text.Trim(),
@@ -95,7 +153,12 @@ namespace Clidapos.Wpf.Views
                 else
                 {
                     productId = _editingProduct.PID;
-                    _editingProduct.ProductCode = CodeInput.Text.Trim();
+
+                    var code = string.IsNullOrWhiteSpace(CodeInput.Text)
+                        ? _editingProduct.ProductCode
+                        : CodeInput.Text.Trim();
+
+                    _editingProduct.ProductCode = code;
                     _editingProduct.ProductName = NameInput.Text.Trim();
                     _editingProduct.Category = CategoryInput.Text.Trim();
                     _editingProduct.Unit = UnitInput.Text.Trim();
@@ -107,12 +170,20 @@ namespace Clidapos.Wpf.Views
 
                 await _productService.SetQuantityAsync(productId, quantity);
 
+                if (buyingPrice > 0)
+                {
+                    await _purchaseService.RecordBuyingPriceAsync(productId, quantity, buyingPrice);
+                }
+
+                await LoadUnits();
+                await LoadCategories();
                 MessageBox.Show("Saved successfully.", "Clidapos");
                 NewItem_Click(sender, e);
             }
             catch (Exception ex)
             {
-                ErrorText.Text = $"Error: {ex.Message}";
+                var detail = ex.InnerException?.Message ?? ex.Message;
+                ErrorText.Text = $"Error: {detail}";
             }
         }
 
