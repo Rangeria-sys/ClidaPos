@@ -19,6 +19,8 @@ namespace Clidapos.Wpf.Data
         public DbSet<RMCategory> RMCategories => Set<RMCategory>();
         public DbSet<Warehouse> Warehouses => Set<Warehouse>();
         public DbSet<WarehouseType> WarehouseTypes => Set<WarehouseType>();
+        public DbSet<SaleBill> SaleBills => Set<SaleBill>();
+        public DbSet<SaleItem> SaleItems => Set<SaleItem>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -56,6 +58,8 @@ namespace Clidapos.Wpf.Data
             {
                 b.ToTable("WorkPeriodEnd", "dbo");
                 b.HasKey(x => x.Id);
+                // Id is NOT an identity column - it mirrors WorkPeriodStart.ID.
+                b.Property(x => x.Id).ValueGeneratedNever();
                 b.Property(x => x.WPEnd).HasColumnType("datetime");
             });
 
@@ -152,6 +156,49 @@ namespace Clidapos.Wpf.Data
                 b.ToTable("WarehouseType", "dbo");
                 b.HasKey(x => x.Type);
                 b.Property(x => x.Type).HasColumnType("nchar(200)");
+            });
+
+            // ---------- SALES (counter / takeaway channel) ----------
+            modelBuilder.Entity<SaleBill>(b =>
+            {
+                b.ToTable("RestaurantPOS_BillingInfoTA", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Id).ValueGeneratedNever();
+                b.Property(x => x.BillNo).HasColumnType("nchar(15)");
+                b.Property(x => x.BillDate).HasColumnType("datetime");
+                b.Property(x => x.SubTotal).HasColumnType("decimal(18,2)");
+                b.Property(x => x.TADiscountPer).HasColumnType("decimal(18,4)");
+                b.Property(x => x.TADiscountAmt).HasColumnType("decimal(18,2)");
+                b.Property(x => x.GrandTotal).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Cash).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Change).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Operator).HasColumnType("nchar(100)");
+                b.Property(x => x.PaymentMode).HasColumnType("nchar(50)");
+                b.Property(x => x.CustomerName).HasColumnType("nchar(150)");
+                b.Property(x => x.PhoneNo).HasColumnType("nchar(100)");
+                b.Property(x => x.TA_Status).HasColumnType("nchar(30)");
+                b.Property(x => x.TaxType).HasColumnType("nchar(20)");
+                b.Property(x => x.Card).HasColumnType("decimal(18,2)");
+                b.Property(x => x.TotalTaxableAmount).HasColumnName("totalTaxableAmount").HasColumnType("decimal(18,2)");
+                b.Property(x => x.TotalTaxAmount).HasColumnName("totalTaxAmount").HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<SaleItem>(b =>
+            {
+                b.ToTable("RestaurantPOS_OrderedProductBillTA", "dbo");
+                b.HasKey(x => x.OP_ID);
+                b.Property(x => x.OP_ID).ValueGeneratedOnAdd();
+                b.Property(x => x.Dish).HasColumnType("nvarchar(max)");
+                b.Property(x => x.Rate).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Quantity).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.VATPer).HasColumnType("decimal(18,2)");
+                b.Property(x => x.VATAmount).HasColumnType("decimal(18,3)");
+                b.Property(x => x.DiscountPer).HasColumnType("decimal(18,4)");
+                b.Property(x => x.DiscountAmount).HasColumnType("decimal(18,3)");
+                b.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Category).HasColumnType("nchar(200)");
+                b.Property(x => x.ItemStatus).HasColumnType("nchar(30)");
             });
         }
     }

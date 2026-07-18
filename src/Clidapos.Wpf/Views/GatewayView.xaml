@@ -5,7 +5,7 @@
         WindowStyle="None"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        Background="White">
+        Background="{StaticResource AppBackground}">
 
     <Window.Resources>
         <Style x:Key="GatewayTile" TargetType="Button">
@@ -24,11 +24,18 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
+
+        <Style x:Key="PeriodButton" TargetType="Button">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Padding" Value="30,14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
     </Window.Resources>
 
-    <Grid>
-        <Image Source="pack://application:,,,/Assets/gateway.jpeg" Stretch="UniformToFill"/>
-        <Rectangle Fill="#B0FFFFFF"/>
+    <Grid Background="{StaticResource AppOverlay}">
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
                     Margin="0,10,20,0">
@@ -88,12 +95,16 @@
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
             <TextBlock x:Name="TimeText" Foreground="#DC143C" FontSize="30" FontWeight="Bold"
                        HorizontalAlignment="Center"/>
-            <TextBlock x:Name="DateText" Foreground="#444444" FontSize="14" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="DateText" Foreground="#DDDDDD" FontSize="14" HorizontalAlignment="Center"/>
         </StackPanel>
 
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,10,0,0">
-            <TextBlock Text="CLIDA POS SYSTEM" Foreground="#DC143C" FontSize="20" FontWeight="Bold"/>
-            <TextBlock x:Name="WelcomeText" Foreground="#444444" FontSize="14"/>
+            <TextBlock x:Name="StoreNameText" Foreground="#DC143C" FontSize="20" FontWeight="Bold"/>
+            <TextBlock x:Name="WelcomeText" Foreground="#DDDDDD" FontSize="14"/>
+            <Border x:Name="ModeBadge" Background="#F3A123" CornerRadius="4" Padding="8,3"
+                    HorizontalAlignment="Left" Margin="0,6,0,0">
+                <TextBlock x:Name="ModeText" Foreground="Black" FontSize="11" FontWeight="Bold"/>
+            </Border>
         </StackPanel>
 
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -133,10 +144,16 @@
                 </Button>
             </StackPanel>
 
-            <Button x:Name="StartPeriodButton" Content="START PERIOD" Background="#F3A123"
-                    Foreground="Black" FontWeight="Bold" FontSize="18" Padding="30,14"
-                    Margin="0,40,0,0" HorizontalAlignment="Center" Click="StartPeriod_Click"
-                    Cursor="Hand"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,40,0,0">
+                <Button x:Name="StartPeriodButton" Content="START PERIOD" Background="#34C759"
+                        Style="{StaticResource PeriodButton}" Click="StartPeriod_Click"/>
+
+                <Button x:Name="EndPeriodButton" Content="END PERIOD" Background="#DC143C"
+                        Foreground="White" Style="{StaticResource PeriodButton}" Click="EndPeriod_Click"/>
+            </StackPanel>
+
+            <TextBlock x:Name="ShiftStatusText" Foreground="#DDDDDD" FontSize="13"
+                       HorizontalAlignment="Center" Margin="0,12,0,0"/>
         </StackPanel>
     </Grid>
 </Window>

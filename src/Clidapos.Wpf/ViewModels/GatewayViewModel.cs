@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -25,7 +26,10 @@ namespace Clidapos.Wpf.ViewModels
             set { _isShiftOpen = value; OnPropertyChanged(); }
         }
 
-        public bool IsAdmin => CurrentUser.UserType.Trim().Equals("Admin", System.StringComparison.OrdinalIgnoreCase);
+        public bool IsAdmin => CurrentUser.UserType.Trim()
+            .Equals("Admin", System.StringComparison.OrdinalIgnoreCase);
+
+        public StoreMode Mode => AppSettings.Mode;
 
         public GatewayViewModel(Registration currentUser)
         {
@@ -33,15 +37,22 @@ namespace Clidapos.Wpf.ViewModels
             _ = RefreshShiftStatusAsync();
         }
 
-        public async System.Threading.Tasks.Task RefreshShiftStatusAsync()
+        public async Task RefreshShiftStatusAsync()
         {
             IsShiftOpen = await _shiftService.IsShiftOpenAsync();
         }
 
-        public async System.Threading.Tasks.Task StartPeriodAsync()
+        public async Task StartPeriodAsync()
         {
             await _shiftService.StartPeriodAsync();
             await RefreshShiftStatusAsync();
+        }
+
+        public async Task<bool> EndPeriodAsync()
+        {
+            var closed = await _shiftService.EndPeriodAsync();
+            await RefreshShiftStatusAsync();
+            return closed;
         }
     }
 }
