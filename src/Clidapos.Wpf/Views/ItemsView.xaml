@@ -5,7 +5,7 @@
         WindowStyle="None"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        Background="#121212">
+        Background="{StaticResource AppBackground}">
 
 	<Window.Resources>
 		<Style x:Key="RoundTopButton" TargetType="Button">
@@ -57,14 +57,11 @@
 		</Style>
 	</Window.Resources>
 
-	<Grid>
+	<Grid Background="{StaticResource AppOverlay}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
-
-		<Image Source="pack://application:,,,/Assets/gateway.jpeg" Stretch="UniformToFill" Grid.RowSpan="2"/>
-		<Rectangle Fill="#CC121212" Grid.RowSpan="2"/>
 
 		<Border Grid.Row="0" Background="#1E1E24">
 			<Grid>

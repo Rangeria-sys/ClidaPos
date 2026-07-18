@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,21 @@ namespace Clidapos.Wpf.Services
                 .FirstOrDefaultAsync();
 
             return latest?.Price;
+        }
+
+        // Latest buying price for ALL products in two queries (no per-row round trips).
+        public async Task<Dictionary<int, decimal>> GetLatestBuyingPricesAsync()
+        {
+            using var db = new ClidaposDbContext();
+
+            var latestIds = await db.PurchaseJoins
+                .GroupBy(j => j.ProductID)
+                .Select(g => g.Max(j => j.SP_ID))
+                .ToListAsync();
+
+            return await db.PurchaseJoins
+                .Where(j => latestIds.Contains(j.SP_ID))
+                .ToDictionaryAsync(j => j.ProductID, j => j.Price);
         }
     }
 }

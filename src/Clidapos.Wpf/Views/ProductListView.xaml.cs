@@ -8,11 +8,18 @@ using Clidapos.Wpf.Services;
 
 namespace Clidapos.Wpf.Views
 {
+    public class ProductRow
+    {
+        public Product Product { get; set; } = null!;
+        public decimal? BuyingPrice { get; set; }
+    }
+
     public partial class ProductListView : Window
     {
         private readonly Registration _currentUser;
         private readonly ProductService _productService = new();
-        private List<Product> _allProducts = new();
+        private readonly PurchaseService _purchaseService = new();
+        private List<ProductRow> _allRows = new();
 
         public ProductListView(Registration currentUser)
         {
@@ -23,8 +30,16 @@ namespace Clidapos.Wpf.Views
 
         private async System.Threading.Tasks.Task LoadProducts()
         {
-            _allProducts = await _productService.GetAllAsync();
-            ProductGrid.ItemsSource = _allProducts;
+            var products = await _productService.GetAllAsync();
+            var prices = await _purchaseService.GetLatestBuyingPricesAsync();
+
+            _allRows = products.Select(p => new ProductRow
+            {
+                Product = p,
+                BuyingPrice = prices.TryGetValue(p.PID, out var bp) ? bp : (decimal?)null
+            }).ToList();
+
+            ProductGrid.ItemsSource = _allRows;
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -33,22 +48,22 @@ namespace Clidapos.Wpf.Views
 
             if (string.IsNullOrEmpty(query))
             {
-                ProductGrid.ItemsSource = _allProducts;
+                ProductGrid.ItemsSource = _allRows;
                 return;
             }
 
-            ProductGrid.ItemsSource = _allProducts.Where(p =>
-                p.ProductName.ToLower().Contains(query) ||
-                p.ProductCode.ToLower().Contains(query) ||
-                (p.Category ?? "").ToLower().Contains(query)
+            ProductGrid.ItemsSource = _allRows.Where(r =>
+                r.Product.ProductName.ToLower().Contains(query) ||
+                r.Product.ProductCode.ToLower().Contains(query) ||
+                (r.Product.Category ?? "").ToLower().Contains(query)
             ).ToList();
         }
 
         private void ProductGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (ProductGrid.SelectedItem is Product selected)
+            if (ProductGrid.SelectedItem is ProductRow row)
             {
-                var itemsView = new ItemsView(_currentUser, selected);
+                var itemsView = new ItemsView(_currentUser, row.Product);
                 itemsView.Show();
                 Close();
             }
@@ -59,6 +74,16 @@ namespace Clidapos.Wpf.Views
             var itemsView = new ItemsView(_currentUser);
             itemsView.Show();
             Close();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

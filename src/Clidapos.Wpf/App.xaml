@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Clidapos.Wpf"
              StartupUri="Views/LoginView.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+	<Application.Resources>
+		<ImageBrush x:Key="AppBackground"
+                    ImageSource="pack://application:,,,/Assets/gateway.jpeg"
+                    Stretch="UniformToFill"/>
+		<SolidColorBrush x:Key="AppOverlay" Color="#CC121212"/>
+	</Application.Resources>
 </Application>
