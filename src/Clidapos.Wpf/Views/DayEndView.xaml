@@ -85,7 +85,30 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-
+					<Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
+												ToolTip="Minimize">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FFE9A6" Offset="0"/>
+												<GradientStop Color="#E8B830" Offset="0.4"/>
+												<GradientStop Color="#B8860B" Offset="0.85"/>
+												<GradientStop Color="#8A6408" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+										<Ellipse.Effect>
+											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+										</Ellipse.Effect>
+									</Ellipse>
+									<TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
                     <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">

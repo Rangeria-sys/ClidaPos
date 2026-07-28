@@ -91,8 +91,13 @@ namespace Clidapos.Wpf.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            new GatewayView(_currentUser).Show();
+            new FrontOfficeHubView(_currentUser).Show();
             Close();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

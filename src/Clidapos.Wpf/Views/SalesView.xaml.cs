@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,15 +15,18 @@ namespace Clidapos.Wpf.Views
         private readonly SaleService _saleService = new();
         private readonly ObservableCollection<CartLine> _cart = new();
 
+        private Product? _stagedProduct;
+        private string _qtyBuffer = "";
+
         public SalesView(Registration currentUser)
         {
             InitializeComponent();
             _currentUser = currentUser;
 
             CashierText.Text = $"Cashier: {currentUser.Name.Trim()}";
-            VatNoteText.Text = $"All prices include VAT at {AppSettings.VatPercent:0.##}%";
 
             CartGrid.ItemsSource = _cart;
+            UpdateQtyDisplay();
             RecomputeTotals();
 
             Loaded += (s, e) => SearchBox.Focus();
@@ -37,12 +38,11 @@ namespace Clidapos.Wpf.Views
             var term = SearchBox.Text.Trim();
             if (term.Length < 2)
             {
-                ResultsGrid.ItemsSource = null;
+                ResultsList.ItemsSource = null;
                 return;
             }
 
-            var results = await _saleService.SearchAsync(term);
-            ResultsGrid.ItemsSource = results;
+            ResultsList.ItemsSource = await _saleService.SearchAsync(term);
         }
 
         private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -55,49 +55,119 @@ namespace Clidapos.Wpf.Views
             var exact = await _saleService.FindByCodeAsync(term);
             if (exact != null)
             {
-                AddToCart(exact);
-                SearchBox.Clear();
-                ResultsGrid.ItemsSource = null;
+                AddToCart(exact, ParseQtyOrDefault());
+                FinishAddAndReset();
                 return;
             }
 
             var results = await _saleService.SearchAsync(term);
             if (results.Count == 1)
             {
-                AddToCart(results[0]);
+                StageProduct(results[0]);
+                ResultsList.ItemsSource = null;
                 SearchBox.Clear();
-                ResultsGrid.ItemsSource = null;
             }
             else
             {
-                ResultsGrid.ItemsSource = results;
-                if (results.Count == 0)
-                    ErrorText.Text = $"Nothing found for \"{term}\".";
+                ResultsList.ItemsSource = results;
+                ErrorText.Text = results.Count == 0 ? $"Nothing found for \"{term}\"." : "";
             }
         }
 
-        private void ResultsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ResultsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ResultsGrid.SelectedItem is Product p)
+            if (ResultsList.SelectedItem is Product p)
+                StageProduct(p);
+        }
+
+        private void ResultsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ResultsList.SelectedItem is Product p)
             {
-                AddToCart(p);
-                SearchBox.Clear();
-                SearchBox.Focus();
+                StageProduct(p);
+                AddStagedToCart_Click(sender, e);
             }
+        }
+
+        // ---------------- STAGING + KEYPAD ----------------
+        private void StageProduct(Product p)
+        {
+            _stagedProduct = p;
+            StagedNameText.Text = p.ProductName.Trim();
+            StagedPriceText.Text = $"{p.Price:N2} each";
+            _qtyBuffer = "";
+            UpdateQtyDisplay();
+            KeypadErrorText.Text = "";
+        }
+
+        private void Keypad_Click(object sender, RoutedEventArgs e)
+        {
+            var tag = (sender as Button)?.Tag as string ?? "";
+
+            switch (tag)
+            {
+                case "CLR":
+                    _qtyBuffer = "";
+                    break;
+                case "DEL":
+                    if (_qtyBuffer.Length > 0)
+                        _qtyBuffer = _qtyBuffer.Substring(0, _qtyBuffer.Length - 1);
+                    break;
+                default:
+                    if (_qtyBuffer.Length < 6)
+                        _qtyBuffer += tag;
+                    break;
+            }
+
+            UpdateQtyDisplay();
+        }
+
+        private void UpdateQtyDisplay()
+        {
+            QtyDisplayText.Text = string.IsNullOrEmpty(_qtyBuffer) ? "1" : _qtyBuffer;
+        }
+
+        private decimal ParseQtyOrDefault()
+        {
+            var text = string.IsNullOrEmpty(_qtyBuffer) ? "1" : _qtyBuffer;
+            return decimal.TryParse(text, out var q) && q > 0 ? q : 1;
+        }
+
+        private void AddStagedToCart_Click(object sender, RoutedEventArgs e)
+        {
+            KeypadErrorText.Text = "";
+
+            if (_stagedProduct == null)
+            {
+                KeypadErrorText.Text = "Select an item first.";
+                return;
+            }
+
+            AddToCart(_stagedProduct, ParseQtyOrDefault());
+            FinishAddAndReset();
+        }
+
+        private void FinishAddAndReset()
+        {
+            _stagedProduct = null;
+            _qtyBuffer = "";
+            UpdateQtyDisplay();
+            StagedNameText.Text = "Search or scan an item";
+            StagedPriceText.Text = "";
+            SearchBox.Clear();
+            ResultsList.ItemsSource = null;
+            SearchBox.Focus();
         }
 
         // ---------------- CART ----------------
-        private void AddToCart(Product p)
+        private void AddToCart(Product p, decimal qty)
         {
             ErrorText.Text = "";
 
             var existing = _cart.FirstOrDefault(l => l.ProductId == p.PID);
             if (existing != null)
-            {
-                existing.Quantity += 1;
-            }
+                existing.Quantity += qty;
             else
-            {
                 _cart.Add(new CartLine
                 {
                     ProductId = p.PID,
@@ -105,12 +175,20 @@ namespace Clidapos.Wpf.Views
                     ProductCode = p.ProductCode.Trim(),
                     Category = p.Category?.Trim() ?? "",
                     Rate = p.Price,
-                    Quantity = 1
+                    Quantity = qty
                 });
-            }
 
             CartGrid.Items.Refresh();
             RecomputeTotals();
+        }
+
+        private void RemoveLineButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.Tag is CartLine line)
+            {
+                _cart.Remove(line);
+                RecomputeTotals();
+            }
         }
 
         private void CartGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -118,22 +196,11 @@ namespace Clidapos.Wpf.Views
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 foreach (var line in _cart.ToList())
-                {
-                    if (line.Quantity <= 0)
-                        _cart.Remove(line);
-                }
+                    if (line.Quantity <= 0) _cart.Remove(line);
+
                 CartGrid.Items.Refresh();
                 RecomputeTotals();
             }), System.Windows.Threading.DispatcherPriority.Background);
-        }
-
-        private void RemoveLine_Click(object sender, RoutedEventArgs e)
-        {
-            if (CartGrid.SelectedItem is CartLine line)
-            {
-                _cart.Remove(line);
-                RecomputeTotals();
-            }
         }
 
         private void ClearCart_Click(object sender, RoutedEventArgs e)
@@ -156,14 +223,12 @@ namespace Clidapos.Wpf.Views
             var total = GrandTotal;
             var vatPercent = AppSettings.VatPercent;
 
-            var taxable = vatPercent > 0
-                ? Math.Round(total / (1 + (vatPercent / 100m)), 2)
-                : total;
+            var taxable = vatPercent > 0 ? Math.Round(total / (1 + (vatPercent / 100m)), 2) : total;
             var vat = Math.Round(total - taxable, 2);
 
             GrandTotalText.Text = total.ToString("N2");
-            VatBreakdownText.Text = $"{AppSettings.CurrencySymbol} — includes VAT of {vat:N2}  (net {taxable:N2})";
-            ItemCountText.Text = $"{_cart.Count} line(s), {_cart.Sum(l => l.Quantity):N2} item(s)";
+            VatBreakdownText.Text = $"{AppSettings.CurrencySymbol} — incl. VAT {vat:N2} (net {taxable:N2})";
+            ItemCountText.Text = $"{_cart.Count} line(s) · {_cart.Sum(l => l.Quantity):N2} item(s)";
 
             ComputeChange();
         }
@@ -182,19 +247,24 @@ namespace Clidapos.Wpf.Views
 
         private void AmountReceived_TextChanged(object sender, TextChangedEventArgs e) => ComputeChange();
 
-        private void PaymentMode_Changed(object sender, RoutedEventArgs e)
+        private void AmountReceivedInput_KeyDown(object sender, KeyEventArgs e)
         {
-            if (CashPanel == null || RefPanel == null) return;
-
-            var isCash = CashMode.IsChecked == true;
-            CashPanel.Visibility = isCash ? Visibility.Visible : Visibility.Collapsed;
-            RefPanel.Visibility = isCash ? Visibility.Collapsed : Visibility.Visible;
+            if (e.Key == Key.Enter)
+                CompleteSale_Click(sender, e);
         }
 
+        private void PaymentMode_Changed(object sender, RoutedEventArgs e)
+        {
+            if (CashDetailsPanel == null) return;
+            CashDetailsPanel.Visibility = CashMode.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        // BankMode maps to the "Card" payment value so the Day End report's
+        // existing Card bucket keeps working - only the button label reads "BANK".
         private string SelectedPaymentMode()
         {
             if (MpesaMode.IsChecked == true) return "M-Pesa";
-            if (CardMode.IsChecked == true) return "Card";
+            if (BankMode.IsChecked == true) return "Card";
             return "Cash";
         }
 
@@ -215,17 +285,12 @@ namespace Clidapos.Wpf.Views
             if (mode != "Cash")
                 received = GrandTotal;
 
-            CompleteButton.IsEnabled = false;
+            PayButton.IsEnabled = false;
 
             var result = await _saleService.SaveSaleAsync(
-                _cart.ToList(),
-                _currentUser,
-                mode,
-                received,
-                CustomerNameInput.Text,
-                PhoneInput.Text);
+                _cart.ToList(), _currentUser, mode, received, string.Empty, string.Empty);
 
-            CompleteButton.IsEnabled = true;
+            PayButton.IsEnabled = true;
 
             if (!result.Ok)
             {
@@ -247,13 +312,17 @@ namespace Clidapos.Wpf.Views
         private void ResetSale()
         {
             _cart.Clear();
+            _stagedProduct = null;
+            _qtyBuffer = "";
             SearchBox.Clear();
             AmountReceivedInput.Clear();
-            CustomerNameInput.Clear();
-            PhoneInput.Clear();
-            ResultsGrid.ItemsSource = null;
+            ResultsList.ItemsSource = null;
             ErrorText.Text = "";
+            KeypadErrorText.Text = "";
+            StagedNameText.Text = "Search or scan an item";
+            StagedPriceText.Text = "";
             CashMode.IsChecked = true;
+            UpdateQtyDisplay();
             RecomputeTotals();
             SearchBox.Focus();
         }
@@ -268,7 +337,7 @@ namespace Clidapos.Wpf.Views
                 if (confirm != MessageBoxResult.Yes) return;
             }
 
-            new GatewayView(_currentUser).Show();
+            new FrontOfficeHubView(_currentUser).Show();
             Close();
         }
 
@@ -279,9 +348,7 @@ namespace Clidapos.Wpf.Views
                   "Closing now will lose this sale. Close Clidapos anyway?"
                 : "Close Clidapos?";
 
-            var confirm = MessageBox.Show(message, "Confirm Exit",
-                MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
+            var confirm = MessageBox.Show(message, "Confirm Exit", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm == MessageBoxResult.Yes)
                 Application.Current.Shutdown();
         }

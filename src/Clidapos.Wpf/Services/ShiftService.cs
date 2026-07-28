@@ -9,19 +9,11 @@ namespace Clidapos.Wpf.Services
 {
     public class ShiftService
     {
-        /// <summary>
-        /// A shift is "open" if the most recent WorkPeriodStart row
-        /// has no matching WorkPeriodEnd row.
-        /// </summary>
         public async Task<bool> IsShiftOpenAsync()
         {
             return await GetOpenPeriodAsync() != null;
         }
 
-        /// <summary>
-        /// Returns the currently open work period, or null if none is open.
-        /// Sales are stamped against this period.
-        /// </summary>
         public async Task<WorkPeriodStart?> GetOpenPeriodAsync()
         {
             using var db = new ClidaposDbContext();
@@ -33,10 +25,16 @@ namespace Clidapos.Wpf.Services
             if (latestStart == null)
                 return null;
 
-            var hasEnd = await db.WorkPeriodEnds
-                .AnyAsync(e => e.Id == latestStart.ID);
-
+            var hasEnd = await db.WorkPeriodEnds.AnyAsync(e => e.Id == latestStart.ID);
             return hasEnd ? null : latestStart;
+        }
+
+        // The most recent period regardless of open/closed status - lets Report
+        // show something useful even right after a period has been closed.
+        public async Task<WorkPeriodStart?> GetLatestPeriodAsync()
+        {
+            using var db = new ClidaposDbContext();
+            return await db.WorkPeriodStarts.OrderByDescending(x => x.ID).FirstOrDefaultAsync();
         }
 
         public async Task StartPeriodAsync()
@@ -50,9 +48,6 @@ namespace Clidapos.Wpf.Services
             await db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Closes the open work period. Returns false if nothing was open.
-        /// </summary>
         public async Task<bool> EndPeriodAsync()
         {
             using var db = new ClidaposDbContext();
@@ -61,18 +56,14 @@ namespace Clidapos.Wpf.Services
                 .OrderByDescending(x => x.ID)
                 .FirstOrDefaultAsync();
 
-            if (latestStart == null)
-                return false;
+            if (latestStart == null) return false;
 
-            var alreadyClosed = await db.WorkPeriodEnds
-                .AnyAsync(e => e.Id == latestStart.ID);
-
-            if (alreadyClosed)
-                return false;
+            var alreadyClosed = await db.WorkPeriodEnds.AnyAsync(e => e.Id == latestStart.ID);
+            if (alreadyClosed) return false;
 
             db.WorkPeriodEnds.Add(new WorkPeriodEnd
             {
-                Id = latestStart.ID,          // shares the PK of the start row
+                Id = latestStart.ID,
                 WPEnd = DateTime.Now
             });
 
