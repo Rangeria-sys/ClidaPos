@@ -1,0 +1,207 @@
+﻿<Window x:Class="Clidapos.Wpf.Views.SalesHistoryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Clidapos - Sales History"
+        WindowStyle="None"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        Background="{StaticResource AppBackground}">
+
+	<Window.Resources>
+		<Style x:Key="RoundTopButton" TargetType="Button">
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+
+		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
+			<Setter Property="Background" Value="#2A2A32"/>
+			<Setter Property="Foreground" Value="#F3A123"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="BorderThickness" Value="0,0,0,2"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		</Style>
+
+		<Style x:Key="ActionBtn" TargetType="Button">
+			<Setter Property="Height" Value="44"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}" CornerRadius="8">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="PanelInput" TargetType="TextBox">
+			<Setter Property="Background" Value="#1E1E24"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
+	</Window.Resources>
+
+	<Grid Background="{StaticResource AppOverlay}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<Border Grid.Row="0" Background="#1E1E24">
+			<Grid>
+				<TextBlock Text="SALES HISTORY" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,15,0">
+					<Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="0,0,10,0" ToolTip="Back to Counter Sale">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FFD98F" Offset="0"/>
+												<GradientStop Color="#F3A123" Offset="0.5"/>
+												<GradientStop Color="#B5741A" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+									</Ellipse>
+									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
+
+					<Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FF7B8C" Offset="0"/>
+												<GradientStop Color="#DC143C" Offset="0.5"/>
+												<GradientStop Color="#8F0C25" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+									</Ellipse>
+									<Viewbox Width="16" Height="16">
+										<Canvas Width="24" Height="24">
+											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+										</Canvas>
+									</Viewbox>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<Grid Grid.Row="1" Margin="16">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1.2*"/>
+				<ColumnDefinition Width="16"/>
+				<ColumnDefinition Width="1.0*"/>
+			</Grid.ColumnDefinitions>
+
+			<Border Grid.Column="0" Background="#1A1A1F" CornerRadius="10" Padding="16">
+				<DockPanel>
+					<TextBlock DockPanel.Dock="Top" Text="RECENT SALES" Foreground="#F3A123" FontSize="15"
+                               FontWeight="Bold" Margin="0,0,0,12"/>
+
+					<DataGrid x:Name="SalesGrid" AutoGenerateColumns="False" FontSize="14"
+                              Background="#141419" Foreground="White" BorderThickness="0"
+                              RowBackground="#141419" AlternatingRowBackground="#1E1E24"
+                              HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
+                              ColumnHeaderStyle="{StaticResource GridHeader}"
+                              IsReadOnly="True" SelectionMode="Single"
+                              SelectionChanged="SalesGrid_SelectionChanged">
+						<DataGrid.RowStyle>
+							<Style TargetType="DataGridRow">
+								<Setter Property="MinHeight" Value="42"/>
+							</Style>
+						</DataGrid.RowStyle>
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Bill No" Binding="{Binding BillNo}" Width="110"/>
+							<DataGridTextColumn Header="Date" Binding="{Binding BillDate, StringFormat='dd MMM, hh:mm tt'}" Width="150"/>
+							<DataGridTextColumn Header="Payment" Binding="{Binding PaymentMode}" Width="100"/>
+							<DataGridTextColumn Header="Total" Binding="{Binding GrandTotal, StringFormat=N2}" Width="*"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</DockPanel>
+			</Border>
+
+			<Border Grid.Column="2" Background="#1A1A1F" CornerRadius="10" Padding="16">
+				<DockPanel>
+					<TextBlock DockPanel.Dock="Top" Text="RECEIPT" Foreground="#F3A123" FontSize="15"
+                               FontWeight="Bold" Margin="0,0,0,4"/>
+					<TextBlock DockPanel.Dock="Top" x:Name="ReceiptHeaderText" Foreground="#888888" FontSize="12"
+                               Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+					<StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+						<TextBlock x:Name="ReceiptTotalText" Foreground="#34C759" FontSize="24" FontWeight="Bold"
+                                   HorizontalAlignment="Right"/>
+
+						<!-- Normal action row -->
+						<StackPanel x:Name="ReceiptActionsPanel" Orientation="Horizontal" Margin="0,12,0,0">
+							<Button Content="PRINT (COMING SOON)" Background="#3A3A42" Style="{StaticResource ActionBtn}"
+                                    Margin="0,0,10,0" Click="Print_Click"/>
+							<Button Content="VOID / REFUND" Background="#DC143C" Style="{StaticResource ActionBtn}"
+                                    Click="StartVoid_Click"/>
+						</StackPanel>
+
+						<!-- Reason entry, hidden until Void is clicked -->
+						<StackPanel x:Name="VoidReasonPanel" Visibility="Collapsed" Margin="0,12,0,0">
+							<TextBlock Text="REASON FOR VOID / REFUND (required)" Foreground="#FF6B6B" FontSize="11"
+                                       FontWeight="Bold" Margin="0,0,0,6"/>
+							<TextBox x:Name="VoidReasonInput" Style="{StaticResource PanelInput}" Height="60"
+                                     TextWrapping="Wrap" AcceptsReturn="True"/>
+							<TextBlock x:Name="VoidErrorText" Foreground="#FF6B6B" FontSize="11"
+                                       Margin="0,6,0,0" TextWrapping="Wrap"/>
+							<StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+								<Button Content="CONFIRM VOID" Background="#DC143C" Style="{StaticResource ActionBtn}"
+                                        Margin="0,0,10,0" Click="ConfirmVoid_Click"/>
+								<Button Content="CANCEL" Background="#3A3A42" Style="{StaticResource ActionBtn}"
+                                        Click="CancelVoid_Click"/>
+							</StackPanel>
+						</StackPanel>
+					</StackPanel>
+
+					<ListBox x:Name="ReceiptItemsList" Background="#141419" Foreground="White" BorderThickness="0">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid Margin="0,6">
+									<StackPanel Orientation="Horizontal">
+										<TextBlock Text="{Binding Dish}" Foreground="White" FontSize="14"/>
+										<TextBlock Foreground="#888888" FontSize="12" Margin="8,0,0,0">
+											<Run Text="x"/>
+											<Run Text="{Binding Quantity, StringFormat=N2}"/>
+										</TextBlock>
+									</StackPanel>
+									<TextBlock Text="{Binding TotalAmount, StringFormat=N2}" Foreground="#CCCCCC"
+                                               FontSize="14" HorizontalAlignment="Right"/>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</DockPanel>
+			</Border>
+		</Grid>
+	</Grid>
+</Window>

@@ -21,6 +21,8 @@ namespace Clidapos.Wpf.Data
         public DbSet<WarehouseType> WarehouseTypes => Set<WarehouseType>();
         public DbSet<SaleBill> SaleBills => Set<SaleBill>();
         public DbSet<SaleItem> SaleItems => Set<SaleItem>();
+        public DbSet<DeletedInvoice> DeletedInvoices => Set<DeletedInvoice>();
+        public DbSet<DeletedInvoiceJoin> DeletedInvoiceJoins => Set<DeletedInvoiceJoin>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -58,7 +60,6 @@ namespace Clidapos.Wpf.Data
             {
                 b.ToTable("WorkPeriodEnd", "dbo");
                 b.HasKey(x => x.Id);
-                // Id is NOT an identity column - it mirrors WorkPeriodStart.ID.
                 b.Property(x => x.Id).ValueGeneratedNever();
                 b.Property(x => x.WPEnd).HasColumnType("datetime");
             });
@@ -199,6 +200,30 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Category).HasColumnType("nchar(200)");
                 b.Property(x => x.ItemStatus).HasColumnType("nchar(30)");
+            });
+
+            // ---------- VOID / REFUND AUDIT TRAIL ----------
+            modelBuilder.Entity<DeletedInvoice>(b =>
+            {
+                b.ToTable("DeletedInvoices", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.BillNo).HasColumnType("nchar(15)");
+                b.Property(x => x.GrandTotal).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Operator).HasColumnType("nchar(100)");
+                b.Property(x => x.PaymentMode).HasColumnType("nchar(100)");
+                b.Property(x => x.Reason).HasColumnType("nchar(200)");
+                b.Property(x => x.BillType).HasColumnType("nchar(20)");
+                b.Property(x => x.Canceled_Deleted).HasColumnType("nchar(20)");
+            });
+
+            modelBuilder.Entity<DeletedInvoiceJoin>(b =>
+            {
+                b.ToTable("DeletedInvoices_Join", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.BillNo).HasColumnType("nchar(15)");
+                b.Property(x => x.ItemName).HasColumnType("nvarchar(max)");
+                b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
+                b.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
             });
         }
     }

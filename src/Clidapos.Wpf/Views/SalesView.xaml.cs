@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -15,28 +16,67 @@ namespace Clidapos.Wpf.Views
         private readonly SaleService _saleService = new();
         private readonly ObservableCollection<CartLine> _cart = new();
 
-        private Product? _stagedProduct;
-        private string _qtyBuffer = "";
+        private bool _isDarkMode = true;
 
         public SalesView(Registration currentUser)
         {
             InitializeComponent();
             _currentUser = currentUser;
 
+            ApplyTheme();
+
             CashierText.Text = $"Cashier: {currentUser.Name.Trim()}";
 
             CartGrid.ItemsSource = _cart;
-            UpdateQtyDisplay();
             RecomputeTotals();
 
             Loaded += (s, e) => SearchBox.Focus();
         }
 
-        // ---------------- SEARCH ----------------
+        // ---------------- THEME ----------------
+        private void ToggleTheme_Click(object sender, RoutedEventArgs e)
+        {
+            _isDarkMode = !_isDarkMode;
+            ApplyTheme();
+        }
+
+        private void ApplyTheme()
+        {
+            Color Rgb(byte r, byte g, byte b) => Color.FromRgb(r, g, b);
+
+            if (_isDarkMode)
+            {
+                Resources["PageBg"] = new SolidColorBrush(Rgb(0x0F, 0x0F, 0x12));
+                Resources["SurfaceBg"] = new SolidColorBrush(Rgb(0x1E, 0x1E, 0x24));
+                Resources["PanelBg"] = new SolidColorBrush(Rgb(0x1A, 0x1A, 0x1F));
+                Resources["FieldBg"] = new SolidColorBrush(Rgb(0x14, 0x14, 0x19));
+                Resources["RowAltBg"] = new SolidColorBrush(Rgb(0x1E, 0x1E, 0x24));
+                Resources["BorderColor"] = new SolidColorBrush(Rgb(0x3A, 0x3A, 0x42));
+                Resources["TextPrimary"] = Brushes.White;
+                Resources["TextSecondary"] = new SolidColorBrush(Rgb(0x88, 0x88, 0x88));
+                Resources["TextMuted"] = new SolidColorBrush(Rgb(0x66, 0x66, 0x66));
+            }
+            else
+            {
+                // Light mode text and borders are deliberately black/near-black and bold-weighted -
+                // a POS till needs to read at a glance, so subtle gray isn't good enough here.
+                Resources["PageBg"] = new SolidColorBrush(Rgb(0xEF, 0xEF, 0xF2));
+                Resources["SurfaceBg"] = Brushes.White;
+                Resources["PanelBg"] = Brushes.White;
+                Resources["FieldBg"] = new SolidColorBrush(Rgb(0xF5, 0xF5, 0xF7));
+                Resources["RowAltBg"] = new SolidColorBrush(Rgb(0xF5, 0xF5, 0xF7));
+                Resources["BorderColor"] = Brushes.Black;
+                Resources["TextPrimary"] = Brushes.Black;
+                Resources["TextSecondary"] = new SolidColorBrush(Rgb(0x20, 0x20, 0x22));
+                Resources["TextMuted"] = new SolidColorBrush(Rgb(0x3A, 0x3A, 0x3E));
+            }
+        }
+
+        // ---------------- SEARCH / SCAN ----------------
         private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var term = SearchBox.Text.Trim();
-            if (term.Length < 2)
+            if (term.Length < 1)
             {
                 ResultsList.ItemsSource = null;
                 return;
@@ -45,6 +85,7 @@ namespace Clidapos.Wpf.Views
             ResultsList.ItemsSource = await _saleService.SearchAsync(term);
         }
 
+        // Enter key = scan/lookup path. Exact code match, or a single fuzzy match, adds immediately.
         private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
@@ -55,17 +96,16 @@ namespace Clidapos.Wpf.Views
             var exact = await _saleService.FindByCodeAsync(term);
             if (exact != null)
             {
-                AddToCart(exact, ParseQtyOrDefault());
-                FinishAddAndReset();
+                AddToCart(exact);
+                ClearSearchUI();
                 return;
             }
 
             var results = await _saleService.SearchAsync(term);
             if (results.Count == 1)
             {
-                StageProduct(results[0]);
-                ResultsList.ItemsSource = null;
-                SearchBox.Clear();
+                AddToCart(results[0]);
+                ClearSearchUI();
             }
             else
             {
@@ -74,99 +114,31 @@ namespace Clidapos.Wpf.Views
             }
         }
 
+        // Clicking a result adds it to the cart at qty 1 - adjust the quantity afterward in the cart itself.
         private void ResultsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ResultsList.SelectedItem is Product p)
-                StageProduct(p);
-        }
-
-        private void ResultsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (ResultsList.SelectedItem is Product p)
             {
-                StageProduct(p);
-                AddStagedToCart_Click(sender, e);
+                AddToCart(p);
+                ClearSearchUI();
             }
         }
 
-        // ---------------- STAGING + KEYPAD ----------------
-        private void StageProduct(Product p)
+        private void ClearSearchUI()
         {
-            _stagedProduct = p;
-            StagedNameText.Text = p.ProductName.Trim();
-            StagedPriceText.Text = $"{p.Price:N2} each";
-            _qtyBuffer = "";
-            UpdateQtyDisplay();
-            KeypadErrorText.Text = "";
-        }
-
-        private void Keypad_Click(object sender, RoutedEventArgs e)
-        {
-            var tag = (sender as Button)?.Tag as string ?? "";
-
-            switch (tag)
-            {
-                case "CLR":
-                    _qtyBuffer = "";
-                    break;
-                case "DEL":
-                    if (_qtyBuffer.Length > 0)
-                        _qtyBuffer = _qtyBuffer.Substring(0, _qtyBuffer.Length - 1);
-                    break;
-                default:
-                    if (_qtyBuffer.Length < 6)
-                        _qtyBuffer += tag;
-                    break;
-            }
-
-            UpdateQtyDisplay();
-        }
-
-        private void UpdateQtyDisplay()
-        {
-            QtyDisplayText.Text = string.IsNullOrEmpty(_qtyBuffer) ? "1" : _qtyBuffer;
-        }
-
-        private decimal ParseQtyOrDefault()
-        {
-            var text = string.IsNullOrEmpty(_qtyBuffer) ? "1" : _qtyBuffer;
-            return decimal.TryParse(text, out var q) && q > 0 ? q : 1;
-        }
-
-        private void AddStagedToCart_Click(object sender, RoutedEventArgs e)
-        {
-            KeypadErrorText.Text = "";
-
-            if (_stagedProduct == null)
-            {
-                KeypadErrorText.Text = "Select an item first.";
-                return;
-            }
-
-            AddToCart(_stagedProduct, ParseQtyOrDefault());
-            FinishAddAndReset();
-        }
-
-        private void FinishAddAndReset()
-        {
-            _stagedProduct = null;
-            _qtyBuffer = "";
-            UpdateQtyDisplay();
-            StagedNameText.Text = "Search or scan an item";
-            StagedPriceText.Text = "";
             SearchBox.Clear();
             ResultsList.ItemsSource = null;
             SearchBox.Focus();
         }
 
         // ---------------- CART ----------------
-        private void AddToCart(Product p, decimal qty)
+        private void AddToCart(Product p)
         {
             ErrorText.Text = "";
 
             var existing = _cart.FirstOrDefault(l => l.ProductId == p.PID);
             if (existing != null)
-                existing.Quantity += qty;
+                existing.Quantity += 1;
             else
                 _cart.Add(new CartLine
                 {
@@ -175,11 +147,55 @@ namespace Clidapos.Wpf.Views
                     ProductCode = p.ProductCode.Trim(),
                     Category = p.Category?.Trim() ?? "",
                     Rate = p.Price,
-                    Quantity = qty
+                    Quantity = 1
                 });
 
             CartGrid.Items.Refresh();
             RecomputeTotals();
+        }
+
+        // ---------------- LEFT ACTION STACK ----------------
+        private void RemoveSelectedLine_Click(object sender, RoutedEventArgs e)
+        {
+            if (CartGrid.SelectedItem is CartLine line)
+            {
+                _cart.Remove(line);
+                RecomputeTotals();
+            }
+            else
+            {
+                ErrorText.Text = "Select a cart line first.";
+            }
+        }
+
+        // Quantity is edited directly in the grid now - this jumps straight into
+        // edit mode on the selected row's Qty cell, saving a click.
+        private void ChangeQty_Click(object sender, RoutedEventArgs e)
+        {
+            if (CartGrid.SelectedItem is not CartLine line)
+            {
+                ErrorText.Text = "Select a cart line first.";
+                return;
+            }
+
+            var qtyColumn = CartGrid.Columns.FirstOrDefault(c => c.Header?.ToString() == "Qty");
+            if (qtyColumn == null) return;
+
+            CartGrid.CurrentCell = new DataGridCellInfo(line, qtyColumn);
+            CartGrid.BeginEdit();
+        }
+
+        private void HoldSale_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Hold Sale is coming soon - it will let you park this cart and serve another customer.",
+                "Clidapos");
+        }
+
+        private void GetData_Click(object sender, RoutedEventArgs e)
+        {
+            new SalesHistoryView(_currentUser).Show();
+            Close();
         }
 
         private void RemoveLineButton_Click(object sender, RoutedEventArgs e)
@@ -207,7 +223,7 @@ namespace Clidapos.Wpf.Views
         {
             if (_cart.Count == 0) return;
 
-            var confirm = MessageBox.Show("Clear all items from the cart?", "Confirm",
+            var confirm = MessageBox.Show("Void this sale? All lines will be cleared.", "Confirm Void",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (confirm != MessageBoxResult.Yes) return;
 
@@ -215,17 +231,39 @@ namespace Clidapos.Wpf.Views
             RecomputeTotals();
         }
 
-        // ---------------- TOTALS ----------------
-        private decimal GrandTotal => Math.Round(_cart.Sum(l => l.Amount), 2);
+        // ---------------- TOTALS (subtotal -> discount -> grand total -> VAT) ----------------
+        private decimal Subtotal => Math.Round(_cart.Sum(l => l.Amount), 2);
+
+        private decimal DiscountPercent
+        {
+            get
+            {
+                if (decimal.TryParse(DiscountInput?.Text, out var p) && p >= 0 && p <= 100)
+                    return p;
+                return 0;
+            }
+        }
+
+        private decimal DiscountAmount => Math.Round(Subtotal * DiscountPercent / 100m, 2);
+
+        private decimal GrandTotal => Math.Round(Subtotal - DiscountAmount, 2);
+
+        private void DiscountInput_TextChanged(object sender, TextChangedEventArgs e) => RecomputeTotals();
 
         private void RecomputeTotals()
         {
+            var subtotal = Subtotal;
+            var discountAmt = DiscountAmount;
             var total = GrandTotal;
             var vatPercent = AppSettings.VatPercent;
 
             var taxable = vatPercent > 0 ? Math.Round(total / (1 + (vatPercent / 100m)), 2) : total;
             var vat = Math.Round(total - taxable, 2);
 
+            SubtotalText.Text = subtotal.ToString("N2");
+            DiscountAmountText.Text = discountAmt > 0
+                ? $"- {AppSettings.CurrencySymbol} {discountAmt:N2} off"
+                : "No discount applied";
             GrandTotalText.Text = total.ToString("N2");
             VatBreakdownText.Text = $"{AppSettings.CurrencySymbol} — incl. VAT {vat:N2} (net {taxable:N2})";
             ItemCountText.Text = $"{_cart.Count} line(s) · {_cart.Sum(l => l.Quantity):N2} item(s)";
@@ -288,7 +326,7 @@ namespace Clidapos.Wpf.Views
             PayButton.IsEnabled = false;
 
             var result = await _saleService.SaveSaleAsync(
-                _cart.ToList(), _currentUser, mode, received, string.Empty, string.Empty);
+                _cart.ToList(), _currentUser, mode, received, string.Empty, string.Empty, DiscountPercent);
 
             PayButton.IsEnabled = true;
 
@@ -312,17 +350,12 @@ namespace Clidapos.Wpf.Views
         private void ResetSale()
         {
             _cart.Clear();
-            _stagedProduct = null;
-            _qtyBuffer = "";
             SearchBox.Clear();
             AmountReceivedInput.Clear();
             ResultsList.ItemsSource = null;
             ErrorText.Text = "";
-            KeypadErrorText.Text = "";
-            StagedNameText.Text = "Search or scan an item";
-            StagedPriceText.Text = "";
+            DiscountInput.Text = "0";
             CashMode.IsChecked = true;
-            UpdateQtyDisplay();
             RecomputeTotals();
             SearchBox.Focus();
         }

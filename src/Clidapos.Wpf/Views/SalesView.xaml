@@ -4,10 +4,61 @@
         Title="Clidapos - Counter Sale"
         WindowStyle="None"
         WindowState="Maximized"
-        ResizeMode="NoResize"
-        Background="{StaticResource AppBackground}">
+        ResizeMode="NoResize">
 
 	<Window.Resources>
+		<!-- Theme-able surface/text colors - values swapped in code-behind on toggle.
+             Accent (amber), success (green), error (red), and the action-stack badge
+             gradients stay constant across both themes; only neutral surfaces/text change. -->
+		<SolidColorBrush x:Key="PageBg" Color="#0F0F12"/>
+		<SolidColorBrush x:Key="SurfaceBg" Color="#1E1E24"/>
+		<SolidColorBrush x:Key="PanelBg" Color="#1A1A1F"/>
+		<SolidColorBrush x:Key="FieldBg" Color="#141419"/>
+		<SolidColorBrush x:Key="RowAltBg" Color="#1E1E24"/>
+		<SolidColorBrush x:Key="BorderColor" Color="#3A3A42"/>
+		<SolidColorBrush x:Key="TextPrimary" Color="White"/>
+		<SolidColorBrush x:Key="TextSecondary" Color="#888888"/>
+		<SolidColorBrush x:Key="TextMuted" Color="#666666"/>
+
+		<RadialGradientBrush x:Key="BadgeBlue" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#9CC9FF" Offset="0"/>
+			<GradientStop Color="#2D6CDF" Offset="0.55"/>
+			<GradientStop Color="#16437F" Offset="1"/>
+		</RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeAmber" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#FFD98F" Offset="0"/>
+			<GradientStop Color="#F3A123" Offset="0.55"/>
+			<GradientStop Color="#B5741A" Offset="1"/>
+		</RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeRed" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#FF8C9B" Offset="0"/>
+			<GradientStop Color="#DC143C" Offset="0.55"/>
+			<GradientStop Color="#8F0C25" Offset="1"/>
+		</RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeTeal" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#84E7D8" Offset="0"/>
+			<GradientStop Color="#17A398" Offset="0.55"/>
+			<GradientStop Color="#0A5A54" Offset="1"/>
+		</RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeGray" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#8A8A94" Offset="0"/>
+			<GradientStop Color="#4A4A54" Offset="0.55"/>
+			<GradientStop Color="#26262E" Offset="1"/>
+		</RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgePurple" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#C9B3FF" Offset="0"/>
+			<GradientStop Color="#7C4DCE" Offset="0.55"/>
+			<GradientStop Color="#472A80" Offset="1"/>
+		</RadialGradientBrush>
+
+		<Style x:Key="IconBadge" TargetType="Ellipse">
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="6" Opacity="0.4"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
 		<Style x:Key="RoundTopButton" TargetType="Button">
 			<Setter Property="Width" Value="40"/>
 			<Setter Property="Height" Value="40"/>
@@ -16,8 +67,8 @@
 		</Style>
 
 		<Style x:Key="SearchInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#1E1E24"/>
-			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="Background" Value="{DynamicResource SurfaceBg}"/>
+			<Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
 			<Setter Property="BorderBrush" Value="#F3A123"/>
 			<Setter Property="BorderThickness" Value="2"/>
 			<Setter Property="Padding" Value="10"/>
@@ -25,20 +76,20 @@
 		</Style>
 
 		<Style x:Key="PanelInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#1E1E24"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="Background" Value="{DynamicResource SurfaceBg}"/>
+			<Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
 			<Setter Property="Padding" Value="8"/>
 			<Setter Property="FontSize" Value="14"/>
 		</Style>
 
 		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#2A2A32"/>
+			<Setter Property="Background" Value="{DynamicResource SurfaceBg}"/>
 			<Setter Property="Foreground" Value="#F3A123"/>
 			<Setter Property="FontWeight" Value="Bold"/>
 			<Setter Property="FontSize" Value="13"/>
 			<Setter Property="Padding" Value="10,8"/>
-			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
 			<Setter Property="BorderThickness" Value="0,0,0,2"/>
 			<Setter Property="HorizontalContentAlignment" Value="Left"/>
 		</Style>
@@ -67,7 +118,7 @@
 		</Style>
 
 		<Style x:Key="ModeToggle" TargetType="RadioButton">
-			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
 			<Setter Property="FontSize" Value="13"/>
 			<Setter Property="FontWeight" Value="SemiBold"/>
 			<Setter Property="Margin" Value="0,0,8,0"/>
@@ -75,8 +126,8 @@
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="RadioButton">
-						<Border x:Name="B" Background="#1E1E24" CornerRadius="8" Padding="18,12"
-                                BorderBrush="#3A3A42" BorderThickness="1">
+						<Border x:Name="B" Background="{DynamicResource SurfaceBg}" CornerRadius="8" Padding="18,12"
+                                BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
 							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 						<ControlTemplate.Triggers>
@@ -108,70 +159,60 @@
 			</Setter>
 		</Style>
 
-		<Style x:Key="KeypadBtn" TargetType="Button">
-			<Setter Property="Height" Value="52"/>
-			<Setter Property="Margin" Value="4"/>
-			<Setter Property="FontSize" Value="20"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="Background" Value="#1E1E24"/>
+		<Style x:Key="StackIconBtn" TargetType="Button">
+			<Setter Property="Height" Value="66"/>
+			<Setter Property="Margin" Value="0,0,0,6"/>
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8"
-                                BorderBrush="#3A3A42" BorderThickness="1">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="B" Property="Background" Value="#2A2A32"/>
-								<Setter TargetName="B" Property="BorderBrush" Value="#F3A123"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
+			<Setter Property="Background" Value="Transparent"/>
 		</Style>
 
-		<Style x:Key="KeypadBtnDanger" TargetType="Button" BasedOn="{StaticResource KeypadBtn}">
-			<Setter Property="Background" Value="#241A1C"/>
+		<Style x:Key="StackIconLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+			<Setter Property="FontSize" Value="9.5"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="Margin" Value="0,3,0,0"/>
 		</Style>
 	</Window.Resources>
-
-	<Grid Background="{StaticResource AppOverlay}">
+	<Grid Background="{DynamicResource PageBg}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Border Grid.Row="0" Background="#1E1E24">
+		<Border Grid.Row="0" Background="{DynamicResource SurfaceBg}">
 			<Grid>
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
 					<TextBlock Text="COUNTER SALE" Foreground="#F3A123" FontSize="16" FontWeight="Bold"
                                VerticalAlignment="Center"/>
-					<TextBlock x:Name="CashierText" Foreground="#CCCCCC" FontSize="13"
+					<TextBlock x:Name="CashierText" Foreground="{DynamicResource TextSecondary}" FontSize="13" FontWeight="Bold"
                                VerticalAlignment="Center" Margin="20,0,0,0"/>
 				</StackPanel>
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="0,0,15,0">
+					<Button Click="ToggleTheme_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="0,0,10,0" ToolTip="Switch light / dark">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Grid>
+									<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
+									<TextBlock Text="🌓" FontSize="16"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Grid>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
+
 					<Button Click="BackToGateway_Click" Style="{StaticResource RoundTopButton}"
                             Margin="0,0,10,0" ToolTip="Back to Front Office">
 						<Button.Template>
 							<ControlTemplate TargetType="Button">
 								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FFD98F" Offset="0"/>
-												<GradientStop Color="#F3A123" Offset="0.5"/>
-												<GradientStop Color="#B5741A" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-									</Ellipse>
+									<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
 									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
 								</Grid>
@@ -183,15 +224,7 @@
 						<Button.Template>
 							<ControlTemplate TargetType="Button">
 								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FF7B8C" Offset="0"/>
-												<GradientStop Color="#DC143C" Offset="0.5"/>
-												<GradientStop Color="#8F0C25" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-									</Ellipse>
+									<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
 									<Viewbox Width="16" Height="16">
 										<Canvas Width="24" Height="24">
 											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
@@ -208,37 +241,147 @@
 
 		<Grid Grid.Row="1" Margin="16">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="86"/>
+				<ColumnDefinition Width="12"/>
+				<ColumnDefinition Width="230"/>
 				<ColumnDefinition Width="16"/>
-				<ColumnDefinition Width="400"/>
+				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<Border Grid.Column="0" Background="#1A1A1F" CornerRadius="10" Padding="16">
+			<!-- ACTION STACK -->
+			<Border Grid.Column="0" Background="{DynamicResource PanelBg}" CornerRadius="10" Padding="6"
+                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1.5">
+				<StackPanel VerticalAlignment="Top">
+
+					<Button Style="{StaticResource StackIconBtn}" Click="RemoveSelectedLine_Click">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Grid Width="34" Height="34">
+								<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
+								<TextBlock Text="✕" FontSize="14" FontWeight="Bold" Foreground="White"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Grid>
+							<TextBlock Text="Remove" Style="{StaticResource StackIconLabel}"/>
+						</StackPanel>
+					</Button>
+
+					<Button Style="{StaticResource StackIconBtn}" Click="ChangeQty_Click">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Grid Width="34" Height="34">
+								<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
+								<TextBlock Text="✎" FontSize="13" FontWeight="Bold" Foreground="White"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Grid>
+							<TextBlock Text="Change Qty" Style="{StaticResource StackIconLabel}"/>
+						</StackPanel>
+					</Button>
+
+					<Button Style="{StaticResource StackIconBtn}" Click="HoldSale_Click">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Grid Width="34" Height="34">
+								<Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
+								<TextBlock Text="⏸" FontSize="13" FontWeight="Bold" Foreground="White"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Grid>
+							<TextBlock Text="Hold Sale" Style="{StaticResource StackIconLabel}"/>
+						</StackPanel>
+					</Button>
+
+					<Button Style="{StaticResource StackIconBtn}" Click="ClearCart_Click">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Grid Width="34" Height="34">
+								<Ellipse Fill="{StaticResource BadgeGray}" Style="{StaticResource IconBadge}"/>
+								<TextBlock Text="⊘" FontSize="14" FontWeight="Bold" Foreground="White"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Grid>
+							<TextBlock Text="Void Sale" Style="{StaticResource StackIconLabel}"/>
+						</StackPanel>
+					</Button>
+
+					<Button Style="{StaticResource StackIconBtn}" Click="NewSale_Click">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Grid Width="34" Height="34">
+								<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
+								<TextBlock Text="+" FontSize="17" FontWeight="Bold" Foreground="Black"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Grid>
+							<TextBlock Text="New Sale" Style="{StaticResource StackIconLabel}"/>
+						</StackPanel>
+					</Button>
+
+					<Button Style="{StaticResource StackIconBtn}" Click="GetData_Click">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Grid Width="34" Height="34">
+								<Ellipse Fill="{StaticResource BadgePurple}" Style="{StaticResource IconBadge}"/>
+								<TextBlock Text="🧾" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Grid>
+							<TextBlock Text="Get Data" Style="{StaticResource StackIconLabel}"/>
+						</StackPanel>
+					</Button>
+
+				</StackPanel>
+			</Border>
+			<!-- SEARCH -->
+			<Border Grid.Column="2" Background="{DynamicResource PanelBg}" CornerRadius="10" Padding="14"
+                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1.5">
 				<DockPanel>
-					<Grid DockPanel.Dock="Top" Margin="0,0,0,12">
-						<TextBlock Text="CART" Foreground="#F3A123" FontSize="18" FontWeight="Bold"/>
-						<TextBlock x:Name="ItemCountText" Foreground="#CCCCCC" FontSize="13"
+					<TextBlock DockPanel.Dock="Top" Text="SEARCH OR SCAN" Foreground="#F3A123" FontSize="13"
+                               FontWeight="Bold" Margin="0,0,0,8"/>
+					<TextBox DockPanel.Dock="Top" x:Name="SearchBox" Style="{StaticResource SearchInput}"
+                             KeyDown="SearchBox_KeyDown" TextChanged="SearchBox_TextChanged"/>
+					<TextBlock DockPanel.Dock="Top" Text="Type a name or scan a code. Click a result to add it."
+                               Foreground="{DynamicResource TextSecondary}" FontSize="11" Margin="0,6,0,8" TextWrapping="Wrap"/>
+
+					<ListBox x:Name="ResultsList" Background="{DynamicResource FieldBg}" Foreground="{DynamicResource TextPrimary}"
+                             BorderThickness="0" SelectionChanged="ResultsList_SelectionChanged">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid Margin="6,6">
+									<TextBlock Text="{Binding ProductName}" Foreground="{DynamicResource TextPrimary}" FontSize="14" FontWeight="Bold"
+                                               TextWrapping="Wrap"/>
+									<TextBlock Text="{Binding Price, StringFormat=N2}" Foreground="#F3A123"
+                                               FontSize="13" HorizontalAlignment="Right"/>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</DockPanel>
+			</Border>
+
+			<!-- CART - item list gets 3/4 of the vertical space, totals get the remaining 1/4 -->
+			<Border Grid.Column="4" Background="{DynamicResource PanelBg}" CornerRadius="10" Padding="16"
+                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1.5">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="3*"/>
+						<RowDefinition Height="1.4*"/>
+					</Grid.RowDefinitions>
+
+					<Grid Grid.Row="0" Margin="0,0,0,12">
+						<TextBlock Text="CART" Foreground="#F3A123" FontSize="20" FontWeight="Bold"/>
+						<TextBlock x:Name="ItemCountText" Foreground="{DynamicResource TextSecondary}" FontSize="13" FontWeight="Bold"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"/>
 					</Grid>
 
-					<DataGrid x:Name="CartGrid" AutoGenerateColumns="False" FontSize="16"
-                              Background="#141419" Foreground="White" BorderThickness="0"
-                              RowBackground="#141419" AlternatingRowBackground="#1E1E24"
+					<DataGrid Grid.Row="1" x:Name="CartGrid" AutoGenerateColumns="False" FontSize="17"
+                              Background="{DynamicResource FieldBg}" Foreground="{DynamicResource TextPrimary}" BorderThickness="0"
+                              RowBackground="{DynamicResource FieldBg}" AlternatingRowBackground="{DynamicResource RowAltBg}"
                               HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
                               ColumnHeaderStyle="{StaticResource GridHeader}"
                               CanUserAddRows="False" SelectionMode="Single"
                               CellEditEnding="CartGrid_CellEditEnding">
 						<DataGrid.RowStyle>
 							<Style TargetType="DataGridRow">
-								<Setter Property="MinHeight" Value="46"/>
+								<Setter Property="MinHeight" Value="50"/>
+								<Setter Property="FontWeight" Value="Bold"/>
 							</Style>
 						</DataGrid.RowStyle>
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Item" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
-							<DataGridTextColumn Header="Price" Binding="{Binding Rate, StringFormat=N2}" Width="110" IsReadOnly="True"/>
+							<DataGridTextColumn Header="Price" Binding="{Binding Rate, StringFormat=N2}" Width="120" IsReadOnly="True"/>
 							<DataGridTextColumn Header="Qty" Binding="{Binding Quantity, StringFormat=N2}" Width="90"/>
 							<DataGridTextColumn Header="Total" Binding="{Binding Amount, StringFormat=N2}" Width="130" IsReadOnly="True"/>
-							<DataGridTemplateColumn Header="" Width="50" CanUserResize="False">
+							<DataGridTemplateColumn Header="" Width="55" CanUserResize="False">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
 										<Button Style="{StaticResource RemoveRowBtn}" Click="RemoveLineButton_Click" Tag="{Binding}"/>
@@ -247,103 +390,60 @@
 							</DataGridTemplateColumn>
 						</DataGrid.Columns>
 					</DataGrid>
-				</DockPanel>
-			</Border>
 
-			<Border Grid.Column="2" Background="#1A1A1F" CornerRadius="10" Padding="14">
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<TextBlock Text="SCAN OR SEARCH" Foreground="#F3A123" FontSize="13" FontWeight="Bold" Margin="0,0,0,8"/>
-						<TextBox x:Name="SearchBox" Style="{StaticResource SearchInput}"
-                                 KeyDown="SearchBox_KeyDown" TextChanged="SearchBox_TextChanged"/>
-						<TextBlock Text="Tap a result, set quantity, then Add."
-                                   Foreground="#888888" FontSize="11" Margin="0,6,0,8" TextWrapping="Wrap"/>
+					<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+						<Border Background="{DynamicResource FieldBg}" CornerRadius="8" Padding="18">
+							<Grid VerticalAlignment="Center">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="*"/>
+								</Grid.ColumnDefinitions>
 
-						<ListBox x:Name="ResultsList" Height="130" Background="#141419" Foreground="White"
-                                 BorderThickness="0" SelectionChanged="ResultsList_SelectionChanged"
-                                 MouseDoubleClick="ResultsList_MouseDoubleClick">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<Grid Margin="6,4">
-										<TextBlock Text="{Binding ProductName}" Foreground="White" FontSize="14"/>
-										<TextBlock Text="{Binding Price, StringFormat=N2}" Foreground="#F3A123"
-                                                   FontSize="13" HorizontalAlignment="Right"/>
-									</Grid>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
+								<!-- LEFT: subtotal + discount -->
+								<StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,24,0">
+									<TextBlock Text="SUBTOTAL" Foreground="{DynamicResource TextSecondary}" FontSize="11" FontWeight="Bold"/>
+									<TextBlock x:Name="SubtotalText" Text="0.00" Foreground="{DynamicResource TextPrimary}" FontSize="18" FontWeight="Bold"
+                                               Margin="0,2,0,10"/>
 
-						<Border Height="1" Background="#3A3A42" Margin="0,14,0,14"/>
+									<TextBlock Text="DISCOUNT %" Foreground="{DynamicResource TextSecondary}" FontSize="11" FontWeight="Bold"/>
+									<StackPanel Orientation="Horizontal" Margin="0,2,0,4">
+										<TextBox x:Name="DiscountInput" Style="{StaticResource PanelInput}" Width="60"
+                                                 HorizontalContentAlignment="Center"
+                                                 TextChanged="DiscountInput_TextChanged"/>
+										<TextBlock Text="%" Foreground="{DynamicResource TextPrimary}" FontSize="15" FontWeight="Bold"
+                                                   Margin="6,0,0,0" VerticalAlignment="Center"/>
+									</StackPanel>
+									<TextBlock x:Name="DiscountAmountText" Text="0.00" Foreground="#F3A123" FontSize="12" FontWeight="Bold"/>
+								</StackPanel>
 
-						<Border Background="#141419" CornerRadius="8" Padding="12" Margin="0,0,0,10">
-							<StackPanel>
-								<TextBlock Text="SELECTED ITEM" Foreground="#888888" FontSize="11" FontWeight="Bold"/>
-								<TextBlock x:Name="StagedNameText" Text="Search or scan an item" Foreground="White"
-                                           FontSize="16" FontWeight="SemiBold" Margin="0,4,0,0" TextWrapping="Wrap"/>
-								<TextBlock x:Name="StagedPriceText" Foreground="#888888" FontSize="12" Margin="0,2,0,0"/>
-							</StackPanel>
+								<!-- RIGHT: total due, on its own -->
+								<StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+									<TextBlock Text="TOTAL DUE" Foreground="{DynamicResource TextSecondary}" FontSize="13" FontWeight="Bold"
+                                               HorizontalAlignment="Right"/>
+									<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#34C759"
+                                               FontSize="52" FontWeight="Bold" HorizontalAlignment="Right"/>
+									<TextBlock x:Name="VatBreakdownText" Foreground="{DynamicResource TextMuted}" FontSize="11" FontWeight="Bold"
+                                               HorizontalAlignment="Right"/>
+								</StackPanel>
+							</Grid>
 						</Border>
-
-						<Border Background="#141419" CornerRadius="8" Padding="12" Margin="0,0,0,10">
-							<StackPanel HorizontalAlignment="Center">
-								<TextBlock Text="QUANTITY" Foreground="#888888" FontSize="11" FontWeight="Bold"
-                                           HorizontalAlignment="Center"/>
-								<TextBlock x:Name="QtyDisplayText" Text="1" Foreground="#F3A123" FontSize="34"
-                                           FontWeight="Bold" HorizontalAlignment="Center"/>
-							</StackPanel>
-						</Border>
-
-						<UniformGrid Rows="4" Columns="3">
-							<Button Content="7" Tag="7" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="8" Tag="8" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="9" Tag="9" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="4" Tag="4" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="5" Tag="5" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="6" Tag="6" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="1" Tag="1" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="2" Tag="2" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="3" Tag="3" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="C" Tag="CLR" Style="{StaticResource KeypadBtnDanger}" Click="Keypad_Click"/>
-							<Button Content="0" Tag="0" Style="{StaticResource KeypadBtn}" Click="Keypad_Click"/>
-							<Button Content="⌫" Tag="DEL" Style="{StaticResource KeypadBtnDanger}" Click="Keypad_Click"/>
-						</UniformGrid>
-
-						<Button Content="ADD TO CART" Background="#2D6CDF" Style="{StaticResource ActionBtn}"
-                                Height="50" Margin="0,10,0,0" Click="AddStagedToCart_Click"/>
-						<TextBlock x:Name="KeypadErrorText" Foreground="#FF6B6B" FontSize="12"
-                                   Margin="0,8,0,0" TextWrapping="Wrap"/>
-
-						<Border Height="1" Background="#3A3A42" Margin="0,16,0,14"/>
-
-						<Button Content="CLEAR CART" Background="#3A3A42" Style="{StaticResource ActionBtn}"
-                                Margin="0,0,0,8" Click="ClearCart_Click"/>
-						<Button Content="NEW SALE" Background="#3A3A42" Style="{StaticResource ActionBtn}"
-                                Click="NewSale_Click"/>
-					</StackPanel>
-				</ScrollViewer>
+					</ScrollViewer>
+				</Grid>
 			</Border>
 		</Grid>
 
-		<Border Grid.Row="2" Background="#1E1E24" Padding="24,14">
+		<!-- FULL-WIDTH ROW BELOW ALL 3 COLUMNS: payment mode, received/change, pay -->
+		<Border Grid.Row="2" Background="{DynamicResource SurfaceBg}" Padding="24,14">
 			<StackPanel>
 				<TextBlock x:Name="ErrorText" Foreground="#FF6B6B" FontSize="12" Margin="0,0,0,8" TextWrapping="Wrap"/>
 				<Grid>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"/>
-						<ColumnDefinition Width="40"/>
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="24"/>
 						<ColumnDefinition Width="220"/>
 					</Grid.ColumnDefinitions>
 
-					<StackPanel Grid.Column="0" VerticalAlignment="Center">
-						<TextBlock Text="TOTAL DUE" Foreground="#888888" FontSize="12" FontWeight="Bold"/>
-						<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#34C759"
-                                   FontSize="44" FontWeight="Bold"/>
-						<TextBlock x:Name="VatBreakdownText" Foreground="#666666" FontSize="11"/>
-					</StackPanel>
-
-					<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+					<StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
 						<RadioButton x:Name="CashMode" Content="CASH" Style="{StaticResource ModeToggle}"
                                      IsChecked="True" Checked="PaymentMode_Changed"/>
 						<RadioButton x:Name="MpesaMode" Content="M-PESA" Style="{StaticResource ModeToggle}"
@@ -353,20 +453,20 @@
 
 						<StackPanel x:Name="CashDetailsPanel" Orientation="Horizontal" Margin="30,0,0,0">
 							<StackPanel Margin="0,0,20,0">
-								<TextBlock Text="RECEIVED" Foreground="#888888" FontSize="11"/>
+								<TextBlock Text="RECEIVED" Foreground="{DynamicResource TextSecondary}" FontSize="11" FontWeight="Bold"/>
 								<TextBox x:Name="AmountReceivedInput" Style="{StaticResource PanelInput}"
                                          Width="130" FontSize="18" TextChanged="AmountReceived_TextChanged"
                                          KeyDown="AmountReceivedInput_KeyDown"/>
 							</StackPanel>
 							<StackPanel>
-								<TextBlock Text="CHANGE" Foreground="#888888" FontSize="11"/>
+								<TextBlock Text="CHANGE" Foreground="{DynamicResource TextSecondary}" FontSize="11" FontWeight="Bold"/>
 								<TextBlock x:Name="ChangeText" Text="0.00" Foreground="#F3A123"
                                            FontSize="22" FontWeight="Bold"/>
 							</StackPanel>
 						</StackPanel>
 					</StackPanel>
 
-					<Button Grid.Column="4" x:Name="PayButton" Content="PAY" Background="#34C759"
+					<Button Grid.Column="2" x:Name="PayButton" Content="PAY" Background="#34C759"
                             Style="{StaticResource ActionBtn}" Height="64" FontSize="20" Click="CompleteSale_Click"/>
 				</Grid>
 			</StackPanel>
