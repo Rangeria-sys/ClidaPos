@@ -14,10 +14,6 @@ namespace Clidapos.Wpf.Views
             InitializeComponent();
             _currentUser = currentUser;
             WelcomeText.Text = $"{currentUser.Name.Trim()} ({currentUser.UserType.Trim()})";
-
-            TableLayoutTile.Visibility = AppSettings.Mode == StoreMode.Restaurant
-                ? Visibility.Visible
-                : Visibility.Collapsed;
         }
 
         private void Nav_Click(object sender, RoutedEventArgs e)
@@ -40,44 +36,39 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
-            if (tag == "MasterSettings")
+            if (tag == "MasterSetting")
             {
-                MessageBox.Show(
-                    "Master Settings — store/restaurant name, address, logo, currency & VAT rate.\n\nComing soon.",
-                    "Clidapos");
+                var masterSettingsView = new MasterSettingsView(_currentUser);
+                masterSettingsView.Show();
+                Close();
                 return;
             }
 
             var sectionName = tag switch
             {
-                "Peripherals" => "Peripherals & Hardware",
+                "Profile" => "Profile Setting",
                 "UserRoles" => "User Security Roles",
-                "BackupRestore" => "Backup & Restore",
-                "License" => "License & Activation",
-                "TableLayout" => "Table Layout Setup",
-
-                "StockLevels" => "Stock Levels",
-                "Warehouse" => "Warehouse Management",
-                "Suppliers" => "Suppliers",
+                "Backup" => "Backup Setting",
                 "PurchaseEntry" => "Purchase Entry",
-                "StockTransfer" => "Stock Transfer",
+                "StockLevels" => "Stock Levels",
                 "StockAdjustment" => "Stock Adjustment",
-
+                "Warehouse" => "Warehouse Management",
+                "StockTransfer" => "Stock Transfer",
+                "Supplier" => "Supplier",
                 "HR" => "HR & Payroll",
-                "CustomerLedger" => "Customer Ledger",
+                "Customers" => "Customer Ledger",
                 "SupplierLedger" => "Supplier Ledger",
                 "Expenses" => "Expense Log",
+                "ExpenseMaster" => "Expense",
                 "Finance" => "Finance & Banking",
                 "Loyalty" => "Loyalty & Membership",
-                "Vouchers" => "Vouchers, Gift Cards & Promotions",
-
+                "Vouchers" => "Vouchers & Promotions",
                 "SalesReports" => "Sales Reports",
                 "StockReports" => "Stock / Item Reports",
                 "PurchaseReports" => "Purchase Reports",
                 "ExpenseReports" => "Expense Reports",
                 "AccountingReports" => "Accounting Reports",
                 "Logs" => "System Logs",
-
                 _ => "Unknown section"
             };
 
@@ -91,14 +82,14 @@ namespace Clidapos.Wpf.Views
             Close();
         }
 
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
         }
     }
 }

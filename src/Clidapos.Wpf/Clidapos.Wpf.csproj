@@ -34,6 +34,43 @@
 		<Resource Include="Assets\back.png" />
 		<Resource Include="Assets\front.png" />
 		<Resource Include="Assets\gateway.jpeg" />
+		<Resource Include="Assets\terminal.png" />
+		<Resource Include="Assets\email.png" />
+		<Resource Include="Assets\sms.png" />
+		<Resource Include="Assets\estore.png" />
+		<Resource Include="Assets\menulayout.png" />
+		<Resource Include="Assets\tablesetting.png" />
+		<Resource Include="Assets\wallet.png" />
+		<Resource Include="Assets\mpesa.png" />
+		<Resource Include="Assets\executequery.png" />
+		<Resource Include="Assets\license.png" />
+		<Resource Include="Assets\workperiod.png" />
+		<Resource Include="Assets\mastersetting.png" />
+		<Resource Include="Assets\profile.png" />
+		<Resource Include="Assets\userroles.png" />
+		<Resource Include="Assets\backup.png" />
+		<Resource Include="Assets\categoryunit.png" />
+		<Resource Include="Assets\items.png" />
+		<Resource Include="Assets\purchaseentry.png" />
+		<Resource Include="Assets\stocklevels.png" />
+		<Resource Include="Assets\stockadjustment.png" />
+		<Resource Include="Assets\warehouse.png" />
+		<Resource Include="Assets\stocktransfer.png" />
+		<Resource Include="Assets\supplier.png" />
+		<Resource Include="Assets\hr.png" />
+		<Resource Include="Assets\customers.png" />
+		<Resource Include="Assets\supplierledger.png" />
+		<Resource Include="Assets\expenses.png" />
+		<Resource Include="Assets\expensemaster.png" />
+		<Resource Include="Assets\finance.png" />
+		<Resource Include="Assets\loyalty.png" />
+		<Resource Include="Assets\vouchers.png" />
+		<Resource Include="Assets\salesreports.png" />
+		<Resource Include="Assets\stockreports.png" />
+		<Resource Include="Assets\purchasereports.png" />
+		<Resource Include="Assets\expensereports.png" />
+		<Resource Include="Assets\accountingreports.png" />
+		<Resource Include="Assets\logs.png" />
 	</ItemGroup>
 
 </Project>

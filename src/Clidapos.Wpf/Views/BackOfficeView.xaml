@@ -8,59 +8,21 @@
         Background="{StaticResource AppBackground}">
 
 	<Window.Resources>
-		<RadialGradientBrush x:Key="BadgeBlue" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#9CC9FF" Offset="0"/>
-			<GradientStop Color="#2D6CDF" Offset="0.55"/>
-			<GradientStop Color="#16437F" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeGreen" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#7DF0AE" Offset="0"/>
-			<GradientStop Color="#34C759" Offset="0.55"/>
-			<GradientStop Color="#1B7C38" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeRed" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#FF8C9B" Offset="0"/>
-			<GradientStop Color="#DC143C" Offset="0.55"/>
-			<GradientStop Color="#8F0C25" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeAmber" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#FFD98F" Offset="0"/>
-			<GradientStop Color="#F3A123" Offset="0.55"/>
-			<GradientStop Color="#B5741A" Offset="1"/>
-		</RadialGradientBrush>
-
-		<Style x:Key="IconBadge" TargetType="Ellipse">
-			<Setter Property="Effect">
-				<Setter.Value>
-					<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="6" Opacity="0.4"/>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="RoundTopButton" TargetType="Button">
-			<Setter Property="Width" Value="40"/>
-			<Setter Property="Height" Value="40"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-		</Style>
-
 		<Style x:Key="TileButton" TargetType="Button">
-			<Setter Property="Width" Value="128"/>
-			<Setter Property="Height" Value="128"/>
-			<Setter Property="Margin" Value="6"/>
+			<Setter Property="Width" Value="150"/>
+			<Setter Property="Height" Value="150"/>
+			<Setter Property="Margin" Value="10"/>
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="Button">
-						<Border x:Name="Base" Background="#1E1E24" CornerRadius="10"
-                                BorderBrush="#3A3A42" BorderThickness="1.5">
+						<Border x:Name="Base" Background="#17171C" CornerRadius="12">
 							<ContentPresenter/>
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="Base" Property="Background" Value="#2A2A32"/>
-								<Setter TargetName="Base" Property="BorderBrush" Value="#F3A123"/>
+								<Setter TargetName="Base" Property="Background" Value="#222228"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -70,36 +32,31 @@
 
 		<Style x:Key="TileLabel" TargetType="TextBlock">
 			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="FontSize" Value="13"/>
 			<Setter Property="FontWeight" Value="SemiBold"/>
 			<Setter Property="TextAlignment" Value="Center"/>
 			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="Margin" Value="0,8,0,0"/>
+			<Setter Property="Margin" Value="0,12,0,0"/>
 		</Style>
 
-		<Style x:Key="CategoryCard" TargetType="Border">
-			<Setter Property="Width" Value="320"/>
-			<Setter Property="Margin" Value="14"/>
-			<Setter Property="Background" Value="Transparent"/>
-		</Style>
-
-		<Style x:Key="CategoryHeader" TargetType="Border">
-			<Setter Property="Padding" Value="24,10"/>
+		<Style x:Key="SectionPill" TargetType="Border">
 			<Setter Property="CornerRadius" Value="20"/>
+			<Setter Property="Padding" Value="24,10"/>
+			<Setter Property="Margin" Value="0,20,0,14"/>
 			<Setter Property="HorizontalAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="0,0,0,14"/>
-			<Setter Property="Effect">
-				<Setter.Value>
-					<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="8" Opacity="0.5"/>
-				</Setter.Value>
-			</Setter>
 		</Style>
 
-		<Style x:Key="CategoryHeaderText" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="White"/>
+		<Style x:Key="SectionPillText" TargetType="TextBlock">
 			<Setter Property="FontSize" Value="15"/>
 			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="Foreground" Value="Black"/>
+		</Style>
+
+		<Style x:Key="RoundTopButton" TargetType="Button">
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
 		</Style>
 	</Window.Resources>
 
@@ -126,15 +83,27 @@
 						<Button.Template>
 							<ControlTemplate TargetType="Button">
 								<Grid>
-									<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FFD98F" Offset="0"/>
+												<GradientStop Color="#F3A123" Offset="0.5"/>
+												<GradientStop Color="#B5741A" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+										<Ellipse.Effect>
+											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+										</Ellipse.Effect>
+									</Ellipse>
 									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
 								</Grid>
 							</ControlTemplate>
 						</Button.Template>
 					</Button>
+
 					<Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-												ToolTip="Minimize">
+                            ToolTip="Minimize">
 						<Button.Template>
 							<ControlTemplate TargetType="Button">
 								<Grid>
@@ -157,11 +126,23 @@
 							</ControlTemplate>
 						</Button.Template>
 					</Button>
+
 					<Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
 						<Button.Template>
 							<ControlTemplate TargetType="Button">
 								<Grid>
-									<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
+									<Ellipse>
+										<Ellipse.Fill>
+											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+												<GradientStop Color="#FF7B8C" Offset="0"/>
+												<GradientStop Color="#DC143C" Offset="0.5"/>
+												<GradientStop Color="#8F0C25" Offset="1"/>
+											</RadialGradientBrush>
+										</Ellipse.Fill>
+										<Ellipse.Effect>
+											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+										</Ellipse.Effect>
+									</Ellipse>
 									<Viewbox Width="16" Height="16">
 										<Canvas Width="24" Height="24">
 											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
@@ -176,327 +157,232 @@
 			</Grid>
 		</Border>
 
-		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-			<WrapPanel HorizontalAlignment="Center" Margin="20" Orientation="Horizontal">
+		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+			<StackPanel Orientation="Horizontal" Margin="30,10,30,20" VerticalAlignment="Top">
 
-				<!-- ===== GENERAL SETTINGS (blue) - core config, matches reference screenshot ===== -->
-				<Border Style="{StaticResource CategoryCard}">
-					<StackPanel>
-						<Border Style="{StaticResource CategoryHeader}" Background="#2D6CDF">
-							<TextBlock Text="GENERAL SETTINGS" Style="{StaticResource CategoryHeaderText}"/>
-						</Border>
-						<WrapPanel Margin="8" HorizontalAlignment="Center">
+				<!-- GENERAL SETTING column -->
+				<StackPanel Margin="0,0,24,0">
+					<Border Style="{StaticResource SectionPill}" Background="#4A7FE8">
+						<TextBlock Text="GENERAL SETTING" Style="{StaticResource SectionPillText}"/>
+					</Border>
+					<WrapPanel Width="340">
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSettings">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="⚙" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Master Settings" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSetting">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/mastersetting.png" Width="48" Height="48"/>
+								<TextBlock Text="Master Setting" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Peripherals">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🖨" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Peripherals &amp; Hardware" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Profile">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/profile.png" Width="48" Height="48"/>
+								<TextBlock Text="Profile Setting" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="👥" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/userroles.png" Width="48" Height="48"/>
+								<TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="BackupRestore">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="💾" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Backup &amp; Restore" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Backup">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/backup.png" Width="48" Height="48"/>
+								<TextBlock Text="Backup Setting" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="License">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🔑" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="License &amp; Activation" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CategoryUnit">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/categoryunit.png" Width="48" Height="48"/>
+								<TextBlock Text="Category Setup" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button x:Name="TableLayoutTile" Style="{StaticResource TileButton}" Click="Nav_Click" Tag="TableLayout">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🍽" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Table Layout Setup" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+					</WrapPanel>
+				</StackPanel>
 
-						</WrapPanel>
-					</StackPanel>
-				</Border>
+				<!-- INVENTORY column -->
+				<StackPanel Margin="0,0,24,0">
+					<Border Style="{StaticResource SectionPill}" Background="#17A398">
+						<TextBlock Text="INVENTORY" Style="{StaticResource SectionPillText}"/>
+					</Border>
+					<WrapPanel Width="340">
 
-				<!-- ===== INVENTORY (green) - everything about what you stock and sell ===== -->
-				<Border Style="{StaticResource CategoryCard}">
-					<StackPanel>
-						<Border Style="{StaticResource CategoryHeader}" Background="#34C759">
-							<TextBlock Text="INVENTORY" Style="{StaticResource CategoryHeaderText}"/>
-						</Border>
-						<WrapPanel Margin="8" HorizontalAlignment="Center">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/items.png" Width="48" Height="48"/>
+								<TextBlock Text="Items" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🏷" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Items &amp; Ingredients" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseEntry">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/purchaseentry.png" Width="48" Height="48"/>
+								<TextBlock Text="Purchase Entry" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CategoryUnit">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="📁" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Category &amp; Unit Setup" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockLevels">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/stocklevels.png" Width="48" Height="48"/>
+								<TextBlock Text="Stock Levels" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockLevels">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="📦" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Stock Levels" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockAdjustment">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/stockadjustment.png" Width="48" Height="48"/>
+								<TextBlock Text="Stock Adjustment" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🏭" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/warehouse.png" Width="48" Height="48"/>
+								<TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Suppliers">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🚚" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Suppliers" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/stocktransfer.png" Width="48" Height="48"/>
+								<TextBlock Text="Stock Transfer" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseEntry">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🧾" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Purchase Entry" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Supplier">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/supplier.png" Width="48" Height="48"/>
+								<TextBlock Text="Supplier" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🔄" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Stock Transfer" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+					</WrapPanel>
+				</StackPanel>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockAdjustment">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="⚖" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Stock Adjustment" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+				<!-- HR & ACCOUNTS column -->
+				<StackPanel Margin="0,0,24,0">
+					<Border Style="{StaticResource SectionPill}" Background="#DC143C">
+						<TextBlock Text="HR &amp; ACCOUNTS" Style="{StaticResource SectionPillText}" Foreground="White"/>
+					</Border>
+					<WrapPanel Width="340">
 
-						</WrapPanel>
-					</StackPanel>
-				</Border>
-				<!-- ===== HR & ACCOUNTS (red) ===== -->
-				<Border Style="{StaticResource CategoryCard}">
-					<StackPanel>
-						<Border Style="{StaticResource CategoryHeader}" Background="#DC143C">
-							<TextBlock Text="HR &amp; ACCOUNTS" Style="{StaticResource CategoryHeaderText}"/>
-						</Border>
-						<WrapPanel Margin="8" HorizontalAlignment="Center">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/hr.png" Width="48" Height="48"/>
+								<TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🧑‍💼" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/customers.png" Width="48" Height="48"/>
+								<TextBlock Text="Customer Ledger" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CustomerLedger">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🤝" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Customer Ledger" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SupplierLedger">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/supplierledger.png" Width="48" Height="48"/>
+								<TextBlock Text="Supplier Ledger" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SupplierLedger">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="📒" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Supplier Ledger" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/expenses.png" Width="48" Height="48"/>
+								<TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="💰" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseMaster">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/expensemaster.png" Width="48" Height="48"/>
+								<TextBlock Text="Expense" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🏦" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/finance.png" Width="48" Height="48"/>
+								<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="⭐" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/loyalty.png" Width="48" Height="48"/>
+								<TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🎟" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/vouchers.png" Width="48" Height="48"/>
+								<TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-						</WrapPanel>
-					</StackPanel>
-				</Border>
+					</WrapPanel>
+				</StackPanel>
 
-				<!-- ===== REPORTS (amber) ===== -->
-				<Border Style="{StaticResource CategoryCard}">
-					<StackPanel>
-						<Border Style="{StaticResource CategoryHeader}" Background="#F3A123">
-							<TextBlock Text="REPORTS" Style="{StaticResource CategoryHeaderText}" Foreground="Black"/>
-						</Border>
-						<WrapPanel Margin="8" HorizontalAlignment="Center">
+				<!-- REPORTS column -->
+				<StackPanel>
+					<Border Style="{StaticResource SectionPill}" Background="#F3A123">
+						<TextBlock Text="REPORTS" Style="{StaticResource SectionPillText}"/>
+					</Border>
+					<WrapPanel Width="340">
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SalesReports">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="📈" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Sales Reports" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SalesReports">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/salesreports.png" Width="48" Height="48"/>
+								<TextBlock Text="Sales Reports" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockReports">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="📋" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Stock / Item Reports" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockReports">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/stockreports.png" Width="48" Height="48"/>
+								<TextBlock Text="Stock / Item Reports" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseReports">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🛒" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Purchase Reports" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseReports">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/purchasereports.png" Width="48" Height="48"/>
+								<TextBlock Text="Purchase Reports" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseReports">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🧮" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Expense Reports" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseReports">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/expensereports.png" Width="48" Height="48"/>
+								<TextBlock Text="Expense Reports" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="AccountingReports">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="📊" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="Accounting Reports" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="AccountingReports">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/accountingreports.png" Width="48" Height="48"/>
+								<TextBlock Text="Accounting Reports" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-							<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs">
-								<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Grid Width="56" Height="56">
-										<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-										<TextBlock Text="🗒" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Grid>
-									<TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
-								</StackPanel>
-							</Button>
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/logs.png" Width="48" Height="48"/>
+								<TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
+							</StackPanel>
+						</Button>
 
-						</WrapPanel>
-					</StackPanel>
-				</Border>
+					</WrapPanel>
+				</StackPanel>
 
-			</WrapPanel>
+			</StackPanel>
 		</ScrollViewer>
 	</Grid>
 </Window>

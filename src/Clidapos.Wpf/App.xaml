@@ -7,6 +7,6 @@
 		<ImageBrush x:Key="AppBackground"
                     ImageSource="pack://application:,,,/Assets/gateway.jpeg"
                     Stretch="UniformToFill"/>
-		<SolidColorBrush x:Key="AppOverlay" Color="#CC121212"/>
+		<SolidColorBrush x:Key="AppOverlay" Color="#16121212"/>
 	</Application.Resources>
 </Application>

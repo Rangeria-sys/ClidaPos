@@ -9,192 +9,292 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="Black">
-    <Window.DataContext>
-        <vm:LoginViewModel/>
-    </Window.DataContext>
+	<Window.DataContext>
+		<vm:LoginViewModel/>
+	</Window.DataContext>
 
-    <Window.Resources>
-        <Style x:Key="PinButton" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="FontWeight" Value="ExtraBold"/>
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border x:Name="Base" CornerRadius="6">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop Color="#FF6B85" Offset="0"/>
-                                        <GradientStop Color="#FF1744" Offset="0.45"/>
-                                        <GradientStop Color="#C4002B" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Border.Effect>
-                                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"
+	<Window.Resources>
+		<Style x:Key="PinButton" TargetType="Button">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="22"/>
+			<Setter Property="FontWeight" Value="ExtraBold"/>
+			<Setter Property="Margin" Value="4"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<Border x:Name="Base" CornerRadius="6">
+								<Border.Background>
+									<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<GradientStop Color="#FF6B85" Offset="0"/>
+										<GradientStop Color="#FF1744" Offset="0.45"/>
+										<GradientStop Color="#C4002B" Offset="1"/>
+									</LinearGradientBrush>
+								</Border.Background>
+								<Border.Effect>
+									<DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"
                                                        BlurRadius="4" Opacity="0.35"/>
-                                </Border.Effect>
-                            </Border>
+								</Border.Effect>
+							</Border>
 
-                            <Border CornerRadius="6,6,20,20" Margin="2,2,2,0" VerticalAlignment="Top" Height="20">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop Color="#70FFFFFF" Offset="0"/>
-                                        <GradientStop Color="#00FFFFFF" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                            </Border>
+							<Border CornerRadius="6,6,20,20" Margin="2,2,2,0" VerticalAlignment="Top" Height="20">
+								<Border.Background>
+									<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<GradientStop Color="#70FFFFFF" Offset="0"/>
+										<GradientStop Color="#00FFFFFF" Offset="1"/>
+									</LinearGradientBrush>
+								</Border.Background>
+							</Border>
 
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <ContentPresenter.Effect>
-                                    <DropShadowEffect Color="Black" ShadowDepth="1.5" BlurRadius="2" Opacity="0.6"/>
-                                </ContentPresenter.Effect>
-                            </ContentPresenter>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Base" Property="Background" Value="#970021"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+								<ContentPresenter.Effect>
+									<DropShadowEffect Color="Black" ShadowDepth="1.5" BlurRadius="2" Opacity="0.6"/>
+								</ContentPresenter.Effect>
+							</ContentPresenter>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsPressed" Value="True">
+								<Setter TargetName="Base" Property="Background" Value="#970021"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="RoundIconButton" TargetType="Button">
-            <Setter Property="Width" Value="50"/>
-            <Setter Property="Height" Value="50"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse x:Name="Circle">
-                                <Ellipse.Fill>
-                                    <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                        <GradientStop Color="#FFE9A6" Offset="0"/>
-                                        <GradientStop Color="#E8B830" Offset="0.4"/>
-                                        <GradientStop Color="#B8860B" Offset="0.85"/>
-                                        <GradientStop Color="#8A6408" Offset="1"/>
-                                    </RadialGradientBrush>
-                                </Ellipse.Fill>
-                                <Ellipse.Effect>
-                                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"
+		<Style x:Key="PinButtonBlue" TargetType="Button">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="22"/>
+			<Setter Property="FontWeight" Value="ExtraBold"/>
+			<Setter Property="Margin" Value="4"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<Border x:Name="Base" CornerRadius="6">
+								<Border.Background>
+									<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<GradientStop Color="#9CC9FF" Offset="0"/>
+										<GradientStop Color="#2D6CDF" Offset="0.45"/>
+										<GradientStop Color="#16437F" Offset="1"/>
+									</LinearGradientBrush>
+								</Border.Background>
+								<Border.Effect>
+									<DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"
+                                                       BlurRadius="4" Opacity="0.35"/>
+								</Border.Effect>
+							</Border>
+
+							<Border CornerRadius="6,6,20,20" Margin="2,2,2,0" VerticalAlignment="Top" Height="20">
+								<Border.Background>
+									<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<GradientStop Color="#70FFFFFF" Offset="0"/>
+										<GradientStop Color="#00FFFFFF" Offset="1"/>
+									</LinearGradientBrush>
+								</Border.Background>
+							</Border>
+
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+								<ContentPresenter.Effect>
+									<DropShadowEffect Color="Black" ShadowDepth="1.5" BlurRadius="2" Opacity="0.6"/>
+								</ContentPresenter.Effect>
+							</ContentPresenter>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsPressed" Value="True">
+								<Setter TargetName="Base" Property="Background" Value="#0F2E58"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="PinButtonGreen" TargetType="Button">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="22"/>
+			<Setter Property="FontWeight" Value="ExtraBold"/>
+			<Setter Property="Margin" Value="4"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<Border x:Name="Base" CornerRadius="6">
+								<Border.Background>
+									<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<GradientStop Color="#8FE8AC" Offset="0"/>
+										<GradientStop Color="#34C759" Offset="0.45"/>
+										<GradientStop Color="#1B7A3B" Offset="1"/>
+									</LinearGradientBrush>
+								</Border.Background>
+								<Border.Effect>
+									<DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"
+                                                       BlurRadius="4" Opacity="0.35"/>
+								</Border.Effect>
+							</Border>
+
+							<Border CornerRadius="6,6,20,20" Margin="2,2,2,0" VerticalAlignment="Top" Height="20">
+								<Border.Background>
+									<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<GradientStop Color="#70FFFFFF" Offset="0"/>
+										<GradientStop Color="#00FFFFFF" Offset="1"/>
+									</LinearGradientBrush>
+								</Border.Background>
+							</Border>
+
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+								<ContentPresenter.Effect>
+									<DropShadowEffect Color="Black" ShadowDepth="1.5" BlurRadius="2" Opacity="0.6"/>
+								</ContentPresenter.Effect>
+							</ContentPresenter>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsPressed" Value="True">
+								<Setter TargetName="Base" Property="Background" Value="#0F4A24"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="RoundIconButton" TargetType="Button">
+			<Setter Property="Width" Value="50"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid>
+							<Ellipse x:Name="Circle">
+								<Ellipse.Fill>
+									<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+										<GradientStop Color="#FFE9A6" Offset="0"/>
+										<GradientStop Color="#E8B830" Offset="0.4"/>
+										<GradientStop Color="#B8860B" Offset="0.85"/>
+										<GradientStop Color="#8A6408" Offset="1"/>
+									</RadialGradientBrush>
+								</Ellipse.Fill>
+								<Ellipse.Effect>
+									<DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"
                                                        BlurRadius="4" Opacity="0.4"/>
-                                </Ellipse.Effect>
-                            </Ellipse>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+								</Ellipse.Effect>
+							</Ellipse>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="TopBarButton" TargetType="Button">
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="28"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="TopBarButton" TargetType="Button">
+			<Setter Property="Width" Value="36"/>
+			<Setter Property="Height" Value="28"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+	</Window.Resources>
 
-    <Grid>
-        <Image Source="pack://application:,,,/Assets/back.jpg" Stretch="UniformToFill"/>
-        <Rectangle Fill="#55000000"/>
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
+	<Grid>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
                     Margin="0,6,10,0">
-            <Button Content="—" Click="Minimize_Click" Style="{StaticResource TopBarButton}"
+			<Button Content="—" Click="Minimize_Click" Style="{StaticResource TopBarButton}"
                     ToolTip="Minimize"/>
-            <Button Content="✕" Click="Exit_Click" Style="{StaticResource TopBarButton}"
+			<Button Content="✕" Click="Exit_Click" Style="{StaticResource TopBarButton}"
                     ToolTip="Close"/>
-        </StackPanel>
+		</StackPanel>
 
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center"
-                Background="White" CornerRadius="10" Width="600">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.5"/>
-            </Border.Effect>
-            <StackPanel>
-                <Border Background="#DC143C" CornerRadius="10,10,0,0" Padding="14">
-                    <TextBlock Text="CLIDA POS SYSTEM" Foreground="White" FontSize="16"
+		<Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="Black" CornerRadius="10" Width="600"
+                BorderBrush="#DC143C" BorderThickness="2">
+			<Border.Effect>
+				<DropShadowEffect Color="#DC143C" BlurRadius="24" ShadowDepth="0" Opacity="0.6"/>
+			</Border.Effect>
+			<StackPanel>
+				<Border Background="Black" CornerRadius="10,10,0,0" Padding="14">
+					<TextBlock Text="CLIDA POS LOGIN" Foreground="White" FontSize="16"
                                FontWeight="Bold" HorizontalAlignment="Center"/>
-                </Border>
+				</Border>
 
-                <Grid Margin="18,16,18,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="230"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+				<Border Height="2" Background="#DC143C"/>
 
-                    <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <Image Source="pack://application:,,,/Assets/sop.png" Width="140" Height="140"
+				<Grid Margin="18,16,18,4">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="230"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">
+						<Image Source="pack://application:,,,/Assets/sop.png" Width="200" Height="200"
                                Stretch="Uniform" Margin="0,0,0,10" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="DateText" FontSize="17" FontWeight="Bold"
+						<TextBlock x:Name="DateText" FontSize="17" FontWeight="Bold"
                                    Foreground="#DC143C" HorizontalAlignment="Left" TextWrapping="Wrap"/>
-                        <TextBlock x:Name="TimeText" FontSize="30" FontWeight="Bold"
+						<TextBlock x:Name="TimeText" FontSize="30" FontWeight="Bold"
                                    Foreground="#DC143C" HorizontalAlignment="Left"/>
-                    </StackPanel>
+					</StackPanel>
 
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
-                        <TextBox Text="{Binding MaskedPin, Mode=OneWay}" IsReadOnly="True" FontSize="16"
+					<StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+						<TextBox Text="{Binding MaskedPin, Mode=OneWay}" IsReadOnly="True" FontSize="16"
                                  Padding="8" TextAlignment="Center" Margin="0,0,0,10" Width="280"
                                  Foreground="#DC143C" FontWeight="Bold"
                                  Background="White" BorderBrush="#DC143C"/>
 
-                        <TextBlock Text="{Binding ErrorMessage}" Foreground="#D93838"
+						<TextBlock Text="{Binding ErrorMessage}" Foreground="#D93838"
                                    TextWrapping="Wrap" Margin="0,0,0,8" HorizontalAlignment="Center"/>
 
-                        <UniformGrid Columns="3" Rows="4" Width="280" Height="240">
-                            <Button Content="1" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="2" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="3" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="4" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="5" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="6" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="7" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="8" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="9" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="Clear" Click="Clear_Click" Style="{StaticResource PinButton}" FontSize="14"/>
-                            <Button Content="0" Click="Digit_Click" Style="{StaticResource PinButton}"/>
-                            <Button Content="→" Click="Login_Click" Style="{StaticResource PinButton}"/>
-                        </UniformGrid>
+						<UniformGrid Columns="3" Rows="4" Width="280" Height="240">
+							<Button Content="1" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="2" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="3" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="4" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="5" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="6" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="7" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="8" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="9" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="Clear" Click="Clear_Click" Style="{StaticResource PinButtonBlue}" FontSize="14"/>
+							<Button Content="0" Click="Digit_Click" Style="{StaticResource PinButton}"/>
+							<Button Content="→" Click="Login_Click" Style="{StaticResource PinButtonGreen}"/>
+						</UniformGrid>
 
-                        <Grid Margin="0,10,0,0" Width="280">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="1" Click="Exit_Click" Style="{StaticResource RoundIconButton}"
+						<Grid Margin="0,10,0,0" Width="280">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Button Grid.Column="1" Click="Exit_Click" Style="{StaticResource RoundIconButton}"
                                     ToolTip="Exit" HorizontalAlignment="Center">
-                                <Viewbox Width="20" Height="20">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="M12,3 L12,11" Stroke="White" StrokeThickness="2.6"
+								<Viewbox Width="20" Height="20">
+									<Canvas Width="24" Height="24">
+										<Path Data="M12,3 L12,11" Stroke="White" StrokeThickness="2.6"
                                               StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                        <Path Data="M7,6.5 A8,8 0 1 0 17,6.5" Stroke="White"
+										<Path Data="M7,6.5 A8,8 0 1 0 17,6.5" Stroke="White"
                                               StrokeThickness="2.4" Fill="Transparent"
                                               StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Button>
-                        </Grid>
-                    </StackPanel>
-                </Grid>
+									</Canvas>
+								</Viewbox>
+							</Button>
+						</Grid>
+					</StackPanel>
+				</Grid>
 
-                <StackPanel HorizontalAlignment="Left" Margin="18,0,0,10">
-                    <TextBlock Text="Version 1.0.0" FontSize="10" Foreground="#888888"/>
-                    <TextBlock Text="© 2026 Clidapos. All rights reserved." FontSize="10"
+				<StackPanel HorizontalAlignment="Left" Margin="18,0,0,10">
+					<TextBlock Text="Version 1.0.0" FontSize="10" Foreground="#888888"/>
+					<TextBlock Text="© 2026 Clidapos. All rights reserved." FontSize="10"
                                Foreground="#888888"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-    </Grid>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Grid>
 </Window>
