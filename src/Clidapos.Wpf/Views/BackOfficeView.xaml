@@ -169,35 +169,35 @@
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSetting">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/mastersetting.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/mastersetting.png" Width="64" Height="64"/>
 								<TextBlock Text="Master Setting" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Profile">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/profile.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/profile.png" Width="64" Height="64"/>
 								<TextBlock Text="Profile Setting" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/userroles.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/userroles.png" Width="64" Height="64"/>
 								<TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Backup">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/backup.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/backup.png" Width="64" Height="64"/>
 								<TextBlock Text="Backup Setting" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CategoryUnit">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/categoryunit.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/categoryunit.png" Width="64" Height="64"/>
 								<TextBlock Text="Category Setup" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
@@ -214,49 +214,49 @@
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/items.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/items.png" Width="64" Height="64"/>
 								<TextBlock Text="Items" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseEntry">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/purchaseentry.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/purchaseentry.png" Width="64" Height="64"/>
 								<TextBlock Text="Purchase Entry" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockLevels">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/stocklevels.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/stocklevels.png" Width="64" Height="64"/>
 								<TextBlock Text="Stock Levels" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockAdjustment">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/stockadjustment.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/stockadjustment.png" Width="64" Height="64"/>
 								<TextBlock Text="Stock Adjustment" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/warehouse.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/warehouse.png" Width="64" Height="64"/>
 								<TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/stocktransfer.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/stocktransfer.png" Width="64" Height="64"/>
 								<TextBlock Text="Stock Transfer" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Supplier">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/supplier.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/supplier.png" Width="64" Height="64"/>
 								<TextBlock Text="Supplier" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
@@ -273,56 +273,56 @@
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/hr.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/hr.png" Width="64" Height="64"/>
 								<TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/customers.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/customers.png" Width="64" Height="64"/>
 								<TextBlock Text="Customer Ledger" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SupplierLedger">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/supplierledger.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/supplierledger.png" Width="64" Height="64"/>
 								<TextBlock Text="Supplier Ledger" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/expenses.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/expenses.png" Width="64" Height="64"/>
 								<TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseMaster">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/expensemaster.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/expensemaster.png" Width="64" Height="64"/>
 								<TextBlock Text="Expense" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/finance.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/finance.png" Width="64" Height="64"/>
 								<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/loyalty.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/loyalty.png" Width="64" Height="64"/>
 								<TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/vouchers.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/vouchers.png" Width="64" Height="64"/>
 								<TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
@@ -339,42 +339,42 @@
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SalesReports">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/salesreports.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/salesreports.png" Width="64" Height="64"/>
 								<TextBlock Text="Sales Reports" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockReports">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/stockreports.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/stockreports.png" Width="64" Height="64"/>
 								<TextBlock Text="Stock / Item Reports" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseReports">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/purchasereports.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/purchasereports.png" Width="64" Height="64"/>
 								<TextBlock Text="Purchase Reports" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseReports">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/expensereports.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/expensereports.png" Width="64" Height="64"/>
 								<TextBlock Text="Expense Reports" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="AccountingReports">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/accountingreports.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/accountingreports.png" Width="64" Height="64"/>
 								<TextBlock Text="Accounting Reports" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>
 
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<Image Source="pack://application:,,,/Assets/logs.png" Width="48" Height="48"/>
+								<Image Source="pack://application:,,,/Assets/logs.png" Width="64" Height="64"/>
 								<TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
 							</StackPanel>
 						</Button>

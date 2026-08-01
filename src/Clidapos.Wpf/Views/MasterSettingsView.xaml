@@ -168,77 +168,77 @@
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Terminal">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/terminal.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/terminal.png" Width="72" Height="72"/>
 							<TextBlock Text="Terminal Setting" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Email">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/email.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/email.png" Width="72" Height="72"/>
 							<TextBlock Text="Email Setting" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SMS">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/sms.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/sms.png" Width="72" Height="72"/>
 							<TextBlock Text="SMS Setting" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="EStoreAccess">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/estore.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/estore.png" Width="72" Height="72"/>
 							<TextBlock Text="eStore Access" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button x:Name="MenuLayoutTile" Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MenuLayout">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/menulayout.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/menulayout.png" Width="72" Height="72"/>
 							<TextBlock Text="Menu Layout" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button x:Name="TableSettingTile" Style="{StaticResource TileButton}" Click="Nav_Click" Tag="TableSetting">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/tablesetting.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/tablesetting.png" Width="72" Height="72"/>
 							<TextBlock Text="Table Setting" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Wallet">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/wallet.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/wallet.png" Width="72" Height="72"/>
 							<TextBlock Text="Wallet" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MpesaApi">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/mpesa.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/mpesa.png" Width="72" Height="72"/>
 							<TextBlock Text="M-Pesa API Setting" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExecuteQuery">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/executequery.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/executequery.png" Width="72" Height="72"/>
 							<TextBlock Text="Execute Query" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="LicenseActivation">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/license.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/license.png" Width="72" Height="72"/>
 							<TextBlock Text="License Activation" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>
 
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="WorkPeriod">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Image Source="pack://application:,,,/Assets/workperiod.png" Width="48" Height="48"/>
+							<Image Source="pack://application:,,,/Assets/workperiod.png" Width="72" Height="72"/>
 							<TextBlock Text="Work Period" Style="{StaticResource TileLabel}"/>
 						</StackPanel>
 					</Button>

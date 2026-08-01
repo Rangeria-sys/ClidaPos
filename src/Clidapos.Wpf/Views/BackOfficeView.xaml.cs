@@ -30,8 +30,8 @@ namespace Clidapos.Wpf.Views
 
             if (tag == "CategoryUnit")
             {
-                var categoryUnitView = new CategoryUnitView(_currentUser);
-                categoryUnitView.Show();
+                var categoryTypeSelectView = new CategoryTypeSelectView(_currentUser);
+                categoryTypeSelectView.Show();
                 Close();
                 return;
             }

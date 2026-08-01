@@ -23,6 +23,7 @@ namespace Clidapos.Wpf.Data
         public DbSet<SaleItem> SaleItems => Set<SaleItem>();
         public DbSet<DeletedInvoice> DeletedInvoices => Set<DeletedInvoice>();
         public DbSet<DeletedInvoiceJoin> DeletedInvoiceJoins => Set<DeletedInvoiceJoin>();
+        public DbSet<ExpenseType> ExpenseTypes => Set<ExpenseType>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -224,6 +225,14 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.ItemName).HasColumnType("nvarchar(max)");
                 b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
                 b.Property(x => x.TotalAmount).HasColumnType("decimal(18,2)");
+            });
+
+            // ---------- EXPENSE TYPE (Category Setup) ----------
+            modelBuilder.Entity<ExpenseType>(b =>
+            {
+                b.ToTable("ExpenseType", "dbo");
+                b.HasKey(x => x.Type);
+                b.Property(x => x.Type).HasColumnType("nchar(200)");
             });
         }
     }
