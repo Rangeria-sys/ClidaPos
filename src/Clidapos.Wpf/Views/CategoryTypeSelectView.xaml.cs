@@ -17,19 +17,25 @@ namespace Clidapos.Wpf.Views
         private void ItemCategory_Click(object sender, RoutedEventArgs e)
         {
             var popup = new ItemCategoryPopup { Owner = this };
-            popup.ShowDialog();
+            popup.Show();
         }
 
         private void UnitCategory_Click(object sender, RoutedEventArgs e)
         {
             var popup = new UnitCategoryPopup { Owner = this };
-            popup.ShowDialog();
+            popup.Show();
         }
 
         private void ExpenseCategory_Click(object sender, RoutedEventArgs e)
         {
             var popup = new ExpenseCategoryPopup { Owner = this };
-            popup.ShowDialog();
+            popup.Show();
+        }
+
+        private void WarehouseType_Click(object sender, RoutedEventArgs e)
+        {
+            var popup = new WarehouseTypePopup { Owner = this };
+            popup.Show();
         }
 
         private void BackToOffice_Click(object sender, RoutedEventArgs e)

@@ -1,11 +1,11 @@
-<Window x:Class="Clidapos.Wpf.Views.ExpenseCategoryPopup"
+<Window x:Class="Clidapos.Wpf.Views.StockAdjustmentPopup"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Expense Category"
+        Title="Stock Adjustment"
         WindowStyle="None"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Width="420" SizeToContent="Height"
+        Width="440" SizeToContent="Height"
         Background="Transparent"
         AllowsTransparency="True"
         ShowInTaskbar="False">
@@ -17,6 +17,22 @@
             <Setter Property="BorderBrush" Value="#D8D8DE"/>
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="PopupCombo" TargetType="ComboBox">
+            <Setter Property="Background" Value="#F5F5F7"/>
+            <Setter Property="Foreground" Value="#1C1C1F"/>
+            <Setter Property="BorderBrush" Value="#D8D8DE"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="ResultsListStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="#F5F5F7"/>
+            <Setter Property="Foreground" Value="#1C1C1F"/>
+            <Setter Property="BorderBrush" Value="#D8D8DE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MaxHeight" Value="120"/>
         </Style>
 
         <Style x:Key="IconActionButton" TargetType="Button">
@@ -56,40 +72,40 @@
         <StackPanel Margin="24">
 
             <Grid Margin="0,0,0,16">
-                <TextBlock Text="EXPENSE CATEGORY" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+                <TextBlock Text="STOCK ADJUSTMENT" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
                 <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
                         Width="30" Height="30" Background="Transparent" Foreground="#888888"
                         FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </Grid>
 
-            <TextBlock Text="Expense Type Name" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+            <TextBlock Text="Product" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+            <TextBox x:Name="SearchBox" Style="{StaticResource PopupInput}"
+                     TextChanged="SearchBox_TextChanged" Margin="0,0,0,4"/>
+            <ListBox x:Name="ResultsList" Style="{StaticResource ResultsListStyle}"
+                     SelectionChanged="ResultsList_SelectionChanged" Margin="0,0,0,4"/>
+            <TextBlock x:Name="SelectedProductText" Foreground="#127C6B" FontSize="13" FontWeight="Bold"
+                       Margin="0,0,0,12" TextWrapping="Wrap"/>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="➕" FontSize="18"/>
-                    <TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+            <TextBlock Text="Warehouse" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+            <ComboBox x:Name="WarehouseCombo" Style="{StaticResource PopupCombo}"
+                      DisplayMemberPath="WarehouseName" Margin="0,0,0,14"/>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
+            <TextBlock Text="Adjustment Type" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+            <ComboBox x:Name="TypeCombo" Style="{StaticResource PopupCombo}" Margin="0,0,0,14">
+                <ComboBoxItem Content="Increase"/>
+                <ComboBoxItem Content="Decrease"/>
+            </ComboBox>
+
+            <TextBlock Text="Quantity" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+            <TextBox x:Name="QtyInput" Style="{StaticResource PopupInput}" Margin="0,0,0,14"/>
+
+            <TextBlock Text="Reason (required)" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+            <TextBox x:Name="ReasonInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+
+            <Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click" Margin="0,0,0,8">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="💾" FontSize="18"/>
-                    <TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
-
-            <Button Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="✎" FontSize="18"/>
-                    <TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
-
-            <Button Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="🗑" FontSize="18"/>
-                    <TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
+                    <TextBlock Text="Save Adjustment" Style="{StaticResource IconBtnText}"/>
                 </StackPanel>
             </Button>
 

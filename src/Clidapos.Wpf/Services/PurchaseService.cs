@@ -8,6 +8,24 @@ using Clidapos.Wpf.Entities;
 
 namespace Clidapos.Wpf.Services
 {
+    public class PurchaseLine
+    {
+        public int ProductId { get; set; }
+        public string ProductName { get; set; } = "";
+        public string ProductCode { get; set; } = "";
+        public decimal Qty { get; set; }
+        public decimal Price { get; set; }
+        public decimal Amount => Qty * Price;
+    }
+
+    public class PurchaseResult
+    {
+        public bool Ok { get; set; }
+        public string InvoiceNo { get; set; } = "";
+        public decimal GrandTotal { get; set; }
+        public string Error { get; set; } = "";
+    }
+
     public class PurchaseService
     {
         private const string DefaultSupplierCode = "SUPP-DEFAULT";
@@ -110,6 +128,114 @@ namespace Clidapos.Wpf.Services
             return await db.PurchaseJoins
                 .Where(j => latestIds.Contains(j.SP_ID))
                 .ToDictionaryAsync(j => j.ProductID, j => j.Price);
+        }
+
+        /// <summary>
+        /// Records a real stock-receiving purchase: writes the Purchase header, one
+        /// PurchaseJoin row per line, and adds the received quantity to stock for the
+        /// chosen warehouse - all inside one transaction.
+        /// </summary>
+        public async Task<PurchaseResult> SavePurchaseAsync(
+            int supplierId,
+            string warehouseName,
+            string invoiceNo,
+            List<PurchaseLine> lines,
+            decimal discountPercent,
+            decimal freightCharges,
+            decimal otherCharges)
+        {
+            if (lines == null || lines.Count == 0)
+                return new PurchaseResult { Ok = false, Error = "Add at least one item to the purchase." };
+
+            if (lines.Any(l => l.Qty <= 0))
+                return new PurchaseResult { Ok = false, Error = "Every line needs a quantity above zero." };
+
+            if (string.IsNullOrWhiteSpace(invoiceNo))
+                return new PurchaseResult { Ok = false, Error = "Invoice number is required." };
+
+            if (string.IsNullOrWhiteSpace(warehouseName))
+                return new PurchaseResult { Ok = false, Error = "Pick a warehouse to receive the stock into." };
+
+            using var db = new ClidaposDbContext();
+            using var tx = await db.Database.BeginTransactionAsync();
+
+            try
+            {
+                var subtotal = Math.Round(lines.Sum(l => l.Amount), 2);
+                var discountAmount = Math.Round(subtotal * discountPercent / 100m, 2);
+                var total = Math.Round(subtotal - discountAmount + freightCharges + otherCharges, 2);
+
+                var maxPurchaseId = await db.Purchases.Select(p => (int?)p.ST_ID).MaxAsync() ?? 0;
+
+                var purchase = new Purchase
+                {
+                    ST_ID = maxPurchaseId + 1,
+                    InvoiceNo = invoiceNo.Trim(),
+                    Date = DateTime.Now,
+                    PurchaseType = "Restock",
+                    Supplier_ID = supplierId,
+                    SubTotal = subtotal,
+                    DiscountPer = discountPercent,
+                    Discount = discountAmount,
+                    PreviousDue = 0,
+                    FreightCharges = freightCharges,
+                    OtherCharges = otherCharges,
+                    Total = total,
+                    RoundOff = 0,
+                    GrandTotal = total,
+                    TotalPayment = total,
+                    PaymentDue = 0
+                };
+                db.Purchases.Add(purchase);
+                await db.SaveChangesAsync();
+
+                foreach (var line in lines)
+                {
+                    db.PurchaseJoins.Add(new PurchaseJoin
+                    {
+                        PurchaseID = purchase.ST_ID,
+                        ProductID = line.ProductId,
+                        Qty = line.Qty,
+                        Price = line.Price,
+                        TotalAmount = Math.Round(line.Amount, 2),
+                        Warehouse = warehouseName
+                    });
+
+                    await AddStockAsync(db, line.ProductId, warehouseName, line.Qty);
+                }
+
+                await db.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                return new PurchaseResult { Ok = true, InvoiceNo = purchase.InvoiceNo.Trim(), GrandTotal = total };
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                return new PurchaseResult { Ok = false, Error = ex.InnerException?.Message ?? ex.Message };
+            }
+        }
+
+        /// <summary>Adds qty to the existing stock row for this product+warehouse, or creates one.</summary>
+        private static async Task AddStockAsync(ClidaposDbContext db, int productId, string warehouseName, decimal qty)
+        {
+            var existing = await db.ProductOpeningStocks
+                .FirstOrDefaultAsync(s => s.ProductID == productId && s.Warehouse.Trim() == warehouseName.Trim());
+
+            if (existing != null)
+            {
+                existing.Qty += qty;
+            }
+            else
+            {
+                db.ProductOpeningStocks.Add(new ProductOpeningStock
+                {
+                    ProductID = productId,
+                    Warehouse = warehouseName,
+                    Qty = qty,
+                    HasExpiryDate = "N"
+                });
+            }
         }
     }
 }

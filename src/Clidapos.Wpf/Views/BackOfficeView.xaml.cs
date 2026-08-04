@@ -44,17 +44,43 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            if (tag == "Supplier")
+            {
+                var supplierPopup = new SupplierPopup { Owner = this };
+                supplierPopup.Show();
+                return;
+            }
+
+            if (tag == "Warehouse")
+            {
+                var warehousePopup = new WarehousePopup { Owner = this };
+                warehousePopup.Show();
+                return;
+            }
+
+            if (tag == "PurchaseEntry")
+            {
+                var purchaseEntryView = new PurchaseEntryView(_currentUser);
+                purchaseEntryView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "StockLevels")
+            {
+                var stockLevelsView = new StockLevelsView(_currentUser);
+                stockLevelsView.Show();
+                Close();
+                return;
+            }
+
             var sectionName = tag switch
             {
                 "Profile" => "Profile Setting",
                 "UserRoles" => "User Security Roles",
                 "Backup" => "Backup Setting",
-                "PurchaseEntry" => "Purchase Entry",
-                "StockLevels" => "Stock Levels",
                 "StockAdjustment" => "Stock Adjustment",
-                "Warehouse" => "Warehouse Management",
                 "StockTransfer" => "Stock Transfer",
-                "Supplier" => "Supplier",
                 "HR" => "HR & Payroll",
                 "Customers" => "Customer Ledger",
                 "SupplierLedger" => "Supplier Ledger",

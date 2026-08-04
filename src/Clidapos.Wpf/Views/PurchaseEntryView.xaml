@@ -1,0 +1,325 @@
+<Window x:Class="Clidapos.Wpf.Views.PurchaseEntryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Clidapos - Purchase Entry"
+        WindowStyle="None"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        Background="{StaticResource AppBackground}">
+
+    <Window.Resources>
+        <Style x:Key="RoundTopButton" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="SearchInput" TargetType="TextBox">
+            <Setter Property="Background" Value="#1E1E24"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#F3A123"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
+
+        <Style x:Key="PanelInput" TargetType="TextBox">
+            <Setter Property="Background" Value="#1E1E24"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#3A3A42"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="PanelCombo" TargetType="ComboBox">
+            <Setter Property="Background" Value="#1E1E24"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#3A3A42"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#2A2A32"/>
+            <Setter Property="Foreground" Value="#F3A123"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderBrush" Value="#3A3A42"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="RemoveRowBtn" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="#3A2226" CornerRadius="6">
+                            <TextBlock Text="✕" Foreground="#FF6B6B" FontSize="13" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="Height" Value="52"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="B" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource AppOverlay}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#1E1E24">
+            <Grid>
+                <TextBlock Text="PURCHASE ENTRY" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,15,0">
+
+                    <Button Click="BackToOffice_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="0,0,10,0" ToolTip="Back to Back Office">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFD98F" Offset="0"/>
+                                                <GradientStop Color="#F3A123" Offset="0.5"/>
+                                                <GradientStop Color="#B5741A" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
+                            ToolTip="Minimize">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FFE9A6" Offset="0"/>
+                                                <GradientStop Color="#E8B830" Offset="0.4"/>
+                                                <GradientStop Color="#B8860B" Offset="0.85"/>
+                                                <GradientStop Color="#8A6408" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+                                                <GradientStop Color="#FF7B8C" Offset="0"/>
+                                                <GradientStop Color="#DC143C" Offset="0.5"/>
+                                                <GradientStop Color="#8F0C25" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <Viewbox Width="16" Height="16">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="230"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- DETAILS PANEL -->
+            <Border Grid.Column="0" Background="#1A1A1F" CornerRadius="10" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="DETAILS" Foreground="#F3A123" FontSize="15" FontWeight="Bold" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Invoice No" Foreground="#888888" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBox x:Name="InvoiceInput" Style="{StaticResource PanelInput}" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Supplier" Foreground="#888888" FontSize="12" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="SupplierCombo" Style="{StaticResource PanelCombo}"
+                              DisplayMemberPath="Name" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Warehouse" Foreground="#888888" FontSize="12" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="WarehouseCombo" Style="{StaticResource PanelCombo}"
+                              DisplayMemberPath="WarehouseName" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Discount %" Foreground="#888888" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBox x:Name="DiscountInput" Style="{StaticResource PanelInput}"
+                             TextChanged="Totals_TextChanged" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Freight Charges" Foreground="#888888" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBox x:Name="FreightInput" Style="{StaticResource PanelInput}"
+                             TextChanged="Totals_TextChanged" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Other Charges" Foreground="#888888" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBox x:Name="OtherChargesInput" Style="{StaticResource PanelInput}"
+                             TextChanged="Totals_TextChanged"/>
+                </StackPanel>
+            </Border>
+
+            <!-- SEARCH -->
+            <Border Grid.Column="2" Background="#1A1A1F" CornerRadius="10" Padding="14">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="ADD ITEM" Foreground="#F3A123" FontSize="13"
+                               FontWeight="Bold" Margin="0,0,0,8"/>
+                    <TextBox DockPanel.Dock="Top" x:Name="SearchBox" Style="{StaticResource SearchInput}"
+                             TextChanged="SearchBox_TextChanged"/>
+                    <TextBlock DockPanel.Dock="Top" Text="Type a name or code. Click a result to add it."
+                               Foreground="#888888" FontSize="11" Margin="0,6,0,8" TextWrapping="Wrap"/>
+
+                    <ListBox x:Name="ResultsList" Background="#141419" Foreground="White"
+                             BorderThickness="0" SelectionChanged="ResultsList_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="6,6">
+                                    <TextBlock Text="{Binding ProductName}" Foreground="White" FontSize="14"
+                                               TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Price, StringFormat=N2}" Foreground="#F3A123"
+                                               FontSize="13" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- LINE GRID + TOTALS -->
+            <Border Grid.Column="4" Background="#1A1A1F" CornerRadius="10" Padding="16">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="ITEMS RECEIVED" Foreground="#F3A123" FontSize="18"
+                               FontWeight="Bold" Margin="0,0,0,12"/>
+
+                    <TextBlock DockPanel.Dock="Bottom" x:Name="ErrorText" Foreground="#FF6B6B" FontSize="12"
+                               Margin="0,10,0,0" TextWrapping="Wrap"/>
+
+                    <Border DockPanel.Dock="Bottom" Background="#141419" CornerRadius="8" Padding="18" Margin="0,12,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="220"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Foreground="#CCCCCC" FontSize="13">
+                                    <Run Text="Subtotal: "/>
+                                    <Run x:Name="SubtotalText" Text="0.00"/>
+                                </TextBlock>
+                                <TextBlock Foreground="#CCCCCC" FontSize="13">
+                                    <Run Text="Discount: "/>
+                                    <Run x:Name="DiscountAmountText" Text="0.00"/>
+                                </TextBlock>
+                                <TextBlock Foreground="#CCCCCC" FontSize="13">
+                                    <Run Text="Freight + Other: "/>
+                                    <Run x:Name="ChargesText" Text="0.00"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                <TextBlock Text="GRAND TOTAL" Foreground="#888888" FontSize="13" FontWeight="Bold"
+                                           HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#34C759"
+                                           FontSize="40" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <Button x:Name="SaveButton" Content="SAVE PURCHASE" Background="#34C759"
+                                        Style="{StaticResource ActionBtn}" Margin="0,10,0,0"
+                                        Click="SavePurchase_Click"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <DataGrid x:Name="LineGrid" AutoGenerateColumns="False" FontSize="15"
+                              Background="#141419" Foreground="White" BorderThickness="0"
+                              RowBackground="#141419" AlternatingRowBackground="#1E1E24"
+                              HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
+                              ColumnHeaderStyle="{StaticResource GridHeader}"
+                              CanUserAddRows="False" SelectionMode="Single"
+                              CellEditEnding="LineGrid_CellEditEnding">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="MinHeight" Value="46"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Item" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Qty, StringFormat=N2}" Width="90"/>
+                            <DataGridTextColumn Header="Cost Price" Binding="{Binding Price, StringFormat=N2}" Width="110"/>
+                            <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=N2}" Width="120" IsReadOnly="True"/>
+                            <DataGridTemplateColumn Header="" Width="50" CanUserResize="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource RemoveRowBtn}" Click="RemoveLine_Click" Tag="{Binding}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

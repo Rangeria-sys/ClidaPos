@@ -71,6 +71,10 @@
 		<Resource Include="Assets\expensereports.png" />
 		<Resource Include="Assets\accountingreports.png" />
 		<Resource Include="Assets\logs.png" />
+		<Resource Include="Assets\warehousecategory.png" />
+		<Resource Include="Assets\itemcategory.png" />
+		<Resource Include="Assets\expensecategory.png" />
+		<Resource Include="Assets\unitcategory.png" />	
 	</ItemGroup>
 
 </Project>

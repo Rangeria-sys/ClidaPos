@@ -24,6 +24,7 @@ namespace Clidapos.Wpf.Data
         public DbSet<DeletedInvoice> DeletedInvoices => Set<DeletedInvoice>();
         public DbSet<DeletedInvoiceJoin> DeletedInvoiceJoins => Set<DeletedInvoiceJoin>();
         public DbSet<ExpenseType> ExpenseTypes => Set<ExpenseType>();
+        public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -61,6 +62,7 @@ namespace Clidapos.Wpf.Data
             {
                 b.ToTable("WorkPeriodEnd", "dbo");
                 b.HasKey(x => x.Id);
+                // Id is NOT an identity column - it mirrors WorkPeriodStart.ID.
                 b.Property(x => x.Id).ValueGeneratedNever();
                 b.Property(x => x.WPEnd).HasColumnType("datetime");
             });
@@ -233,6 +235,18 @@ namespace Clidapos.Wpf.Data
                 b.ToTable("ExpenseType", "dbo");
                 b.HasKey(x => x.Type);
                 b.Property(x => x.Type).HasColumnType("nchar(200)");
+            });
+
+            // ---------- STOCK ADJUSTMENT ----------
+            modelBuilder.Entity<StockAdjustment>(b =>
+            {
+                b.ToTable("StockAdjustment_Warehouse", "dbo");
+                b.HasKey(x => x.SA_ID);
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.Warehouse).HasColumnType("nchar(250)");
+                b.Property(x => x.AdjustmentType).HasColumnType("nchar(20)");
+                b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Reason).HasColumnType("nchar(200)");
             });
         }
     }

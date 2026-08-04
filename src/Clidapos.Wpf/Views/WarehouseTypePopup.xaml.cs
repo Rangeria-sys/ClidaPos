@@ -4,12 +4,12 @@ using Clidapos.Wpf.Services;
 
 namespace Clidapos.Wpf.Views
 {
-    public partial class ExpenseCategoryPopup : Window
+    public partial class WarehouseTypePopup : Window
     {
-        private readonly ExpenseTypeService _expenseTypeService = new();
+        private readonly WarehouseTypeService _warehouseTypeService = new();
         private string? _editing;
 
-        public ExpenseCategoryPopup(string? editName = null)
+        public WarehouseTypePopup(string? editName = null)
         {
             InitializeComponent();
 
@@ -37,7 +37,7 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
-            await _expenseTypeService.EnsureExistsAsync(name);
+            await _warehouseTypeService.EnsureExistsAsync(name);
             _editing = null;
             NameInput.Text = "";
             ErrorText.Text = "Saved.";
@@ -60,7 +60,7 @@ namespace Clidapos.Wpf.Views
 
             try
             {
-                await _expenseTypeService.RenameAsync(_editing, newName);
+                await _warehouseTypeService.RenameAsync(_editing, newName);
                 _editing = null;
                 ErrorText.Text = "Updated.";
             }
@@ -78,11 +78,11 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
-            var confirm = MessageBox.Show($"Remove expense type '{_editing}'?", "Confirm Remove",
+            var confirm = MessageBox.Show($"Remove warehouse type '{_editing}'?", "Confirm Remove",
                 MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
-            await _expenseTypeService.RemoveAsync(_editing);
+            await _warehouseTypeService.RemoveAsync(_editing);
             _editing = null;
             NameInput.Text = "";
             ErrorText.Text = "Removed.";
@@ -90,7 +90,7 @@ namespace Clidapos.Wpf.Views
 
         private void GetData_Click(object sender, RoutedEventArgs e)
         {
-            var listView = new ExpenseCategoryListView();
+            var listView = new WarehouseTypeListView();
             listView.Show();
             Close();
         }
