@@ -14,6 +14,21 @@ namespace Clidapos.Wpf.Views
             InitializeComponent();
             _currentUser = currentUser;
             WelcomeText.Text = $"{currentUser.Name.Trim()} ({currentUser.UserType.Trim()})";
+
+            // Every Back Office screen is reached through here, so this is where
+            // the audit-log session gets set for the whole session.
+            CurrentSession.UserId = currentUser.UserID.Trim();
+
+            // Safe to call every time - EnsureStarted() does nothing if the
+            // background checker is already running from earlier this session.
+            AutoBackupScheduler.EnsureStarted();
+
+            // Stock Transfer is restaurant-only for now (its underlying table is
+            // built around Warehouse -> Kitchen transfers) - hidden in Supermarket mode,
+            // same pattern as Menu Layout and Table Setting in Master Settings.
+            StockTransferTile.Visibility = AppSettings.Mode == StoreMode.Restaurant
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void Nav_Click(object sender, RoutedEventArgs e)
@@ -74,27 +89,113 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            if (tag == "StockAdjustment")
+            {
+                var stockAdjustmentPopup = new StockAdjustmentPopup { Owner = this };
+                stockAdjustmentPopup.Show();
+                return;
+            }
+
+            if (tag == "SalesReports")
+            {
+                var salesReportView = new SalesReportView(_currentUser);
+                salesReportView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "StockReports")
+            {
+                var stockReportView = new StockReportView(_currentUser);
+                stockReportView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "PurchaseReports")
+            {
+                var purchaseReportView = new PurchaseReportView(_currentUser);
+                purchaseReportView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "ExpenseMaster")
+            {
+                var expensePopup = new ExpensePopup { Owner = this };
+                expensePopup.Show();
+                return;
+            }
+
+            if (tag == "Logs")
+            {
+                var systemLogsView = new SystemLogsView(_currentUser);
+                systemLogsView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "Profile")
+            {
+                var hotelProfilePopup = new HotelProfilePopup { Owner = this };
+                hotelProfilePopup.Show();
+                return;
+            }
+
+            if (tag == "UserRoles")
+            {
+                var userRolesPopup = new UserSecurityRolesPopup { Owner = this };
+                userRolesPopup.Show();
+                return;
+            }
+
+            if (tag == "EmployeeRegistration")
+            {
+                var employeeRegPopup = new EmployeeRegistrationPopup { Owner = this };
+                employeeRegPopup.Show();
+                return;
+            }
+
+            if (tag == "Backup")
+            {
+                var backupPopup = new BackupSettingPopup { Owner = this };
+                backupPopup.Show();
+                return;
+            }
+
+            if (tag == "SupplierLedger")
+            {
+                var supplierLedgerView = new SupplierLedgerListView(_currentUser);
+                supplierLedgerView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "Customers")
+            {
+                var customerPopup = new CustomerPopup { Owner = this };
+                customerPopup.Show();
+                return;
+            }
+
+            if (tag == "CustomerLedger")
+            {
+                var customerLedgerView = new CustomerLedgerListView(_currentUser);
+                customerLedgerView.Show();
+                Close();
+                return;
+            }
+
             var sectionName = tag switch
             {
-                "Profile" => "Profile Setting",
-                "UserRoles" => "User Security Roles",
-                "Backup" => "Backup Setting",
-                "StockAdjustment" => "Stock Adjustment",
                 "StockTransfer" => "Stock Transfer",
                 "HR" => "HR & Payroll",
-                "Customers" => "Customer Ledger",
-                "SupplierLedger" => "Supplier Ledger",
                 "Expenses" => "Expense Log",
-                "ExpenseMaster" => "Expense",
                 "Finance" => "Finance & Banking",
                 "Loyalty" => "Loyalty & Membership",
                 "Vouchers" => "Vouchers & Promotions",
-                "SalesReports" => "Sales Reports",
-                "StockReports" => "Stock / Item Reports",
-                "PurchaseReports" => "Purchase Reports",
                 "ExpenseReports" => "Expense Reports",
                 "AccountingReports" => "Accounting Reports",
-                "Logs" => "System Logs",
                 _ => "Unknown section"
             };
 

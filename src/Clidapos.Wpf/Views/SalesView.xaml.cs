@@ -14,6 +14,7 @@ namespace Clidapos.Wpf.Views
     {
         private readonly Registration _currentUser;
         private readonly SaleService _saleService = new();
+        private readonly LogService _logService = new();
         private readonly ObservableCollection<CartLine> _cart = new();
 
         private bool _isDarkMode = true;
@@ -335,6 +336,9 @@ namespace Clidapos.Wpf.Views
                 ErrorText.Text = result.Error;
                 return;
             }
+
+            await _logService.LogAsync(CurrentSession.UserId,
+                $"Completed Sale {result.BillNo} - {AppSettings.CurrencySymbol} {result.GrandTotal:N2} ({mode})");
 
             MessageBox.Show(
                 $"Sale {result.BillNo} completed.\n\n" +

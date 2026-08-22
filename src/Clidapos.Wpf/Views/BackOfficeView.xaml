@@ -177,7 +177,7 @@
                         <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Profile">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Image Source="pack://application:,,,/Assets/profile.png" Width="72" Height="72"/>
-                                <TextBlock Text="Profile Setting" Style="{StaticResource TileLabel}"/>
+                                <TextBlock Text="Business Profile" Style="{StaticResource TileLabel}"/>
                             </StackPanel>
                         </Button>
 
@@ -240,14 +240,7 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Image Source="pack://application:,,,/Assets/warehouse.png" Width="72" Height="72"/>
-                                <TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer">
+                        <Button x:Name="StockTransferTile" Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Image Source="pack://application:,,,/Assets/stocktransfer.png" Width="72" Height="72"/>
                                 <TextBlock Text="Stock Transfer" Style="{StaticResource TileLabel}"/>
@@ -261,6 +254,13 @@
                             </StackPanel>
                         </Button>
 
+                        <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image Source="pack://application:,,,/Assets/warehouse.png" Width="72" Height="72"/>
+                                <TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
+                            </StackPanel>
+                        </Button>
+
                     </WrapPanel>
                 </StackPanel>
 
@@ -270,6 +270,13 @@
                         <TextBlock Text="HR &amp; ACCOUNTS" Style="{StaticResource SectionPillText}" Foreground="White"/>
                     </Border>
                     <WrapPanel Width="340">
+
+                        <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="EmployeeRegistration">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="👥" FontSize="40" Foreground="#F3A123" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Employee Registration" Style="{StaticResource TileLabel}"/>
+                            </StackPanel>
+                        </Button>
 
                         <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -281,6 +288,13 @@
                         <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Image Source="pack://application:,,,/Assets/customers.png" Width="72" Height="72"/>
+                                <TextBlock Text="Customers" Style="{StaticResource TileLabel}"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CustomerLedger">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="📒" FontSize="40" Foreground="#F3A123" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Customer Ledger" Style="{StaticResource TileLabel}"/>
                             </StackPanel>
                         </Button>

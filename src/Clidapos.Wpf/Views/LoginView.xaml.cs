@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Clidapos.Wpf.Services;
 using Clidapos.Wpf.ViewModels;
 
 namespace Clidapos.Wpf.Views
@@ -9,6 +10,7 @@ namespace Clidapos.Wpf.Views
     public partial class LoginView : Window
     {
         private readonly DispatcherTimer _clockTimer;
+        private readonly LogService _logService = new();
 
         public LoginView()
         {
@@ -58,6 +60,12 @@ namespace Clidapos.Wpf.Views
 
             if (Vm.LoggedInUser != null)
             {
+                // Session tracking starts here, at the moment of login, so any
+                // screen reached afterward - Front Office or Back Office - can
+                // log actions under the correct user.
+                CurrentSession.UserId = Vm.LoggedInUser.UserID.Trim();
+                await _logService.LogAsync(CurrentSession.UserId, "Logged in");
+
                 var gateway = new GatewayView(Vm.LoggedInUser);
                 gateway.Show();
                 Close();

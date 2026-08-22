@@ -8,6 +8,7 @@ namespace Clidapos.Wpf.Views
     public partial class SupplierPopup : Window
     {
         private readonly SupplierService _supplierService = new();
+        private readonly LogService _logService = new();
         private Supplier? _editing;
 
         public SupplierPopup(Supplier? editSupplier = null)
@@ -53,6 +54,7 @@ namespace Clidapos.Wpf.Views
             };
 
             await _supplierService.AddAsync(supplier);
+            await _logService.LogAsync(CurrentSession.UserId, $"Added Supplier '{name}' ({code})");
             _editing = null;
             CodeInput.Text = "";
             NameInput.Text = "";
@@ -82,6 +84,7 @@ namespace Clidapos.Wpf.Views
                 _editing.Name = name;
 
                 await _supplierService.UpdateAsync(_editing);
+                await _logService.LogAsync(CurrentSession.UserId, $"Updated Supplier '{name}'");
                 ErrorText.Text = "Updated.";
             }
             catch (Exception ex)
@@ -102,7 +105,9 @@ namespace Clidapos.Wpf.Views
                 MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
+            var deletedName = _editing.Name.Trim();
             await _supplierService.DeleteAsync(_editing.ID);
+            await _logService.LogAsync(CurrentSession.UserId, $"Deleted Supplier '{deletedName}'");
             _editing = null;
             CodeInput.Text = "";
             NameInput.Text = "";

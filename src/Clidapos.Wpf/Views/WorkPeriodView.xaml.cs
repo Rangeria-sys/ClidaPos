@@ -8,6 +8,7 @@ namespace Clidapos.Wpf.Views
     {
         private readonly Registration _currentUser;
         private readonly ShiftService _shiftService = new();
+        private readonly LogService _logService = new();
 
         public WorkPeriodView(Registration currentUser)
         {
@@ -39,6 +40,7 @@ namespace Clidapos.Wpf.Views
         private async void StartPeriod_Click(object sender, RoutedEventArgs e)
         {
             await _shiftService.StartPeriodAsync();
+            await _logService.LogAsync(CurrentSession.UserId, "Started Work Period");
             await RefreshStatus();
             MessageBox.Show("Period started. POS is now unlocked.", "Clidapos");
         }

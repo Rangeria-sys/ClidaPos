@@ -9,6 +9,7 @@ namespace Clidapos.Wpf.Views
     {
         private readonly Registration _currentUser;
         private readonly SaleService _saleService = new();
+        private readonly LogService _logService = new();
         private int? _selectedBillId;
 
         public SalesHistoryView(Registration currentUser)
@@ -94,6 +95,9 @@ namespace Clidapos.Wpf.Views
                 VoidErrorText.Text = result.Error;
                 return;
             }
+
+            await _logService.LogAsync(CurrentSession.UserId,
+                $"Voided Sale (Bill ID {_selectedBillId}) - Reason: {reason}");
 
             var message = "Sale voided and stock restored.";
             if (result.StockWarnings.Count > 0)

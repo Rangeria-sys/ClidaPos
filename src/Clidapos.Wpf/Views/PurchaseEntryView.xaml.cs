@@ -15,6 +15,7 @@ namespace Clidapos.Wpf.Views
         private readonly SaleService _saleService = new();
         private readonly SupplierService _supplierService = new();
         private readonly WarehouseService _warehouseService = new();
+        private readonly LogService _logService = new();
         private readonly ObservableCollection<PurchaseCartLine> _lines = new();
 
         public PurchaseEntryView(Registration currentUser)
@@ -24,8 +25,6 @@ namespace Clidapos.Wpf.Views
 
             LineGrid.ItemsSource = _lines;
 
-            // Set after InitializeComponent so every named element in the visual tree
-            // already exists before Totals_TextChanged (fired by these assignments) runs.
             DiscountInput.Text = "0";
             FreightInput.Text = "0";
             OtherChargesInput.Text = "0";
@@ -184,6 +183,9 @@ namespace Clidapos.Wpf.Views
                 ErrorText.Text = result.Error;
                 return;
             }
+
+            await _logService.LogAsync(CurrentSession.UserId,
+                $"Recorded Purchase {result.InvoiceNo} from '{supplier.Name.Trim()}' - {AppSettings.CurrencySymbol} {result.GrandTotal:N2}");
 
             MessageBox.Show(
                 $"Purchase {result.InvoiceNo} saved.\n\nTotal: {AppSettings.CurrencySymbol} {result.GrandTotal:N2}\n\nStock has been added to {warehouse.WarehouseName.Trim()}.",

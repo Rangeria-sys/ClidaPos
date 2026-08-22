@@ -30,6 +30,7 @@ namespace Clidapos.Wpf.Services
     {
         private const string DefaultSupplierCode = "SUPP-DEFAULT";
         private readonly WarehouseService _warehouseService = new();
+        private readonly SupplierLedgerService _supplierLedgerService = new();
 
         public async Task<int> EnsureDefaultSupplierAsync()
         {
@@ -133,7 +134,9 @@ namespace Clidapos.Wpf.Services
         /// <summary>
         /// Records a real stock-receiving purchase: writes the Purchase header, one
         /// PurchaseJoin row per line, and adds the received quantity to stock for the
-        /// chosen warehouse - all inside one transaction.
+        /// chosen warehouse - all inside one transaction. After the transaction commits,
+        /// also posts a real Credit entry to the Supplier Ledger (money now owed) -
+        /// this is best-effort and never rolls back or fails the purchase itself.
         /// </summary>
         public async Task<PurchaseResult> SavePurchaseAsync(
             int supplierId,
@@ -159,8 +162,15 @@ namespace Clidapos.Wpf.Services
             using var db = new ClidaposDbContext();
             using var tx = await db.Database.BeginTransactionAsync();
 
+            string? supplierCode = null;
+            string? supplierName = null;
+
             try
             {
+                var supplier = await db.Suppliers.FirstOrDefaultAsync(s => s.ID == supplierId);
+                supplierCode = supplier?.SupplierID.Trim();
+                supplierName = supplier?.Name.Trim();
+
                 var subtotal = Math.Round(lines.Sum(l => l.Amount), 2);
                 var discountAmount = Math.Round(subtotal * discountPercent / 100m, 2);
                 var total = Math.Round(subtotal - discountAmount + freightCharges + otherCharges, 2);
@@ -206,6 +216,21 @@ namespace Clidapos.Wpf.Services
 
                 await db.SaveChangesAsync();
                 await tx.CommitAsync();
+
+                // Ledger posting happens after the purchase is safely committed -
+                // best-effort, never allowed to undo a purchase that already succeeded.
+                if (!string.IsNullOrWhiteSpace(supplierCode))
+                {
+                    try
+                    {
+                        await _supplierLedgerService.PostPurchaseEntryAsync(
+                            supplierCode!, supplierName ?? "", purchase.InvoiceNo.Trim(), total);
+                    }
+                    catch
+                    {
+                        // Ledger posting failure never invalidates a completed purchase.
+                    }
+                }
 
                 return new PurchaseResult { Ok = true, InvoiceNo = purchase.InvoiceNo.Trim(), GrandTotal = total };
             }

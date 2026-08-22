@@ -7,6 +7,7 @@ namespace Clidapos.Wpf.Views
     public partial class WarehouseTypePopup : Window
     {
         private readonly WarehouseTypeService _warehouseTypeService = new();
+        private readonly LogService _logService = new();
         private string? _editing;
 
         public WarehouseTypePopup(string? editName = null)
@@ -38,6 +39,7 @@ namespace Clidapos.Wpf.Views
             }
 
             await _warehouseTypeService.EnsureExistsAsync(name);
+            await _logService.LogAsync(CurrentSession.UserId, $"Added Warehouse Type '{name}'");
             _editing = null;
             NameInput.Text = "";
             ErrorText.Text = "Saved.";
@@ -60,7 +62,9 @@ namespace Clidapos.Wpf.Views
 
             try
             {
+                var oldName = _editing;
                 await _warehouseTypeService.RenameAsync(_editing, newName);
+                await _logService.LogAsync(CurrentSession.UserId, $"Renamed Warehouse Type '{oldName}' to '{newName}'");
                 _editing = null;
                 ErrorText.Text = "Updated.";
             }
@@ -82,7 +86,9 @@ namespace Clidapos.Wpf.Views
                 MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
+            var deletedName = _editing;
             await _warehouseTypeService.RemoveAsync(_editing);
+            await _logService.LogAsync(CurrentSession.UserId, $"Deleted Warehouse Type '{deletedName}'");
             _editing = null;
             NameInput.Text = "";
             ErrorText.Text = "Removed.";

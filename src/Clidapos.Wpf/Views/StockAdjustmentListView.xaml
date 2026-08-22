@@ -1,7 +1,7 @@
 <Window x:Class="Clidapos.Wpf.Views.StockAdjustmentListView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Clidapos - Stock Adjustment History"
+        Title="Clidapos - Pick a Product to Adjust"
         WindowStyle="None"
         WindowState="Maximized"
         ResizeMode="NoResize"
@@ -43,7 +43,7 @@
 
         <Border Grid.Row="0" Background="#1E1E24">
             <Grid>
-                <TextBlock Text="STOCK ADJUSTMENT HISTORY" Foreground="#F3A123" FontSize="16"
+                <TextBlock Text="PICK A PRODUCT TO ADJUST" Foreground="#F3A123" FontSize="16"
                            FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="0,0,15,0">
@@ -136,26 +136,26 @@
 
             <TextBox x:Name="SearchBox" Grid.Row="0" Style="{StaticResource SearchInput}"
                      Margin="0,0,0,8" TextChanged="SearchBox_TextChanged"
-                     Tag="Search by product or warehouse..."/>
+                     Tag="Search by product name, code, or category..."/>
 
-            <TextBlock Grid.Row="1" Text="Every stock adjustment ever made, newest first."
+            <TextBlock Grid.Row="1" Text="Click a product to adjust its stock."
                        Foreground="#999999" FontSize="12" Margin="2,0,0,12"/>
 
             <Border Grid.Row="2" Background="#1A1A1F" CornerRadius="8" Padding="16">
-                <DataGrid x:Name="AdjustmentGrid" AutoGenerateColumns="False"
+                <DataGrid x:Name="StockGrid" AutoGenerateColumns="False"
                           Background="#1A1A1F" Foreground="White" BorderThickness="0"
                           RowBackground="#1A1A1F" AlternatingRowBackground="#22222A"
                           HeadersVisibility="Column" GridLinesVisibility="None"
                           RowHeaderWidth="0"
                           ColumnHeaderStyle="{StaticResource GridHeader}"
-                          IsReadOnly="True" SelectionMode="Single">
+                          IsReadOnly="True" SelectionMode="Single"
+                          MouseDoubleClick="StockGrid_MouseDoubleClick">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat='dd MMM yyyy, hh:mm tt'}" Width="170"/>
                         <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
-                        <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="160"/>
-                        <DataGridTextColumn Header="Type" Binding="{Binding AdjustmentType}" Width="100"/>
-                        <DataGridTextColumn Header="Qty" Binding="{Binding Qty, StringFormat=N2}" Width="90"/>
-                        <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="220"/>
+                        <DataGridTextColumn Header="Code" Binding="{Binding ProductCode}" Width="120"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="150"/>
+                        <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="180"/>
+                        <DataGridTextColumn Header="Qty On Hand" Binding="{Binding Qty, StringFormat=N2}" Width="140"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>

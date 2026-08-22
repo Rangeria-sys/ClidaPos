@@ -8,11 +8,13 @@ namespace Clidapos.Wpf.Services
 {
     public class StockLevelRow
     {
+        public int ProductID { get; set; }
         public string ProductName { get; set; } = "";
         public string ProductCode { get; set; } = "";
         public string Category { get; set; } = "";
         public string Warehouse { get; set; } = "";
         public decimal Qty { get; set; }
+        public decimal Price { get; set; }
     }
 
     public class StockLevelsService
@@ -34,11 +36,13 @@ namespace Clidapos.Wpf.Services
                 .Where(s => productLookup.ContainsKey(s.ProductID))
                 .Select(s => new StockLevelRow
                 {
+                    ProductID = s.ProductID,
                     ProductName = productLookup[s.ProductID].ProductName.Trim(),
                     ProductCode = productLookup[s.ProductID].ProductCode.Trim(),
                     Category = productLookup[s.ProductID].Category?.Trim() ?? "",
                     Warehouse = s.Warehouse.Trim(),
-                    Qty = s.Qty
+                    Qty = s.Qty,
+                    Price = productLookup[s.ProductID].Price
                 })
                 .OrderBy(r => r.ProductName)
                 .ThenBy(r => r.Warehouse)

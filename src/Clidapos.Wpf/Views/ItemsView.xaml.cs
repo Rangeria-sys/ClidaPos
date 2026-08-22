@@ -12,6 +12,7 @@ namespace Clidapos.Wpf.Views
         private readonly PurchaseService _purchaseService = new();
         private readonly UnitService _unitService = new();
         private readonly CategoryService _categoryService = new();
+        private readonly LogService _logService = new();
         private Product? _editingProduct;
 
         public ItemsView(Registration currentUser, Product? productToEdit = null)
@@ -128,6 +129,7 @@ namespace Clidapos.Wpf.Views
                 await _categoryService.EnsureExistsAsync(CategoryInput.Text.Trim());
 
                 int productId;
+                var wasNew = _editingProduct == null;
 
                 if (_editingProduct == null)
                 {
@@ -177,6 +179,10 @@ namespace Clidapos.Wpf.Views
 
                 await LoadUnits();
                 await LoadCategories();
+
+                await _logService.LogAsync(CurrentSession.UserId,
+                    (wasNew ? "Added Item '" : "Updated Item '") + NameInput.Text.Trim() + "'");
+
                 MessageBox.Show("Saved successfully.", "Clidapos");
                 NewItem_Click(sender, e);
             }
@@ -200,7 +206,9 @@ namespace Clidapos.Wpf.Views
 
             if (confirm == MessageBoxResult.Yes)
             {
+                var deletedName = _editingProduct.ProductName.Trim();
                 await _productService.DeleteAsync(_editingProduct.PID);
+                await _logService.LogAsync(CurrentSession.UserId, $"Deleted Item '{deletedName}'");
                 MessageBox.Show("Deleted.", "Clidapos");
                 NewItem_Click(sender, e);
             }

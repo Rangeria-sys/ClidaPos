@@ -10,6 +10,7 @@ namespace Clidapos.Wpf.Views
         private readonly Registration _currentUser;
         private readonly ReportService _reportService = new();
         private readonly ShiftService _shiftService = new();
+        private readonly LogService _logService = new();
         private readonly int _periodId;
 
         public DayEndView(Registration currentUser, int periodId)
@@ -80,6 +81,7 @@ namespace Clidapos.Wpf.Views
 
             if (closed)
             {
+                await _logService.LogAsync(CurrentSession.UserId, "Ended Work Period");
                 MessageBox.Show("Period closed.", "Clidapos");
                 await LoadSummary();
             }

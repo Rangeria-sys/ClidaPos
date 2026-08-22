@@ -9,6 +9,7 @@ namespace Clidapos.Wpf.Views
     {
         private readonly WarehouseService _warehouseService = new();
         private readonly WarehouseTypeService _warehouseTypeService = new();
+        private readonly LogService _logService = new();
         private string? _editingOriginalName;
 
         public WarehousePopup(Warehouse? editWarehouse = null)
@@ -72,6 +73,7 @@ namespace Clidapos.Wpf.Views
                 };
 
                 await _warehouseService.AddAsync(warehouse);
+                await _logService.LogAsync(CurrentSession.UserId, $"Added Warehouse '{name}'");
                 _editingOriginalName = null;
                 NameInput.Text = "";
                 AddressInput.Text = "";
@@ -117,6 +119,7 @@ namespace Clidapos.Wpf.Views
                 };
 
                 await _warehouseService.UpdateAsync(_editingOriginalName, warehouse);
+                await _logService.LogAsync(CurrentSession.UserId, $"Updated Warehouse '{name}'");
                 _editingOriginalName = name;
                 await LoadTypes();
                 ErrorText.Text = "Updated.";
@@ -139,7 +142,9 @@ namespace Clidapos.Wpf.Views
                 MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
+            var deletedName = _editingOriginalName;
             await _warehouseService.RemoveAsync(_editingOriginalName);
+            await _logService.LogAsync(CurrentSession.UserId, $"Deleted Warehouse '{deletedName}'");
             _editingOriginalName = null;
             NameInput.Text = "";
             AddressInput.Text = "";

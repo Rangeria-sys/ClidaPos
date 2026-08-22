@@ -25,6 +25,13 @@ namespace Clidapos.Wpf.Data
         public DbSet<DeletedInvoiceJoin> DeletedInvoiceJoins => Set<DeletedInvoiceJoin>();
         public DbSet<ExpenseType> ExpenseTypes => Set<ExpenseType>();
         public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
+        public DbSet<Expense> Expenses => Set<Expense>();
+        public DbSet<LogEntry> Logs => Set<LogEntry>();
+        public DbSet<Hotel> Hotels => Set<Hotel>();
+        public DbSet<EmployeeRegistration> EmployeeRegistrations => Set<EmployeeRegistration>();
+        public DbSet<SupplierLedgerEntry> SupplierLedgerEntries => Set<SupplierLedgerEntry>();
+        public DbSet<Customer> Customers => Set<Customer>();
+        public DbSet<CustomerLedgerEntry> CustomerLedgerEntries => Set<CustomerLedgerEntry>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -47,7 +54,14 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.UserType).HasColumnType("nchar(30)");
                 b.Property(x => x.Password).HasColumnType("nchar(50)");
                 b.Property(x => x.Name).HasColumnType("nchar(150)");
+                b.Property(x => x.JoiningDate).HasColumnType("datetime");
                 b.Property(x => x.Active).HasColumnType("nchar(10)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(50)");
+                b.Property(x => x.EmailID).HasColumnType("nchar(150)");
+                b.Property(x => x.SSN).HasColumnType("nchar(50)");
+                b.Property(x => x.PayrollType).HasColumnType("nchar(30)");
+                b.Property(x => x.CardNo).HasColumnType("nchar(50)");
+                b.Property(x => x.AutoLogout).HasColumnType("nchar(10)");
             });
 
             modelBuilder.Entity<WorkPeriodStart>(b =>
@@ -62,7 +76,6 @@ namespace Clidapos.Wpf.Data
             {
                 b.ToTable("WorkPeriodEnd", "dbo");
                 b.HasKey(x => x.Id);
-                // Id is NOT an identity column - it mirrors WorkPeriodStart.ID.
                 b.Property(x => x.Id).ValueGeneratedNever();
                 b.Property(x => x.WPEnd).HasColumnType("datetime");
             });
@@ -242,11 +255,106 @@ namespace Clidapos.Wpf.Data
             {
                 b.ToTable("StockAdjustment_Warehouse", "dbo");
                 b.HasKey(x => x.SA_ID);
-                b.Property(x => x.Date).HasColumnType("datetime");
                 b.Property(x => x.Warehouse).HasColumnType("nchar(250)");
                 b.Property(x => x.AdjustmentType).HasColumnType("nchar(20)");
                 b.Property(x => x.Qty).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Reason).HasColumnType("nchar(200)");
+            });
+
+            // ---------- EXPENSE (master list of named expense items) ----------
+            modelBuilder.Entity<Expense>(b =>
+            {
+                b.ToTable("Expense", "dbo");
+                b.HasKey(x => x.ExpenseName);
+                b.Property(x => x.ExpenseName).HasColumnType("nvarchar(250)");
+                b.Property(x => x.ExpenseType).HasColumnType("nchar(200)");
+            });
+
+            // ---------- SYSTEM LOGS ----------
+            modelBuilder.Entity<LogEntry>(b =>
+            {
+                b.ToTable("Logs", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.UserID).HasColumnType("nchar(100)");
+                b.Property(x => x.Operation).HasColumnType("nvarchar(250)");
+                b.Property(x => x.Date).HasColumnType("datetime");
+            });
+
+            // ---------- HOTEL (business profile - singleton, one row) ----------
+            // Id IS a real IDENTITY column in the database, confirmed by an actual
+            // insert error - the DB assigns it, we never set it in code.
+            modelBuilder.Entity<Hotel>(b =>
+            {
+                b.ToTable("Hotel", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.HotelName).HasColumnType("nchar(150)");
+                b.Property(x => x.AddressLine1).HasColumnType("nvarchar(250)");
+                b.Property(x => x.AddressLine2).HasColumnType("nvarchar(250)");
+                b.Property(x => x.AddressLine3).HasColumnType("nvarchar(250)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(100)");
+                b.Property(x => x.EmailID).HasColumnType("nchar(150)");
+                b.Property(x => x.TIN).HasColumnType("nchar(30)");
+                b.Property(x => x.STNo).HasColumnType("nchar(30)");
+                b.Property(x => x.CIN).HasColumnType("nchar(30)");
+                b.Property(x => x.BaseCurrency).HasColumnType("nchar(200)");
+                b.Property(x => x.CurrencyCode).HasColumnType("nchar(10)");
+                b.Property(x => x.TicketFooterMessage).HasColumnType("nvarchar(250)");
+                b.Property(x => x.ShowLogo).HasColumnType("nchar(20)");
+                b.Property(x => x.CapitalAccount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Logo).HasColumnType("image");
+            });
+
+            // ---------- EMPLOYEE REGISTRATION (real HR/personal details) ----------
+            modelBuilder.Entity<EmployeeRegistration>(b =>
+            {
+                b.ToTable("EmployeeRegistration", "dbo");
+                b.HasKey(x => x.EmpId);
+                b.Property(x => x.EmployeeID).HasColumnType("nchar(15)");
+                b.Property(x => x.EmployeeName).HasColumnType("nchar(150)");
+                b.Property(x => x.Address).HasColumnType("nvarchar(250)");
+                b.Property(x => x.City).HasColumnType("nchar(150)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(30)");
+                b.Property(x => x.Email).HasColumnType("nchar(150)");
+                b.Property(x => x.DateOfJoining).HasColumnType("datetime");
+                b.Property(x => x.Active).HasColumnType("nchar(20)");
+            });
+
+            // ---------- SUPPLIER LEDGER (linked to real Supplier via SupplierID) ----------
+            modelBuilder.Entity<SupplierLedgerEntry>(b =>
+            {
+                b.ToTable("SupplierLedgerBook", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.Name).HasColumnType("nchar(200)");
+                b.Property(x => x.LedgerNo).HasColumnType("nchar(50)");
+                b.Property(x => x.Label).HasColumnType("nchar(200)");
+                b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PartyID).HasColumnType("nchar(20)");
+            });
+
+            // ---------- CUSTOMER (real customer master) ----------
+            modelBuilder.Entity<Customer>(b =>
+            {
+                b.ToTable("Customer", "dbo");
+                b.HasKey(x => x.ID);
+                b.Property(x => x.ID).ValueGeneratedNever();
+                b.Property(x => x.CustomerID).HasColumnType("nchar(30)");
+                b.Property(x => x.Name).HasColumnType("nchar(200)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(50)");
+                b.Property(x => x.Email).HasColumnType("nchar(150)");
+            });
+
+            // ---------- CUSTOMER LEDGER (linked to real Customer via int CreditCustomer_ID) ----------
+            modelBuilder.Entity<CustomerLedgerEntry>(b =>
+            {
+                b.ToTable("CreditCustomerLedger", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.LedgerNo).HasColumnType("nchar(50)");
+                b.Property(x => x.Label).HasColumnType("nchar(200)");
+                b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
             });
         }
     }

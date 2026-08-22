@@ -7,6 +7,7 @@ namespace Clidapos.Wpf.Views
     public partial class ItemCategoryPopup : Window
     {
         private readonly CategoryService _categoryService = new();
+        private readonly LogService _logService = new();
         private string? _editing;
 
         public ItemCategoryPopup(string? editName = null)
@@ -38,6 +39,7 @@ namespace Clidapos.Wpf.Views
             }
 
             await _categoryService.EnsureExistsAsync(name);
+            await _logService.LogAsync(CurrentSession.UserId, $"Added Item Category '{name}'");
             _editing = null;
             NameInput.Text = "";
             ErrorText.Text = "Saved.";
@@ -60,7 +62,9 @@ namespace Clidapos.Wpf.Views
 
             try
             {
+                var oldName = _editing;
                 await _categoryService.RenameAsync(_editing, newName);
+                await _logService.LogAsync(CurrentSession.UserId, $"Renamed Item Category '{oldName}' to '{newName}'");
                 _editing = null;
                 ErrorText.Text = "Updated.";
             }
@@ -82,7 +86,9 @@ namespace Clidapos.Wpf.Views
                 MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
+            var deletedName = _editing;
             await _categoryService.RemoveAsync(_editing);
+            await _logService.LogAsync(CurrentSession.UserId, $"Deleted Item Category '{deletedName}'");
             _editing = null;
             NameInput.Text = "";
             ErrorText.Text = "Removed.";
