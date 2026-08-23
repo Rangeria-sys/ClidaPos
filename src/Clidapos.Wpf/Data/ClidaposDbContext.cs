@@ -32,6 +32,19 @@ namespace Clidapos.Wpf.Data
         public DbSet<SupplierLedgerEntry> SupplierLedgerEntries => Set<SupplierLedgerEntry>();
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<CustomerLedgerEntry> CustomerLedgerEntries => Set<CustomerLedgerEntry>();
+        public DbSet<PayrollRun> PayrollRuns => Set<PayrollRun>();
+        public DbSet<Bank> Banks => Set<Bank>();
+        public DbSet<BankBranch> BankBranches => Set<BankBranch>();
+        public DbSet<BankAccountRegistration> BankAccountRegistrations => Set<BankAccountRegistration>();
+        public DbSet<BankAccountLedger> BankAccountLedgers => Set<BankAccountLedger>();
+        public DbSet<LoyaltyMember> LoyaltyMembers => Set<LoyaltyMember>();
+        public DbSet<LoyaltyMemberLedgerBook> LoyaltyMemberLedgerBooks => Set<LoyaltyMemberLedgerBook>();
+        public DbSet<LoyaltySetting> LoyaltySettings => Set<LoyaltySetting>();
+        public DbSet<Voucher> Vouchers => Set<Voucher>();
+        public DbSet<VoucherOtherDetail> VoucherOtherDetails => Set<VoucherOtherDetail>();
+        public DbSet<Promotion> Promotions => Set<Promotion>();
+        public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
+        public DbSet<LedgerBookEntry> LedgerBookEntries => Set<LedgerBookEntry>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -281,8 +294,6 @@ namespace Clidapos.Wpf.Data
             });
 
             // ---------- HOTEL (business profile - singleton, one row) ----------
-            // Id IS a real IDENTITY column in the database, confirmed by an actual
-            // insert error - the DB assigns it, we never set it in code.
             modelBuilder.Entity<Hotel>(b =>
             {
                 b.ToTable("Hotel", "dbo");
@@ -317,6 +328,7 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Email).HasColumnType("nchar(150)");
                 b.Property(x => x.DateOfJoining).HasColumnType("datetime");
                 b.Property(x => x.Active).HasColumnType("nchar(20)");
+                b.Property(x => x.Photo).HasColumnType("image");
             });
 
             // ---------- SUPPLIER LEDGER (linked to real Supplier via SupplierID) ----------
@@ -355,6 +367,165 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Label).HasColumnType("nchar(200)");
                 b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
+            });
+
+            // ---------- PAYROLL RUN (real, Kenya-appropriate, linked to EmployeeRegistration) ----------
+            modelBuilder.Entity<PayrollRun>(b =>
+            {
+                b.ToTable("PayrollRun", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.PaymentDate).HasColumnType("datetime");
+                b.Property(x => x.PayMonth).HasColumnType("nchar(20)");
+                b.Property(x => x.GrossSalary).HasColumnType("decimal(18,2)");
+                b.Property(x => x.NSSFPer).HasColumnType("decimal(18,4)");
+                b.Property(x => x.NSSF).HasColumnType("decimal(18,2)");
+                b.Property(x => x.SHAPer).HasColumnType("decimal(18,4)");
+                b.Property(x => x.SHA).HasColumnType("decimal(18,2)");
+                b.Property(x => x.HousingLevyPer).HasColumnType("decimal(18,4)");
+                b.Property(x => x.HousingLevy).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PAYEPer).HasColumnType("decimal(18,4)");
+                b.Property(x => x.PAYE).HasColumnType("decimal(18,2)");
+                b.Property(x => x.NetPay).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PaymentMode).HasColumnType("nchar(50)");
+                b.Property(x => x.Remarks).HasColumnType("nchar(250)");
+            });
+
+            // ---------- FINANCE & BANKING (real, linked Bank -> Branch -> Account -> Ledger) ----------
+            modelBuilder.Entity<Bank>(b =>
+            {
+                b.ToTable("Bank", "dbo");
+                b.HasKey(x => x.BankName);
+                b.Property(x => x.BankName).HasColumnType("nvarchar(250)");
+            });
+
+            modelBuilder.Entity<BankBranch>(b =>
+            {
+                b.ToTable("BankBranch", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.BranchName).HasColumnType("nvarchar(250)");
+                b.Property(x => x.Address).HasColumnType("nvarchar(250)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(100)");
+                b.Property(x => x.SwiftCode).HasColumnType("nchar(50)");
+                b.Property(x => x.IFSCCode).HasColumnType("nchar(50)");
+                b.Property(x => x.BankName).HasColumnType("nvarchar(250)");
+            });
+
+            modelBuilder.Entity<BankAccountRegistration>(b =>
+            {
+                b.ToTable("BankAccountRegistration", "dbo");
+                b.HasKey(x => x.AccountNo);
+                b.Property(x => x.AccountNo).HasColumnType("nchar(50)");
+                b.Property(x => x.AccountName).HasColumnType("nchar(200)");
+                b.Property(x => x.AccountType).HasColumnType("nchar(100)");
+                b.Property(x => x.OpeningDate).HasColumnType("datetime");
+                b.Property(x => x.BalanceAmount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Active).HasColumnType("nchar(10)");
+            });
+
+            modelBuilder.Entity<BankAccountLedger>(b =>
+            {
+                b.ToTable("BankAccountLedger", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.AccNo).HasColumnType("nchar(50)");
+                b.Property(x => x.LedgerNo).HasColumnType("nchar(200)");
+                b.Property(x => x.Label).HasColumnType("nchar(200)");
+                b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
+            });
+
+            // ---------- LOYALTY & MEMBERSHIP (real points-based program) ----------
+            modelBuilder.Entity<LoyaltyMember>(b =>
+            {
+                b.ToTable("LoyaltyMember", "dbo");
+                b.HasKey(x => x.MemberID);
+                b.Property(x => x.MemberID).ValueGeneratedNever();
+                b.Property(x => x.Name).HasColumnType("nchar(200)");
+                b.Property(x => x.CardNo).HasColumnType("nchar(50)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(50)");
+                b.Property(x => x.Address).HasColumnType("nvarchar(max)");
+                b.Property(x => x.RegistrationDate).HasColumnType("datetime");
+                b.Property(x => x.Active).HasColumnType("nchar(10)");
+            });
+
+            modelBuilder.Entity<LoyaltyMemberLedgerBook>(b =>
+            {
+                b.ToTable("LoyaltyMemberLedgerBook", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.LedgerNo).HasColumnType("nchar(50)");
+                b.Property(x => x.Label).HasColumnType("nchar(200)");
+                b.Property(x => x.PointsEarned).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PointsRedeem).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<LoyaltySetting>(b =>
+            {
+                b.ToTable("LoyaltySetting", "dbo");
+                b.HasKey(x => x.LoyaltyName);
+                b.Property(x => x.LoyaltyName).HasColumnType("nchar(150)");
+                b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Points).HasColumnType("decimal(18,2)");
+            });
+
+            // ---------- VOUCHERS & PROMOTIONS ----------
+            modelBuilder.Entity<Voucher>(b =>
+            {
+                b.ToTable("Voucher", "dbo");
+                b.HasKey(x => x.ID);
+                b.Property(x => x.VoucherNo).HasColumnType("nchar(30)");
+                b.Property(x => x.Name).HasColumnType("nchar(150)");
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.Details).HasColumnType("nvarchar(max)");
+                b.Property(x => x.PaymentMode).HasColumnType("nchar(150)");
+                b.Property(x => x.GrandTotal).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<VoucherOtherDetail>(b =>
+            {
+                b.ToTable("Voucher_OtherDetails", "dbo");
+                b.HasKey(x => x.VD_ID);
+                b.Property(x => x.Particulars).HasColumnType("nvarchar(250)");
+                b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Note).HasColumnType("nvarchar(max)");
+            });
+
+            modelBuilder.Entity<Promotion>(b =>
+            {
+                b.ToTable("Promotion", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Dish).HasColumnType("nvarchar(250)");
+                b.Property(x => x.Rate).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PDay).HasColumnType("nchar(30)");
+                b.Property(x => x.TimeFrom).HasColumnType("datetime");
+                b.Property(x => x.TimeTo).HasColumnType("datetime");
+                b.Property(x => x.Active).HasColumnType("nchar(10)");
+            });
+
+            // ---------- ACCOUNTING: manual double-entry Journal + LedgerBook ----------
+            modelBuilder.Entity<JournalEntry>(b =>
+            {
+                b.ToTable("Journal", "dbo");
+                b.HasKey(x => x.ID);
+                b.Property(x => x.DebitAccount).HasColumnType("nchar(200)");
+                b.Property(x => x.CreditAccount).HasColumnType("nchar(200)");
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.Amount).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Remarks).HasColumnType("nvarchar(max)");
+            });
+
+            modelBuilder.Entity<LedgerBookEntry>(b =>
+            {
+                b.ToTable("LedgerBook", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Date).HasColumnType("datetime");
+                b.Property(x => x.Name).HasColumnType("nchar(200)");
+                b.Property(x => x.LedgerNo).HasColumnType("nchar(200)");
+                b.Property(x => x.Label).HasColumnType("nchar(200)");
+                b.Property(x => x.AccLedger).HasColumnType("nchar(200)");
+                b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
+                b.Property(x => x.PartyID).HasColumnType("nchar(50)");
             });
         }
     }

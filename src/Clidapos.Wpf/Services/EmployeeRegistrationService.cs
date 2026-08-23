@@ -25,6 +25,11 @@ namespace Clidapos.Wpf.Services
         public async Task AddAsync(EmployeeRegistration employee)
         {
             using var db = new ClidaposDbContext();
+
+            // Photo is NOT NULL in the real database - an empty placeholder satisfies
+            // that constraint until a real photo-upload feature is built.
+            employee.Photo ??= System.Array.Empty<byte>();
+
             db.Set<EmployeeRegistration>().Add(employee);
             await db.SaveChangesAsync();
         }

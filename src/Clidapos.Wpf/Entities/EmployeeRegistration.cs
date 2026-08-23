@@ -4,8 +4,8 @@ namespace Clidapos.Wpf.Entities
 {
     /// <summary>
     /// Maps to the EmployeeRegistration table - real HR/personal details for staff.
-    /// Photo (binary image) is deliberately left out - same reasoning as Hotel.Logo,
-    /// a real upload UI is a separate task, not a text field.
+    /// Photo is NOT NULL in the real database - a real upload UI is a separate task,
+    /// so the service inserts an empty placeholder for now rather than a real photo.
     /// </summary>
     public class EmployeeRegistration
     {
@@ -18,5 +18,6 @@ namespace Clidapos.Wpf.Entities
         public string Email { get; set; } = "";
         public DateTime DateOfJoining { get; set; }
         public string? Active { get; set; }
+        public byte[]? Photo { get; set; }
     }
 }

@@ -186,16 +186,65 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            if (tag == "HR")
+            {
+                var payrollView = new PayrollListView(_currentUser);
+                payrollView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "Finance")
+            {
+                var bankLedgerView = new BankLedgerListView(_currentUser);
+                bankLedgerView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "Loyalty")
+            {
+                var loyaltyView = new LoyaltyLedgerListView(_currentUser);
+                loyaltyView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "Vouchers")
+            {
+                var voucherHubView = new VoucherHubView(_currentUser);
+                voucherHubView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "AccountingReports")
+            {
+                var accountingReportView = new AccountingReportView(_currentUser);
+                accountingReportView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "ExpenseReports")
+            {
+                var expenseReportView = new ExpenseReportView(_currentUser);
+                expenseReportView.Show();
+                Close();
+                return;
+            }
+
+            if (tag == "Expenses")
+            {
+                var expenseLogView = new ExpenseLogListView(_currentUser);
+                expenseLogView.Show();
+                Close();
+                return;
+            }
+
             var sectionName = tag switch
             {
                 "StockTransfer" => "Stock Transfer",
-                "HR" => "HR & Payroll",
-                "Expenses" => "Expense Log",
-                "Finance" => "Finance & Banking",
-                "Loyalty" => "Loyalty & Membership",
-                "Vouchers" => "Vouchers & Promotions",
-                "ExpenseReports" => "Expense Reports",
-                "AccountingReports" => "Accounting Reports",
                 _ => "Unknown section"
             };
 

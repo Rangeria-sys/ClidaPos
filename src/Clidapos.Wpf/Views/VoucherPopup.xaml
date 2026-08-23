@@ -1,0 +1,150 @@
+<Window x:Class="Clidapos.Wpf.Views.VoucherPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Payment Voucher"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Width="560" SizeToContent="Height"
+        Background="Transparent"
+        AllowsTransparency="True"
+        ShowInTaskbar="False">
+
+    <Window.Resources>
+        <Style x:Key="PopupInput" TargetType="TextBox">
+            <Setter Property="Background" Value="#F5F5F7"/>
+            <Setter Property="Foreground" Value="#1C1C1F"/>
+            <Setter Property="BorderBrush" Value="#D8D8DE"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="PopupCombo" TargetType="ComboBox">
+            <Setter Property="Background" Value="#F5F5F7"/>
+            <Setter Property="Foreground" Value="#1C1C1F"/>
+            <Setter Property="BorderBrush" Value="#D8D8DE"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="IsEditable" Value="True"/>
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#6B6B72"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,0,0,3"/>
+        </Style>
+
+        <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F0F0F2"/>
+            <Setter Property="Foreground" Value="#4A4A50"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderBrush" Value="#D8D8DE"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
+        </Border.Effect>
+        <StackPanel Margin="24">
+
+            <Grid Margin="0,0,0,16">
+                <TextBlock Text="PAYMENT VOUCHER" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
+                        Width="30" Height="30" Background="Transparent" Foreground="#888888"
+                        FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Paid To" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="NameInput" Style="{StaticResource PopupInput}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Payment Mode" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="PaymentModeInput" Style="{StaticResource PopupCombo}">
+                        <ComboBoxItem Content="Cash"/>
+                        <ComboBoxItem Content="M-Pesa"/>
+                        <ComboBoxItem Content="Bank Transfer"/>
+                        <ComboBoxItem Content="Cheque"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="Details / Reason" Style="{StaticResource FieldLabel}"/>
+            <TextBox x:Name="DetailsInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+
+            <TextBlock Text="LINE ITEMS" Foreground="#8A8A92" FontSize="11" FontWeight="Bold" Margin="0,0,0,8"/>
+
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="ParticularsInput" Style="{StaticResource PopupInput}" Tag="Particulars"/>
+                <TextBox Grid.Column="2" x:Name="AmountInput" Style="{StaticResource PopupInput}" Tag="Amount"/>
+                <Button Grid.Column="4" Content="Add" Click="AddLine_Click"
+                        Style="{StaticResource ActionBtn}" Background="#6B6B72"/>
+            </Grid>
+
+            <Border Background="#FAFAFB" BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,10">
+                <DataGrid x:Name="LinesGrid" AutoGenerateColumns="False" Height="140"
+                          Background="Transparent" BorderThickness="0"
+                          RowBackground="Transparent" AlternatingRowBackground="#F5F5F7"
+                          HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
+                          ColumnHeaderStyle="{StaticResource GridHeader}"
+                          IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
+                          FontSize="12" Foreground="#1C1C1F">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Particulars" Binding="{Binding Particulars}" Width="*"/>
+                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=N2}" Width="120"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <Border Background="#FAFAFB" BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,14">
+                <Grid>
+                    <TextBlock Text="GRAND TOTAL" Foreground="#8A8A92" FontSize="12" FontWeight="Bold"/>
+                    <TextBlock x:Name="GrandTotalText" Text="0.00" FontSize="22" FontWeight="Bold"
+                               Foreground="#1C1C1F" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+
+            <Button Content="💾  Save Voucher" Click="SaveVoucher_Click"
+                    Style="{StaticResource ActionBtn}" Height="48" Background="#F3A123" FontSize="14"/>
+
+            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
+                       Margin="0,12,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+    </Border>
+</Window>
