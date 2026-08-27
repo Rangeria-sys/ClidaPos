@@ -321,8 +321,23 @@ namespace Clidapos.Wpf.Views
             var mode = SelectedPaymentMode();
             decimal.TryParse(AmountReceivedInput.Text, out var received);
 
-            if (mode != "Cash")
+            if (mode == "M-Pesa")
+            {
+                var mpesaPopup = new MpesaPaymentPopup(GrandTotal, "Counter Sale", "Sale payment") { Owner = this };
+                var completed = mpesaPopup.ShowDialog() == true;
+
+                if (!completed || mpesaPopup.PaymentResult == null)
+                {
+                    ErrorText.Text = "M-Pesa payment was not completed. Sale not saved.";
+                    return;
+                }
+
                 received = GrandTotal;
+            }
+            else if (mode != "Cash")
+            {
+                received = GrandTotal;
+            }
 
             PayButton.IsEnabled = false;
 

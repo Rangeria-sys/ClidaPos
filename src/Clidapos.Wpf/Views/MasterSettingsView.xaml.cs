@@ -26,19 +26,61 @@ namespace Clidapos.Wpf.Views
         {
             var tag = ((Button)sender).Tag?.ToString() ?? "";
 
+            if (tag == "MpesaApi")
+            {
+                var mpesaPopup = new MpesaSettingPopup { Owner = this };
+                mpesaPopup.Show();
+                return;
+            }
+
+            if (tag == "Email")
+            {
+                var emailListView = new EmailSettingListView { Owner = this };
+                emailListView.Show();
+                return;
+            }
+
+            if (tag == "SMS")
+            {
+                var smsListView = new SMSSettingListView { Owner = this };
+                smsListView.Show();
+                return;
+            }
+
+            if (tag == "Wallet")
+            {
+                var walletTypeListView = new WalletTypeListView { Owner = this };
+                walletTypeListView.Show();
+                return;
+            }
+
+            if (tag == "Terminal")
+            {
+                var terminalPopup = new TerminalSettingPopup { Owner = this };
+                terminalPopup.Show();
+                return;
+            }
+
+            if (tag == "LicenseActivation")
+            {
+                var licensePopup = new LicenseSettingPopup { Owner = this };
+                licensePopup.Show();
+                return;
+            }
+
+            if (tag == "WorkPeriod")
+            {
+                var workPeriodPopup = new WorkPeriodSettingPopup { Owner = this };
+                workPeriodPopup.Show();
+                return;
+            }
+
             var sectionName = tag switch
             {
-                "Terminal" => "Terminal Setting",
-                "Email" => "Email Setting",
-                "SMS" => "SMS Setting",
                 "EStoreAccess" => "eStore Access",
                 "MenuLayout" => "Menu Layout",
                 "TableSetting" => "Table Setting",
-                "Wallet" => "Wallet",
-                "MpesaApi" => "M-Pesa API Setting",
                 "ExecuteQuery" => "Execute Query",
-                "LicenseActivation" => "License Activation",
-                "WorkPeriod" => "Work Period",
                 _ => "Unknown section"
             };
 

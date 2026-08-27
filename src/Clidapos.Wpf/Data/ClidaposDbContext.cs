@@ -45,6 +45,13 @@ namespace Clidapos.Wpf.Data
         public DbSet<Promotion> Promotions => Set<Promotion>();
         public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
         public DbSet<LedgerBookEntry> LedgerBookEntries => Set<LedgerBookEntry>();
+        public DbSet<MpesaSetting> MpesaSettings => Set<MpesaSetting>();
+        public DbSet<EmailSetting> EmailSettings => Set<EmailSetting>();
+        public DbSet<SMSSetting> SMSSettings => Set<SMSSetting>();
+        public DbSet<WalletType> WalletTypes => Set<WalletType>();
+        public DbSet<TerminalSetting> TerminalSettings => Set<TerminalSetting>();
+        public DbSet<LicenseSetting> LicenseSettings => Set<LicenseSetting>();
+        public DbSet<WorkPeriodSetting> WorkPeriodSettings => Set<WorkPeriodSetting>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -526,6 +533,88 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
                 b.Property(x => x.PartyID).HasColumnType("nchar(50)");
+            });
+
+            // ---------- MASTER SETTINGS: integration configs (each a singleton) ----------
+            // MpesaSetting's real columns are generic (Id, C1..C6) - no semantic names exist
+            // in the database. This mapping is a size-informed best guess: Shortcode/Environment
+            // are short (nchar 20), ConsumerKey/ConsumerSecret are medium (nchar 150), and
+            // AccountNumber/PassKey are the longest fields (nvarchar 250). Adjust the
+            // HasColumnName values below if the real intended order turns out to differ.
+            modelBuilder.Entity<MpesaSetting>(b =>
+            {
+                b.ToTable("MpesaSetting", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Shortcode).HasColumnName("C1").HasColumnType("nchar(20)");
+                b.Property(x => x.AccountNumber).HasColumnName("C2").HasColumnType("nvarchar(250)");
+                b.Property(x => x.ConsumerKey).HasColumnName("C3").HasColumnType("nchar(150)");
+                b.Property(x => x.ConsumerSecret).HasColumnName("C4").HasColumnType("nchar(150)");
+                b.Property(x => x.PassKey).HasColumnName("C5").HasColumnType("nvarchar(250)");
+                b.Property(x => x.Environment).HasColumnName("C6").HasColumnType("nchar(20)");
+            });
+
+            modelBuilder.Entity<EmailSetting>(b =>
+            {
+                b.ToTable("EmailSetting", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ServerName).HasColumnType("nchar(150)");
+                b.Property(x => x.SMTPAddress).HasColumnType("nvarchar(250)");
+                b.Property(x => x.Username).HasColumnType("nchar(200)");
+                b.Property(x => x.Password).HasColumnType("nchar(100)");
+                b.Property(x => x.Port).HasColumnType("int");
+                b.Property(x => x.TLS_SSL_Required).HasColumnType("nchar(10)");
+                b.Property(x => x.IsDefault).HasColumnType("nchar(10)");
+                b.Property(x => x.IsActive).HasColumnType("nchar(10)");
+            });
+
+            modelBuilder.Entity<SMSSetting>(b =>
+            {
+                b.ToTable("SMSSetting", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.APIURL).HasColumnType("nvarchar(max)");
+                b.Property(x => x.IsDefault).HasColumnType("nchar(10)");
+                b.Property(x => x.IsEnabled).HasColumnType("nchar(10)");
+            });
+
+            // ---------- WALLET (simple named type list, no balance tracking) ----------
+            modelBuilder.Entity<WalletType>(b =>
+            {
+                b.ToTable("Wallet", "dbo");
+                b.HasKey(x => x.Type);
+                b.Property(x => x.Type).HasColumnName("WalletType").HasColumnType("nchar(200)");
+            });
+
+            // ---------- TERMINAL & LICENSE (both real, newly created tables) ----------
+            modelBuilder.Entity<TerminalSetting>(b =>
+            {
+                b.ToTable("TerminalSetting", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.TerminalName).HasColumnType("nchar(100)");
+                b.Property(x => x.PrinterName).HasColumnType("nchar(200)");
+                b.Property(x => x.ReceiptPaperWidth).HasColumnType("nchar(20)");
+                b.Property(x => x.ScannerNotes).HasColumnType("nvarchar(250)");
+                b.Property(x => x.WifiNetworkName).HasColumnType("nchar(150)");
+            });
+
+            modelBuilder.Entity<LicenseSetting>(b =>
+            {
+                b.ToTable("LicenseSetting", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.LicenseKey).HasColumnType("nchar(100)");
+                b.Property(x => x.ActivatedDate).HasColumnType("datetime");
+                b.Property(x => x.IsActive).HasColumnType("nchar(10)");
+                b.Property(x => x.Notes).HasColumnType("nvarchar(250)");
+            });
+
+            // ---------- WORK PERIOD SETTING (real, newly created table) ----------
+            modelBuilder.Entity<WorkPeriodSetting>(b =>
+            {
+                b.ToTable("WorkPeriodSetting", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.DefaultStartTime).HasColumnType("nchar(10)");
+                b.Property(x => x.DefaultEndTime).HasColumnType("nchar(10)");
+                b.Property(x => x.AutoCloseEnabled).HasColumnType("nchar(10)");
+                b.Property(x => x.ReminderMinutesBeforeClose).HasColumnType("int");
             });
         }
     }

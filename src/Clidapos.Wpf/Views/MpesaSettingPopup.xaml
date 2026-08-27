@@ -1,15 +1,9 @@
-<Window x:Class="Clidapos.Wpf.Views.BillPaymentPopup"
+<Window x:Class="Clidapos.Wpf.Views.MpesaSettingPopup"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Record Bill Payment"
-        WindowStyle="None"
-        ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="460" SizeToContent="Height"
-        Background="Transparent"
-        AllowsTransparency="True"
-        ShowInTaskbar="False">
-
+        Title="M-Pesa API Settings" WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" Width="460" SizeToContent="Height"
+        Background="Transparent" AllowsTransparency="True" ShowInTaskbar="False">
     <Window.Resources>
         <Style x:Key="PopupInput" TargetType="TextBox">
             <Setter Property="Background" Value="#F5F5F7"/>
@@ -18,7 +12,6 @@
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
-
         <Style x:Key="PopupCombo" TargetType="ComboBox">
             <Setter Property="Background" Value="#F5F5F7"/>
             <Setter Property="Foreground" Value="#1C1C1F"/>
@@ -26,13 +19,11 @@
             <Setter Property="Padding" Value="8"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
-
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#6B6B72"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Margin" Value="0,0,0,3"/>
         </Style>
-
         <Style x:Key="ActionBtn" TargetType="Button">
             <Setter Property="Height" Value="48"/>
             <Setter Property="Foreground" Value="White"/>
@@ -51,26 +42,22 @@
             </Setter>
         </Style>
     </Window.Resources>
-
     <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
         <Border.Effect>
             <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
         </Border.Effect>
         <StackPanel Margin="24">
-
             <Grid Margin="0,0,0,16">
-                <TextBlock Text="RECORD BILL PAYMENT" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
-                        Width="30" Height="30" Background="Transparent" Foreground="#888888"
-                        FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                <TextBlock Text="M-PESA API SETTINGS" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right" Width="30" Height="30"
+                        Background="Transparent" Foreground="#888888" FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </Grid>
 
-            <TextBlock Text="Bill" Style="{StaticResource FieldLabel}"/>
-            <ComboBox x:Name="BillInput" Style="{StaticResource PopupCombo}"
-                      DisplayMemberPath="ExpenseName" Margin="0,0,0,12"/>
+            <TextBlock Text="Consumer Key" Style="{StaticResource FieldLabel}"/>
+            <TextBox x:Name="ConsumerKeyInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
 
-            <TextBlock Text="Paid To (e.g. supplier / provider name)" Style="{StaticResource FieldLabel}"/>
-            <TextBox x:Name="PaidToInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
+            <TextBlock Text="Consumer Secret" Style="{StaticResource FieldLabel}"/>
+            <TextBox x:Name="ConsumerSecretInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
 
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
@@ -79,29 +66,28 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Amount" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="AmountInput" Style="{StaticResource PopupInput}"/>
+                    <TextBlock Text="Shortcode (Till/Paybill)" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="ShortcodeInput" Style="{StaticResource PopupInput}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2">
-                    <TextBlock Text="Payment Mode" Style="{StaticResource FieldLabel}"/>
-                    <ComboBox x:Name="PaymentModeInput" Style="{StaticResource PopupCombo}">
-                        <ComboBoxItem Content="Cash"/>
-                        <ComboBoxItem Content="M-Pesa"/>
-                        <ComboBoxItem Content="Bank Transfer"/>
-                        <ComboBoxItem Content="Cheque"/>
+                    <TextBlock Text="Environment &amp; Account Type" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="EnvironmentInput" Style="{StaticResource PopupCombo}">
+                        <ComboBoxItem Content="Sandbox - Paybill"/>
+                        <ComboBoxItem Content="Sandbox - Till Number"/>
+                        <ComboBoxItem Content="Production - Paybill"/>
+                        <ComboBoxItem Content="Production - Till Number"/>
                     </ComboBox>
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="Notes" Style="{StaticResource FieldLabel}"/>
-            <TextBox x:Name="NotesInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+            <TextBlock Text="Pass Key" Style="{StaticResource FieldLabel}"/>
+            <TextBox x:Name="PassKeyInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
 
-            <Button Content="💾  Record Payment" Click="Save_Click"
-                    Style="{StaticResource ActionBtn}" Background="#F3A123"/>
+            <TextBlock Text="Account Number (shared bank Paybills only, e.g. KCB - leave blank for Till/Buy Goods)" Style="{StaticResource FieldLabel}"/>
+            <TextBox x:Name="AccountNumberInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
 
-            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,12,0,0" TextWrapping="Wrap"/>
+            <Button Content="💾  Save Settings" Click="Save_Click" Style="{StaticResource ActionBtn}" Background="#F3A123"/>
+            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12" Margin="0,12,0,0" TextWrapping="Wrap"/>
         </StackPanel>
     </Border>
 </Window>
-    
