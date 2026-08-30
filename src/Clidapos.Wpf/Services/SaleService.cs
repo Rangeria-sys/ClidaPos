@@ -80,9 +80,41 @@ namespace Clidapos.Wpf.Services
         }
 
         /// <summary>
+        /// Real stock check before a sale is allowed - sums each product's total
+        /// requested quantity across all cart lines (in case it appears more than
+        /// once) and compares it against what's actually on hand. Returns null when
+        /// everything is available, or a human-readable message listing every product
+        /// that's short.
+        /// </summary>
+        private static async Task<string?> ValidateStockAvailabilityAsync(ClidaposDbContext db, List<CartLine> lines)
+        {
+            var shortages = new List<string>();
+
+            var grouped = lines
+                .GroupBy(l => l.ProductId)
+                .Select(g => new { ProductId = g.Key, TotalQty = g.Sum(x => x.Quantity), Name = g.First().ProductName });
+
+            foreach (var item in grouped)
+            {
+                var available = await db.ProductOpeningStocks
+                    .Where(s => s.ProductID == item.ProductId)
+                    .SumAsync(s => (decimal?)s.Qty) ?? 0;
+
+                if (available < item.TotalQty)
+                    shortages.Add($"{item.Name}: only {available:N2} in stock, {item.TotalQty:N2} requested");
+            }
+
+            return shortages.Count == 0
+                ? null
+                : "Not enough stock for:\n" + string.Join("\n", shortages);
+        }
+
+        /// <summary>
         /// Writes the bill, its lines, and deducts stock - all inside one transaction,
         /// so a failure part-way through leaves nothing behind. discountPercent applies
-        /// to the whole sale (0-100), taken off the VAT-inclusive subtotal.
+        /// to the whole sale (0-100), taken off the VAT-inclusive subtotal. Stock is
+        /// verified as available before anything is written - a sale is rejected
+        /// outright rather than allowed to push quantity negative.
         /// </summary>
         public async Task<SaleResult> SaveSaleAsync(
             List<CartLine> lines,
@@ -122,6 +154,11 @@ namespace Clidapos.Wpf.Services
                 return new SaleResult { Ok = false, Error = "Amount received is less than the total due." };
 
             using var db = new ClidaposDbContext();
+
+            var stockError = await ValidateStockAvailabilityAsync(db, lines);
+            if (stockError != null)
+                return new SaleResult { Ok = false, Error = stockError };
+
             using var tx = await db.Database.BeginTransactionAsync();
 
             try
@@ -294,7 +331,13 @@ namespace Clidapos.Wpf.Services
             }
         }
 
-        /// <summary>Takes quantity off stock rows oldest-first; allows going negative rather than blocking a sale.</summary>
+        /// <summary>
+        /// Takes quantity off stock rows oldest-first. By the time this runs,
+        /// ValidateStockAvailabilityAsync has already confirmed enough stock exists,
+        /// so this should never need to go negative in normal operation - the
+        /// fallback below only guards against a rare race condition (e.g. two sales
+        /// of the same last item completing in the same instant).
+        /// </summary>
         private static async Task DeductStockAsync(ClidaposDbContext db, int productId, decimal qty)
         {
             var rows = await db.ProductOpeningStocks

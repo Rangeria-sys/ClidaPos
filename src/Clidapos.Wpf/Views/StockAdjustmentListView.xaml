@@ -43,13 +43,8 @@
 
         <Border Grid.Row="0" Background="#1E1E24">
             <Grid>
-                <TextBlock Text="PICK A PRODUCT TO ADJUST" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
-
-                    <Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="0,0,10,0" ToolTip="Back">
+                <Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
+                            Margin="15,0,0,0" HorizontalAlignment="Left" ToolTip="Back">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Grid>
@@ -71,7 +66,12 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
+                <TextBlock Text="PICK A PRODUCT TO ADJUST" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,15,0">
 
+                    
                     <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
                             ToolTip="Minimize">
                         <Button.Template>

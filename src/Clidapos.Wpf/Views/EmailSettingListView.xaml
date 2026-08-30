@@ -4,70 +4,73 @@
         Title="Email Servers" WindowStyle="None" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" Width="560" Height="480"
         Background="Transparent" AllowsTransparency="True" ShowInTaskbar="False">
-	<Window.Resources>
-		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#F0F0F2"/>
-			<Setter Property="Foreground" Value="#4A4A50"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="Padding" Value="8,6"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="BorderThickness" Value="0,0,0,2"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		</Style>
-		<Style x:Key="ActionBtn" TargetType="Button">
-			<Setter Property="Height" Value="42"/>
-			<Setter Property="Background" Value="#F3A123"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" CornerRadius="6">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-	</Window.Resources>
-	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-		<Border.Effect>
-			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-		</Border.Effect>
-		<Grid Margin="24">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
+    <Window.Resources>
+        <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F0F0F2"/>
+            <Setter Property="Foreground" Value="#4A4A50"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderBrush" Value="#D8D8DE"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Background" Value="#F3A123"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
+        </Border.Effect>
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-			<Grid Grid.Row="0" Margin="0,0,0,16">
-				<TextBlock Text="EMAIL SERVERS" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-				<Button Content="✕" Click="Close_Click" HorizontalAlignment="Right" Width="30" Height="30"
-                        Background="Transparent" Foreground="#888888" FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
-			</Grid>
+            <Grid Grid.Row="0" Margin="0,0,0,16">
+                <TextBlock Text="EMAIL SERVERS" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+                <Button Click="Close_Click" HorizontalAlignment="Right"
+				        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                    <Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+				           Width="28" Height="28"/>
+                </Button>
+            </Grid>
 
-			<Button Grid.Row="1" Content="➕ Add Email Server" Click="AddServer_Click"
+            <Button Grid.Row="1" Content="➕ Add Email Server" Click="AddServer_Click"
                     Style="{StaticResource ActionBtn}" Width="170" HorizontalAlignment="Left" Margin="0,0,0,12"/>
 
-			<DataGrid Grid.Row="2" x:Name="ServerGrid" AutoGenerateColumns="False"
+            <DataGrid Grid.Row="2" x:Name="ServerGrid" AutoGenerateColumns="False"
                       Background="White" BorderThickness="1" BorderBrush="#E4E4E8"
                       RowBackground="White" AlternatingRowBackground="#FAFAFB"
                       HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
                       ColumnHeaderStyle="{StaticResource GridHeader}"
                       IsReadOnly="True" SelectionMode="Single" Foreground="#1C1C1F"
                       MouseDoubleClick="ServerGrid_MouseDoubleClick">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Server Name" Binding="{Binding ServerName}" Width="*"/>
-					<DataGridTextColumn Header="From Email" Binding="{Binding SMTPAddress}" Width="*"/>
-					<DataGridTextColumn Header="Default" Binding="{Binding IsDefault}" Width="80"/>
-					<DataGridTextColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
-				</DataGrid.Columns>
-			</DataGrid>
-		</Grid>
-	</Border>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Server Name" Binding="{Binding ServerName}" Width="*"/>
+                    <DataGridTextColumn Header="From Email" Binding="{Binding SMTPAddress}" Width="*"/>
+                    <DataGridTextColumn Header="Default" Binding="{Binding IsDefault}" Width="80"/>
+                    <DataGridTextColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Border>
 </Window>

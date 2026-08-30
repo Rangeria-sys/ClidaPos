@@ -58,6 +58,13 @@ namespace Clidapos.Wpf.Views
             Close();
         }
 
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            var login = new LoginView();
+            login.Show();
+            Close();
+        }
+
         private void Minimize_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;

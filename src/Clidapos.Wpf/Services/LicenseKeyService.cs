@@ -21,7 +21,28 @@ namespace Clidapos.Wpf.Services
     /// </summary>
     public static class LicenseKeyService
     {
-        private const string SharedSecret = "CHANGE-THIS-TO-YOUR-OWN-RANDOM-SECRET-8f3a9d2c7e1b";
+        // The secret is stored XOR-obfuscated rather than as a plain string constant,
+        // so it does not appear as readable text if the compiled app is decompiled.
+        // This is a deterrent, not a vault - someone who deliberately traces through
+        // DecodeSecret() can still recover it, but it defeats a casual look at
+        // decompiled output, which is where most attempts would stop.
+        private static readonly byte[] ObfuscatedSecret =
+        {
+            0x3C, 0x16, 0x6C, 0x02, 0x02, 0x03, 0x23, 0x0C, 0x2E, 0x32, 0x08, 0x1D, 0x6B, 0x2F, 0x30, 0x2D,
+            0x3D, 0x15, 0x1D, 0x3C, 0x0D, 0x63, 0x6C, 0x22, 0x00, 0x2E, 0x39, 0x6B, 0x0A, 0x18, 0x14, 0x08,
+            0x1E, 0x0D, 0x6A, 0x0D, 0x2B, 0x2D, 0x30, 0x36
+        };
+        private const byte ObfuscationKey = 0x5A;
+
+        private static string SharedSecret => DecodeSecret();
+
+        private static string DecodeSecret()
+        {
+            var bytes = new byte[ObfuscatedSecret.Length];
+            for (var i = 0; i < ObfuscatedSecret.Length; i++)
+                bytes[i] = (byte)(ObfuscatedSecret[i] ^ ObfuscationKey);
+            return Encoding.UTF8.GetString(bytes);
+        }
 
         public static readonly Dictionary<string, string> DurationLabels = new()
         {

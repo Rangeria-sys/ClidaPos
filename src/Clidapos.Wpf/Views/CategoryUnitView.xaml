@@ -7,400 +7,375 @@
         ResizeMode="NoResize"
         Background="{StaticResource AppBackground}">
 
-    <Window.Resources>
+	<Window.Resources>
 
-        <!-- ============ ICON BADGE COLOURS ============ -->
-        <RadialGradientBrush x:Key="BadgeGreen" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-            <GradientStop Color="#7DF0AE" Offset="0"/>
-            <GradientStop Color="#34C759" Offset="0.55"/>
-            <GradientStop Color="#1B7C38" Offset="1"/>
-        </RadialGradientBrush>
+		<!-- ============ ICON BADGE COLOURS ============ -->
+		<RadialGradientBrush x:Key="BadgeGreen" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#7DF0AE" Offset="0"/>
+			<GradientStop Color="#34C759" Offset="0.55"/>
+			<GradientStop Color="#1B7C38" Offset="1"/>
+		</RadialGradientBrush>
 
-        <RadialGradientBrush x:Key="BadgeAmber" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-            <GradientStop Color="#FFD98F" Offset="0"/>
-            <GradientStop Color="#F3A123" Offset="0.55"/>
-            <GradientStop Color="#B5741A" Offset="1"/>
-        </RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeAmber" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#FFD98F" Offset="0"/>
+			<GradientStop Color="#F3A123" Offset="0.55"/>
+			<GradientStop Color="#B5741A" Offset="1"/>
+		</RadialGradientBrush>
 
-        <RadialGradientBrush x:Key="BadgeBlue" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-            <GradientStop Color="#9CC9FF" Offset="0"/>
-            <GradientStop Color="#2D6CDF" Offset="0.55"/>
-            <GradientStop Color="#16437F" Offset="1"/>
-        </RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeBlue" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#9CC9FF" Offset="0"/>
+			<GradientStop Color="#2D6CDF" Offset="0.55"/>
+			<GradientStop Color="#16437F" Offset="1"/>
+		</RadialGradientBrush>
 
-        <RadialGradientBrush x:Key="BadgeRed" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-            <GradientStop Color="#FF8C9B" Offset="0"/>
-            <GradientStop Color="#DC143C" Offset="0.55"/>
-            <GradientStop Color="#8F0C25" Offset="1"/>
-        </RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeRed" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#FF8C9B" Offset="0"/>
+			<GradientStop Color="#DC143C" Offset="0.55"/>
+			<GradientStop Color="#8F0C25" Offset="1"/>
+		</RadialGradientBrush>
 
-        <RadialGradientBrush x:Key="BadgeTeal" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-            <GradientStop Color="#84E7D8" Offset="0"/>
-            <GradientStop Color="#17A398" Offset="0.55"/>
-            <GradientStop Color="#0A5A54" Offset="1"/>
-        </RadialGradientBrush>
+		<RadialGradientBrush x:Key="BadgeTeal" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
+			<GradientStop Color="#84E7D8" Offset="0"/>
+			<GradientStop Color="#17A398" Offset="0.55"/>
+			<GradientStop Color="#0A5A54" Offset="1"/>
+		</RadialGradientBrush>
 
-        <!-- ============ ICON SHAPES ============ -->
-        <Geometry x:Key="IcoPlus">M12,5 V19 M5,12 H19</Geometry>
-        <Geometry x:Key="IcoSave">M4.5,4.5 H15.5 L19.5,8.5 V19.5 H4.5 Z M8,4.5 V9 H15 V4.5 M7,13 H17 V19.5</Geometry>
-        <Geometry x:Key="IcoPencil">M4,20 L4.5,15.8 L15.8,4.5 L19.5,8.2 L8.2,19.5 Z M14,6.3 L17.7,10</Geometry>
-        <Geometry x:Key="IcoTrash">M4,7 H20 M9.5,7 V4.5 H14.5 V7 M6,7 L7,20 H17 L18,7 M10,10.5 V17 M14,10.5 V17</Geometry>
-        <Geometry x:Key="IcoSearch">M16,10 A6,6 0 1 1 4,10 A6,6 0 1 1 16,10 M14.5,14.5 L20,20</Geometry>
+		<!-- ============ ICON SHAPES ============ -->
+		<Geometry x:Key="IcoPlus">M12,5 V19 M5,12 H19</Geometry>
+		<Geometry x:Key="IcoSave">M4.5,4.5 H15.5 L19.5,8.5 V19.5 H4.5 Z M8,4.5 V9 H15 V4.5 M7,13 H17 V19.5</Geometry>
+		<Geometry x:Key="IcoPencil">M4,20 L4.5,15.8 L15.8,4.5 L19.5,8.2 L8.2,19.5 Z M14,6.3 L17.7,10</Geometry>
+		<Geometry x:Key="IcoTrash">M4,7 H20 M9.5,7 V4.5 H14.5 V7 M6,7 L7,20 H17 L18,7 M10,10.5 V17 M14,10.5 V17</Geometry>
+		<Geometry x:Key="IcoSearch">M16,10 A6,6 0 1 1 4,10 A6,6 0 1 1 16,10 M14.5,14.5 L20,20</Geometry>
 
-        <Style x:Key="IconBadge" TargetType="Ellipse">
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect Color="Black" ShadowDepth="1.5" BlurRadius="5" Opacity="0.45"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
+		<Style x:Key="IconBadge" TargetType="Ellipse">
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" ShadowDepth="1.5" BlurRadius="5" Opacity="0.45"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="IconPath" TargetType="Path">
-            <Setter Property="Stroke" Value="White"/>
-            <Setter Property="StrokeThickness" Value="2"/>
-            <Setter Property="StrokeStartLineCap" Value="Round"/>
-            <Setter Property="StrokeEndLineCap" Value="Round"/>
-            <Setter Property="StrokeLineJoin" Value="Round"/>
-        </Style>
+		<Style x:Key="IconPath" TargetType="Path">
+			<Setter Property="Stroke" Value="White"/>
+			<Setter Property="StrokeThickness" Value="2"/>
+			<Setter Property="StrokeStartLineCap" Value="Round"/>
+			<Setter Property="StrokeEndLineCap" Value="Round"/>
+			<Setter Property="StrokeLineJoin" Value="Round"/>
+		</Style>
 
-        <!-- ============ BUTTONS ============ -->
-        <Style x:Key="MenuBtn" TargetType="Button">
-            <Setter Property="Height" Value="54"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="#1E1E24"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="10"
+		<!-- ============ BUTTONS ============ -->
+		<Style x:Key="MenuBtn" TargetType="Button">
+			<Setter Property="Height" Value="54"/>
+			<Setter Property="Margin" Value="0,0,0,10"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background" Value="#1E1E24"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="10"
                                 BorderBrush="#3A3A42" BorderThickness="1">
-                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Background" Value="#2A2A32"/>
-                                <Setter TargetName="B" Property="BorderBrush" Value="#F3A123"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+							<ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="B" Property="Background" Value="#2A2A32"/>
+								<Setter TargetName="B" Property="BorderBrush" Value="#F3A123"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="MenuBtnDanger" TargetType="Button" BasedOn="{StaticResource MenuBtn}">
-            <Setter Property="Background" Value="#241A1C"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="10"
+		<Style x:Key="MenuBtnDanger" TargetType="Button" BasedOn="{StaticResource MenuBtn}">
+			<Setter Property="Background" Value="#241A1C"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="10"
                                 BorderBrush="#5A2A31" BorderThickness="1">
-                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Background" Value="#3A2226"/>
-                                <Setter TargetName="B" Property="BorderBrush" Value="#DC143C"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+							<ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="B" Property="Background" Value="#3A2226"/>
+								<Setter TargetName="B" Property="BorderBrush" Value="#DC143C"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="MenuText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="14,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
+		<Style x:Key="MenuText" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="Margin" Value="14,0,0,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
 
-        <Style x:Key="RoundTopButton" TargetType="Button">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
+		<Style x:Key="RoundTopButton" TargetType="Button">
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
 
-        <Style x:Key="FormLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#CCCCCC"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Margin" Value="0,10,0,4"/>
-        </Style>
+		<Style x:Key="FormLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#CCCCCC"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Margin" Value="0,10,0,4"/>
+		</Style>
 
-        <Style x:Key="PanelInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#1E1E24"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#3A3A42"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="PanelInput" TargetType="TextBox">
+			<Setter Property="Background" Value="#1E1E24"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
+	</Window.Resources>
 
-    <Grid Background="{StaticResource AppOverlay}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+	<Grid Background="{StaticResource AppOverlay}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#1E1E24">
-            <Grid>
-                <TextBlock Text="CATEGORY &amp; UNIT SETUP" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+		<Border Grid.Row="0" Background="#1E1E24">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<Button Grid.Column="0" Click="BackToOffice_Click" Width="56" Height="56"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Margin="15,0,0,0" ToolTip="Back">
+					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+                           Width="42" Height="42"/>
+				</Button>
+
+				<TextBlock Grid.Column="1" Text="CATEGORY &amp; UNIT SETUP" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
                             Margin="0,0,15,0">
 
-                    <Button Click="BackToOffice_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="0,0,10,0" ToolTip="Back to Back Office">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
 
-                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-                            ToolTip="Minimize">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse Style="{StaticResource IconBadge}">
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFE9A6" Offset="0"/>
-                                                <GradientStop Color="#E8B830" Offset="0.4"/>
-                                                <GradientStop Color="#B8860B" Offset="0.85"/>
-                                                <GradientStop Color="#8A6408" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
+				</StackPanel>
+			</Grid>
+		</Border>
 
-                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-                                    <Viewbox Width="16" Height="16">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                        </Canvas>
-                                    </Viewbox>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-
-            <!-- ================= CATEGORY CARD ================= -->
-            <Border Background="#1A1A1F" CornerRadius="14" Padding="24" Width="340" Margin="0,0,26,0">
-                <Border.Effect>
-                    <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="5" Opacity="0.55"/>
-                </Border.Effect>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                        <Grid Width="34" Height="34">
-                            <Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-                            <Viewbox Width="18" Height="18">
-                                <Canvas Width="24" Height="24">
-                                    <Path Data="M3.5,6.5 A1,1 0 0 1 4.5,5.5 H9.5 L11.5,8 H19.5 A1,1 0 0 1 20.5,9 V18 A1,1 0 0 1 19.5,19 H4.5 A1,1 0 0 1 3.5,18 Z"
+			<!-- ================= CATEGORY CARD ================= -->
+			<Border Background="#1A1A1F" CornerRadius="14" Padding="24" Width="340" Margin="0,0,26,0">
+				<Border.Effect>
+					<DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="5" Opacity="0.55"/>
+				</Border.Effect>
+				<StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+						<Grid Width="34" Height="34">
+							<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
+							<Viewbox Width="18" Height="18">
+								<Canvas Width="24" Height="24">
+									<Path Data="M3.5,6.5 A1,1 0 0 1 4.5,5.5 H9.5 L11.5,8 H19.5 A1,1 0 0 1 20.5,9 V18 A1,1 0 0 1 19.5,19 H4.5 A1,1 0 0 1 3.5,18 Z"
                                           Style="{StaticResource IconPath}"/>
-                                </Canvas>
-                            </Viewbox>
-                        </Grid>
-                        <TextBlock Text="Categories" Foreground="#F3A123" FontSize="19" FontWeight="Bold"
+								</Canvas>
+							</Viewbox>
+						</Grid>
+						<TextBlock Text="Categories" Foreground="#F3A123" FontSize="19" FontWeight="Bold"
                                    VerticalAlignment="Center" Margin="12,0,0,0"/>
-                    </StackPanel>
+					</StackPanel>
 
-                    <TextBlock Text="Category Name" Style="{StaticResource FormLabel}"/>
-                    <TextBox x:Name="NewCategoryInput" Style="{StaticResource PanelInput}"/>
-                    <TextBlock Text="Type a name and Save. Use Get Data to see the saved list."
+					<TextBlock Text="Category Name" Style="{StaticResource FormLabel}"/>
+					<TextBox x:Name="NewCategoryInput" Style="{StaticResource PanelInput}"/>
+					<TextBlock Text="Type a name and Save. Use Get Data to see the saved list."
                                Foreground="#888888" FontSize="11" Margin="0,8,0,16" TextWrapping="Wrap"/>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="NewCategory_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoPlus}" Style="{StaticResource IconPath}" StrokeThickness="2.6"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="New" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtn}" Click="NewCategory_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoPlus}" Style="{StaticResource IconPath}" StrokeThickness="2.6"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="New" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="SaveCategory_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoSave}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Save" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtn}" Click="SaveCategory_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoSave}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Save" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="UpdateCategory_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoPencil}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Update" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtn}" Click="UpdateCategory_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoPencil}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Update" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtnDanger}" Click="DeleteCategory_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoTrash}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Delete" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtnDanger}" Click="DeleteCategory_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoTrash}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Delete" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="GetCategories_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoSearch}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Get Data" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Border>
+					<Button Style="{StaticResource MenuBtn}" Click="GetCategories_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoSearch}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Get Data" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Border>
 
-            <!-- ================= UNIT CARD ================= -->
-            <Border Background="#1A1A1F" CornerRadius="14" Padding="24" Width="340">
-                <Border.Effect>
-                    <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="5" Opacity="0.55"/>
-                </Border.Effect>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                        <Grid Width="34" Height="34">
-                            <Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
-                            <Viewbox Width="18" Height="18">
-                                <Canvas Width="24" Height="24">
-                                    <Path Data="M12,4 V20 M7,20 H17 M4,9 H20 M4,9 L6.5,15 H1.5 Z M20,9 L22.5,15 H17.5 Z"
+			<!-- ================= UNIT CARD ================= -->
+			<Border Background="#1A1A1F" CornerRadius="14" Padding="24" Width="340">
+				<Border.Effect>
+					<DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="5" Opacity="0.55"/>
+				</Border.Effect>
+				<StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+						<Grid Width="34" Height="34">
+							<Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
+							<Viewbox Width="18" Height="18">
+								<Canvas Width="24" Height="24">
+									<Path Data="M12,4 V20 M7,20 H17 M4,9 H20 M4,9 L6.5,15 H1.5 Z M20,9 L22.5,15 H17.5 Z"
                                           Style="{StaticResource IconPath}"/>
-                                </Canvas>
-                            </Viewbox>
-                        </Grid>
-                        <TextBlock Text="Units" Foreground="#F3A123" FontSize="19" FontWeight="Bold"
+								</Canvas>
+							</Viewbox>
+						</Grid>
+						<TextBlock Text="Units" Foreground="#F3A123" FontSize="19" FontWeight="Bold"
                                    VerticalAlignment="Center" Margin="12,0,0,0"/>
-                    </StackPanel>
+					</StackPanel>
 
-                    <TextBlock Text="Unit Name" Style="{StaticResource FormLabel}"/>
-                    <TextBox x:Name="NewUnitInput" Style="{StaticResource PanelInput}"/>
-                    <TextBlock Text="Type a name and Save. Use Get Data to see the saved list."
+					<TextBlock Text="Unit Name" Style="{StaticResource FormLabel}"/>
+					<TextBox x:Name="NewUnitInput" Style="{StaticResource PanelInput}"/>
+					<TextBlock Text="Type a name and Save. Use Get Data to see the saved list."
                                Foreground="#888888" FontSize="11" Margin="0,8,0,16" TextWrapping="Wrap"/>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="NewUnit_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoPlus}" Style="{StaticResource IconPath}" StrokeThickness="2.6"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="New" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtn}" Click="NewUnit_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeGreen}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoPlus}" Style="{StaticResource IconPath}" StrokeThickness="2.6"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="New" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="SaveUnit_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoSave}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Save" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtn}" Click="SaveUnit_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoSave}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Save" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="UpdateUnit_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoPencil}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Update" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtn}" Click="UpdateUnit_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoPencil}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Update" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtnDanger}" Click="DeleteUnit_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoTrash}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Delete" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
+					<Button Style="{StaticResource MenuBtnDanger}" Click="DeleteUnit_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoTrash}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Delete" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
 
-                    <Button Style="{StaticResource MenuBtn}" Click="GetUnits_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="36" Height="36">
-                                <Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
-                                <Viewbox Width="19" Height="19">
-                                    <Canvas Width="24" Height="24">
-                                        <Path Data="{StaticResource IcoSearch}" Style="{StaticResource IconPath}"/>
-                                    </Canvas>
-                                </Viewbox>
-                            </Grid>
-                            <TextBlock Text="Get Data" Style="{StaticResource MenuText}"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Border>
+					<Button Style="{StaticResource MenuBtn}" Click="GetUnits_Click">
+						<StackPanel Orientation="Horizontal">
+							<Grid Width="36" Height="36">
+								<Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
+								<Viewbox Width="19" Height="19">
+									<Canvas Width="24" Height="24">
+										<Path Data="{StaticResource IcoSearch}" Style="{StaticResource IconPath}"/>
+									</Canvas>
+								</Viewbox>
+							</Grid>
+							<TextBlock Text="Get Data" Style="{StaticResource MenuText}"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Border>
 
-        </StackPanel>
-    </Grid>
+		</StackPanel>
+	</Grid>
 </Window>

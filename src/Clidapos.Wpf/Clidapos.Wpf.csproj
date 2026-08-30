@@ -74,7 +74,11 @@
 		<Resource Include="Assets\warehousecategory.png" />
 		<Resource Include="Assets\itemcategory.png" />
 		<Resource Include="Assets\expensecategory.png" />
-		<Resource Include="Assets\unitcategory.png" />	
+		<Resource Include="Assets\unitcategory.png" />
+		<Resource Include="Assets\exit_button.png" />
+		<Resource Include="Assets\back-arrow.png" />
+		<Resource Include="Assets\minimize.png" />
+		
 	</ItemGroup>
 
 </Project>
