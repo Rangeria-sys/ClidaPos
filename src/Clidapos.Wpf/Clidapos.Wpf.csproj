@@ -83,6 +83,10 @@
 		<Resource Include="Assets\workp.png" />
 		<Resource Include="Assets\pos.png" />
 		<Resource Include="Assets\report.png" />
+		<Resource Include="Assets\import.png" />
+		<Resource Include="Assets\export.png" />
+		<Resource Include="Assets\cusledger.png" />
+		<Resource Include="Assets\employee.png" />
 		<Resource Include="Assets\clockin.png" />
 		<Resource Include="Assets\logout.png" />
 	</ItemGroup>
