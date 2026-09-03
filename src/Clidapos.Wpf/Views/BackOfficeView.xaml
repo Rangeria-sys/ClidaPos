@@ -5,7 +5,7 @@
         WindowStyle="None"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        Background="{StaticResource AppBackground}">
+        Background="#17171C">
 
 	<Window.Resources>
 		<Style x:Key="TileButton" TargetType="Button">
@@ -14,15 +14,25 @@
 			<Setter Property="Margin" Value="10"/>
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Background" Value="#17171C"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="Button">
-						<Border x:Name="Base" Background="#17171C" CornerRadius="12">
-							<ContentPresenter/>
+						<Border x:Name="Base" Background="{TemplateBinding Background}" CornerRadius="12">
+							<Grid>
+								<ContentPresenter/>
+								<!-- Colour-agnostic hover feedback: a white wash that fades in,
+                                     rather than swapping to a fixed hover colour, so it reads
+                                     correctly no matter which accent this particular tile uses. -->
+								<Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="12"/>
+							</Grid>
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="Base" Property="Background" Value="#222228"/>
+								<Setter TargetName="HoverOverlay" Property="Opacity" Value="0.14"/>
+							</Trigger>
+							<Trigger Property="IsPressed" Value="True">
+								<Setter TargetName="HoverOverlay" Property="Opacity" Value="0.24"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -30,25 +40,63 @@
 			</Setter>
 		</Style>
 
-		<Style x:Key="TileLabel" TargetType="TextBlock">
+		<!-- Same bold font + clean shadow treatment used on Gateway and Front Office,
+             so every screen in the app reads consistently. -->
+		<Style x:Key="StylishBoldText" TargetType="TextBlock">
+			<Setter Property="FontFamily" Value="Segoe UI"/>
+			<Setter Property="FontWeight" Value="Black"/>
 			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="TextAlignment" Value="Center"/>
-			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="Margin" Value="0,12,0,0"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" Direction="315" ShadowDepth="2" BlurRadius="4" Opacity="0.65"/>
+				</Setter.Value>
+			</Setter>
 		</Style>
 
-		<Style x:Key="SectionPill" TargetType="Border">
-			<Setter Property="CornerRadius" Value="20"/>
-			<Setter Property="Padding" Value="24,10"/>
-			<Setter Property="Margin" Value="0,20,0,14"/>
+		<Style x:Key="HeaderPanel" TargetType="Border">
+			<Setter Property="Background" Value="#A6141414"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="16,10"/>
+		</Style>
+
+		<!-- A solid near-black bar behind every tile label, so the text stays high
+             contrast no matter what color that particular tile happens to be -
+             more reliable than a shadow/glow, which can wash out on light tiles. -->
+		<Style x:Key="TileLabelBar" TargetType="Border">
+			<Setter Property="Background" Value="#D6000000"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="8,5"/>
+			<Setter Property="Margin" Value="0,12,0,0"/>
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 		</Style>
 
+		<Style x:Key="TileLabel" TargetType="TextBlock">
+			<Setter Property="FontFamily" Value="Segoe UI"/>
+			<Setter Property="FontWeight" Value="Black"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+		</Style>
+
+		<Style x:Key="SectionPill" TargetType="Border">
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="26,12"/>
+			<Setter Property="Margin" Value="0,20,0,14"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="BorderBrush" Value="#33FFFFFF"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" ShadowDepth="4" BlurRadius="10" Opacity="0.5"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
 		<Style x:Key="SectionPillText" TargetType="TextBlock">
-			<Setter Property="FontSize" Value="15"/>
-			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontFamily" Value="Segoe UI"/>
+			<Setter Property="FontSize" Value="19"/>
+			<Setter Property="FontWeight" Value="Black"/>
 			<Setter Property="Foreground" Value="Black"/>
 		</Style>
 
@@ -60,53 +108,35 @@
 		</Style>
 	</Window.Resources>
 
-	<Grid Background="{StaticResource AppOverlay}">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="60"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+	<Grid>
 
-		<Border Grid.Row="0" Background="#1E1E24">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
+		<Button Click="BackToGateway_Click" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Width="56" Height="56" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                Margin="15,10,0,0" ToolTip="Back to Gateway">
+			<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform" Width="42" Height="42"/>
+		</Button>
 
-				<Button Grid.Column="0" Click="BackToGateway_Click" Width="56" Height="56"
-                        Background="Transparent" BorderThickness="0" Cursor="Hand"
-                        Margin="15,0,0,0" ToolTip="Back to Gateway">
-					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
-                           Width="42" Height="42"/>
-				</Button>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Margin="0,10,20,0">
+			<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+                    BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+				<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform" Width="42" Height="42"/>
+			</Button>
+			<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+                    BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+				<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform" Width="42" Height="42"/>
+			</Button>
+		</StackPanel>
 
-				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<TextBlock Text="CLIDA POS - BACK OFFICE" Foreground="#F3A123" FontSize="16" FontWeight="Bold"
-                               VerticalAlignment="Center"/>
-					<TextBlock x:Name="WelcomeText" Foreground="#CCCCCC" FontSize="13"
-                               VerticalAlignment="Center" Margin="20,0,0,0"/>
-				</StackPanel>
-
-				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
-
-					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
-						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
-                               Width="42" Height="42"/>
-					</Button>
-
-					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
-						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                               Width="42" Height="42"/>
-					</Button>
-				</StackPanel>
-			</Grid>
+		<Border Style="{StaticResource HeaderPanel}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="CLIDA POS - BACK OFFICE" Style="{StaticResource StylishBoldText}" FontSize="18"/>
+				<TextBlock x:Name="WelcomeText" Foreground="#E8E8E8" FontFamily="Segoe UI Semibold" FontSize="14"
+                           VerticalAlignment="Center" Margin="18,0,0,0"/>
+			</StackPanel>
 		</Border>
 
-		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+		<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,84,0,0">
 			<StackPanel Orientation="Horizontal" Margin="30,10,30,20" VerticalAlignment="Top">
 
 				<!-- GENERAL SETTING column -->
@@ -116,38 +146,48 @@
 					</Border>
 					<WrapPanel Width="340">
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSetting">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="MasterSetting" Background="#4A7FE8">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/mastersetting.png" Width="72" Height="72"/>
-								<TextBlock Text="Master Setting" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Master Setting" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Profile">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Profile" Background="#9B59B6">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/profile.png" Width="72" Height="72"/>
-								<TextBlock Text="Business Profile" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Business Profile" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="UserRoles" Background="#16A085">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/userroles.png" Width="72" Height="72"/>
-								<TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="User Security Roles" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Backup">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Backup" Background="#E67E22">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/backup.png" Width="72" Height="72"/>
-								<TextBlock Text="Backup Setting" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Backup Setting" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CategoryUnit">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CategoryUnit" Background="#C0392B">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/categoryunit.png" Width="72" Height="72"/>
-								<TextBlock Text="Category Setup" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Category Setup" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
@@ -161,52 +201,66 @@
 					</Border>
 					<WrapPanel Width="340">
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Items" Background="#2ECC71">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/items.png" Width="72" Height="72"/>
-								<TextBlock Text="Items" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Items" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseEntry">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseEntry" Background="#3498DB">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/purchaseentry.png" Width="72" Height="72"/>
-								<TextBlock Text="Purchase Entry" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Purchase Entry" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockLevels">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockLevels" Background="#F39C12">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/stocklevels.png" Width="72" Height="72"/>
-								<TextBlock Text="Stock Levels" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Stock Levels" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockAdjustment">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockAdjustment" Background="#8E44AD">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/stockadjustment.png" Width="72" Height="72"/>
-								<TextBlock Text="Stock Adjustment" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Stock Adjustment" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button x:Name="StockTransferTile" Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer">
+						<Button x:Name="StockTransferTile" Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockTransfer" Background="#1ABC9C">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/stocktransfer.png" Width="72" Height="72"/>
-								<TextBlock Text="Stock Transfer" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Stock Transfer" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Supplier">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Supplier" Background="#EC407A">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/supplier.png" Width="72" Height="72"/>
-								<TextBlock Text="Supplier" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Supplier" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Warehouse" Background="#5C6BC0">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/warehouse.png" Width="72" Height="72"/>
-								<TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Warehouse Management" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
@@ -220,73 +274,93 @@
 					</Border>
 					<WrapPanel Width="340">
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="EmployeeRegistration">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="EmployeeRegistration" Background="#29B6F6">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<TextBlock Text="👥" FontSize="40" Foreground="#F3A123" HorizontalAlignment="Center"/>
-								<TextBlock Text="Employee Registration" Style="{StaticResource TileLabel}"/>
+								<Image Source="pack://application:,,,/Assets/employee.png" Width="72" Height="72"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Employee Registration" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="HR" Background="#66BB6A">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/hr.png" Width="72" Height="72"/>
-								<TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="HR &amp; Payroll" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Customers" Background="#FFA726">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/customers.png" Width="72" Height="72"/>
-								<TextBlock Text="Customers" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Customers" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CustomerLedger">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="CustomerLedger" Background="#7E57C2">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-								<TextBlock Text="📒" FontSize="40" Foreground="#F3A123" HorizontalAlignment="Center"/>
-								<TextBlock Text="Customer Ledger" Style="{StaticResource TileLabel}"/>
+								<Image Source="pack://application:,,,/Assets/cusledger.png" Width="72" Height="72"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Customer Ledger" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SupplierLedger">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SupplierLedger" Background="#B4472A">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/supplierledger.png" Width="72" Height="72"/>
-								<TextBlock Text="Supplier Ledger" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Supplier Ledger" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Expenses" Background="#E74C3C">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/expenses.png" Width="72" Height="72"/>
-								<TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Expense Log" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseMaster">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseMaster" Background="#D35400">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/expensemaster.png" Width="72" Height="72"/>
-								<TextBlock Text="Expense" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Expense" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Finance" Background="#7B241C">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/finance.png" Width="72" Height="72"/>
-								<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Loyalty" Background="#AB47BC">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/loyalty.png" Width="72" Height="72"/>
-								<TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Loyalty &amp; Membership" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Vouchers" Background="#D4A017">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/vouchers.png" Width="72" Height="72"/>
-								<TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Vouchers &amp; Promotions" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
@@ -300,45 +374,57 @@
 					</Border>
 					<WrapPanel Width="340">
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SalesReports">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SalesReports" Background="#4A7FE8">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/salesreports.png" Width="72" Height="72"/>
-								<TextBlock Text="Sales Reports" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Sales Reports" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockReports">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="StockReports" Background="#16A085">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/stockreports.png" Width="72" Height="72"/>
-								<TextBlock Text="Stock / Item Reports" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Stock / Item Reports" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseReports">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="PurchaseReports" Background="#E67E22">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/purchasereports.png" Width="72" Height="72"/>
-								<TextBlock Text="Purchase Reports" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Purchase Reports" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseReports">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExpenseReports" Background="#C0392B">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/expensereports.png" Width="72" Height="72"/>
-								<TextBlock Text="Expense Reports" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Expense Reports" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="AccountingReports">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="AccountingReports" Background="#8E44AD">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/accountingreports.png" Width="72" Height="72"/>
-								<TextBlock Text="Accounting Reports" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Accounting Reports" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 
-						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs">
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Logs" Background="#607D8B">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/logs.png" Width="72" Height="72"/>
-								<TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="System Logs" Style="{StaticResource TileLabel}"/>
+								</Border>
 							</StackPanel>
 						</Button>
 

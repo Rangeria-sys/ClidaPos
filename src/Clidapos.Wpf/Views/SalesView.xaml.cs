@@ -3,74 +3,61 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.EntityFrameworkCore;
+using Clidapos.Wpf.Data;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
 namespace Clidapos.Wpf.Views
 {
+    // Turns a DataGridRow's 0-based AlternationIndex into a 1-based row number
+    // for display in the Cart grid's row header column.
+    public class RowNumberConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is int index) return (index + 1).ToString();
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
     public partial class SalesView : Window
     {
         private readonly Registration _currentUser;
         private readonly SaleService _saleService = new();
         private readonly LogService _logService = new();
+        private readonly CustomerLedgerService _customerLedgerService = new();
+        private readonly HeldSaleService _heldSaleService = new();
+        private readonly ReceiptService _receiptService = new();
         private readonly ObservableCollection<CartLine> _cart = new();
-
-        private bool _isDarkMode = true;
 
         public SalesView(Registration currentUser)
         {
             InitializeComponent();
             _currentUser = currentUser;
 
-            ApplyTheme();
-
             CashierText.Text = $"Cashier: {currentUser.Name.Trim()}";
 
             CartGrid.ItemsSource = _cart;
             RecomputeTotals();
 
-            Loaded += (s, e) => SearchBox.Focus();
+            Loaded += async (s, e) =>
+            {
+                SearchBox.Focus();
+                await LoadCreditCustomers();
+            };
         }
 
-        // ---------------- THEME ----------------
-        private void ToggleTheme_Click(object sender, RoutedEventArgs e)
+        private async System.Threading.Tasks.Task LoadCreditCustomers()
         {
-            _isDarkMode = !_isDarkMode;
-            ApplyTheme();
-        }
-
-        private void ApplyTheme()
-        {
-            Color Rgb(byte r, byte g, byte b) => Color.FromRgb(r, g, b);
-
-            if (_isDarkMode)
-            {
-                Resources["PageBg"] = new SolidColorBrush(Rgb(0x0F, 0x0F, 0x12));
-                Resources["SurfaceBg"] = new SolidColorBrush(Rgb(0x1E, 0x1E, 0x24));
-                Resources["PanelBg"] = new SolidColorBrush(Rgb(0x1A, 0x1A, 0x1F));
-                Resources["FieldBg"] = new SolidColorBrush(Rgb(0x14, 0x14, 0x19));
-                Resources["RowAltBg"] = new SolidColorBrush(Rgb(0x1E, 0x1E, 0x24));
-                Resources["BorderColor"] = new SolidColorBrush(Rgb(0x3A, 0x3A, 0x42));
-                Resources["TextPrimary"] = Brushes.White;
-                Resources["TextSecondary"] = new SolidColorBrush(Rgb(0x88, 0x88, 0x88));
-                Resources["TextMuted"] = new SolidColorBrush(Rgb(0x66, 0x66, 0x66));
-            }
-            else
-            {
-                // Light mode text and borders are deliberately black/near-black and bold-weighted -
-                // a POS till needs to read at a glance, so subtle gray isn't good enough here.
-                Resources["PageBg"] = new SolidColorBrush(Rgb(0xEF, 0xEF, 0xF2));
-                Resources["SurfaceBg"] = Brushes.White;
-                Resources["PanelBg"] = Brushes.White;
-                Resources["FieldBg"] = new SolidColorBrush(Rgb(0xF5, 0xF5, 0xF7));
-                Resources["RowAltBg"] = new SolidColorBrush(Rgb(0xF5, 0xF5, 0xF7));
-                Resources["BorderColor"] = Brushes.Black;
-                Resources["TextPrimary"] = Brushes.Black;
-                Resources["TextSecondary"] = new SolidColorBrush(Rgb(0x20, 0x20, 0x22));
-                Resources["TextMuted"] = new SolidColorBrush(Rgb(0x3A, 0x3A, 0x3E));
-            }
+            using var db = new ClidaposDbContext();
+            CreditCustomerCombo.ItemsSource = await db.Set<CreditCustomer>().OrderBy(c => c.Name).ToListAsync();
         }
 
         // ---------------- SEARCH / SCAN ----------------
@@ -186,11 +173,52 @@ namespace Clidapos.Wpf.Views
             CartGrid.BeginEdit();
         }
 
-        private void HoldSale_Click(object sender, RoutedEventArgs e)
+        // With items in the cart: parks them aside and clears the cart so another
+        // customer can be served. With an empty cart: opens the list of already-held
+        // sales so one can be picked up and resumed - one button covers both directions.
+        private async void HoldSale_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(
-                "Hold Sale is coming soon - it will let you park this cart and serve another customer.",
-                "Clidapos");
+            ErrorText.Text = "";
+
+            if (_cart.Count == 0)
+            {
+                var popup = new HeldSalesPopup { Owner = this };
+                var resumed = popup.ShowDialog() == true;
+
+                if (resumed && popup.Resumed != null)
+                {
+                    var held = popup.Resumed;
+
+                    foreach (var item in held.Items)
+                    {
+                        _cart.Add(new CartLine
+                        {
+                            ProductId = item.ProductId,
+                            ProductName = item.ProductName ?? "",
+                            ProductCode = item.ProductCode ?? "",
+                            Category = item.Category ?? "",
+                            Rate = item.Rate,
+                            Quantity = item.Quantity
+                        });
+                    }
+
+                    DiscountInput.Text = held.Sale.DiscountPercent.ToString();
+                    CartGrid.Items.Refresh();
+                    RecomputeTotals();
+                }
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                $"Hold this sale ({_cart.Count} line(s))? The cart will be cleared so you can serve another customer.",
+                "Confirm Hold", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            var label = $"Held {DateTime.Now:hh:mm tt}";
+            await _heldSaleService.HoldAsync(_cart.ToList(), _currentUser.Name.Trim(), DiscountPercent, "", label);
+            await _logService.LogAsync(CurrentSession.UserId, $"Held a sale ({_cart.Count} line(s))");
+
+            ResetSale();
         }
 
         private void GetData_Click(object sender, RoutedEventArgs e)
@@ -220,13 +248,18 @@ namespace Clidapos.Wpf.Views
             }), System.Windows.Threading.DispatcherPriority.Background);
         }
 
-        private void ClearCart_Click(object sender, RoutedEventArgs e)
+        // Voiding an in-progress cart never touches the database (nothing was ever
+        // saved) - but it still requires a reason and gets logged, matching the
+        // same discipline used when voiding an already-completed sale in Sales History.
+        private async void ClearCart_Click(object sender, RoutedEventArgs e)
         {
             if (_cart.Count == 0) return;
 
-            var confirm = MessageBox.Show("Void this sale? All lines will be cleared.", "Confirm Void",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (confirm != MessageBoxResult.Yes) return;
+            var popup = new VoidReasonPopup(_cart.Count, GrandTotal, AppSettings.CurrencySymbol) { Owner = this };
+            if (popup.ShowDialog() != true) return;
+
+            await _logService.LogAsync(CurrentSession.UserId,
+                $"Voided in-progress cart ({_cart.Count} line(s), {AppSettings.CurrencySymbol} {GrandTotal:N2}) - Reason: {popup.Reason}");
 
             _cart.Clear();
             RecomputeTotals();
@@ -294,8 +327,9 @@ namespace Clidapos.Wpf.Views
 
         private void PaymentMode_Changed(object sender, RoutedEventArgs e)
         {
-            if (CashDetailsPanel == null) return;
+            if (CashDetailsPanel == null || CreditDetailsPanel == null) return;
             CashDetailsPanel.Visibility = CashMode.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            CreditDetailsPanel.Visibility = CreditMode.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         // BankMode maps to the "Card" payment value so the Day End report's
@@ -304,6 +338,7 @@ namespace Clidapos.Wpf.Views
         {
             if (MpesaMode.IsChecked == true) return "M-Pesa";
             if (BankMode.IsChecked == true) return "Card";
+            if (CreditMode.IsChecked == true) return "Credit";
             return "Cash";
         }
 
@@ -320,6 +355,7 @@ namespace Clidapos.Wpf.Views
 
             var mode = SelectedPaymentMode();
             decimal.TryParse(AmountReceivedInput.Text, out var received);
+            CreditCustomer? creditCustomer = null;
 
             if (mode == "M-Pesa")
             {
@@ -334,6 +370,17 @@ namespace Clidapos.Wpf.Views
 
                 received = GrandTotal;
             }
+            else if (mode == "Credit")
+            {
+                if (CreditCustomerCombo.SelectedItem is not CreditCustomer selected)
+                {
+                    ErrorText.Text = "Select the customer this credit sale is for.";
+                    return;
+                }
+
+                creditCustomer = selected;
+                received = 0; // nothing paid now - the full amount goes to their ledger balance
+            }
             else if (mode != "Cash")
             {
                 received = GrandTotal;
@@ -341,8 +388,11 @@ namespace Clidapos.Wpf.Views
 
             PayButton.IsEnabled = false;
 
+            var customerName = creditCustomer?.Name?.Trim() ?? string.Empty;
+            var customerPhone = creditCustomer?.ContactNo?.Trim() ?? string.Empty;
+
             var result = await _saleService.SaveSaleAsync(
-                _cart.ToList(), _currentUser, mode, received, string.Empty, string.Empty, DiscountPercent);
+                _cart.ToList(), _currentUser, mode, received, customerName, customerPhone, DiscountPercent);
 
             PayButton.IsEnabled = true;
 
@@ -355,11 +405,37 @@ namespace Clidapos.Wpf.Views
             await _logService.LogAsync(CurrentSession.UserId,
                 $"Completed Sale {result.BillNo} - {AppSettings.CurrencySymbol} {result.GrandTotal:N2} ({mode})");
 
+            // Best-effort: record the debt to the customer's ledger after the sale has
+            // already succeeded. A failure here should never undo a completed sale.
+            if (creditCustomer != null)
+            {
+                try
+                {
+                    await _customerLedgerService.AddCreditGivenAsync(
+                        creditCustomer.CC_ID, $"Credit Sale {result.BillNo}", result.GrandTotal);
+                }
+                catch (Exception ledgerEx)
+                {
+                    var detail = ledgerEx.InnerException?.Message ?? ledgerEx.Message;
+                    MessageBox.Show(
+                        $"Sale {result.BillNo} was saved, but recording it to {creditCustomer.Name.Trim()}'s ledger failed:\n\n{detail}\n\n" +
+                        "Please add it manually from Customer Ledger.",
+                        "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+
             MessageBox.Show(
                 $"Sale {result.BillNo} completed.\n\n" +
                 $"Total: {AppSettings.CurrencySymbol} {result.GrandTotal:N2}\n" +
-                $"Change: {AppSettings.CurrencySymbol} {result.Change:N2}",
+                (mode == "Credit"
+                    ? $"Charged to: {creditCustomer?.Name.Trim()} (added to their credit balance)"
+                    : $"Change: {AppSettings.CurrencySymbol} {result.Change:N2}"),
                 "Clidapos");
+
+            var printNow = MessageBox.Show("Print a receipt for this sale?", "Clidapos",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (printNow == MessageBoxResult.Yes)
+                await _receiptService.PrintReceiptForNewSaleAsync(result.BillNo ?? "");
 
             ResetSale();
         }
@@ -375,6 +451,7 @@ namespace Clidapos.Wpf.Views
             ErrorText.Text = "";
             DiscountInput.Text = "0";
             CashMode.IsChecked = true;
+            CreditCustomerCombo.SelectedItem = null;
             RecomputeTotals();
             SearchBox.Focus();
         }

@@ -32,6 +32,16 @@ namespace Clidapos.Wpf.Services
                 .SumAsync(s => (decimal?)s.Qty) ?? 0;
         }
 
+        /// <summary>Current stock quantity for every product in one query - used by the Items Excel export instead of one round trip per product.</summary>
+        public async Task<Dictionary<int, decimal>> GetAllQuantitiesAsync()
+        {
+            using var db = new ClidaposDbContext();
+            return await db.ProductOpeningStocks
+                .GroupBy(s => s.ProductID)
+                .Select(g => new { ProductId = g.Key, Qty = g.Sum(s => s.Qty) })
+                .ToDictionaryAsync(x => x.ProductId, x => x.Qty);
+        }
+
         public async Task SetQuantityAsync(int productId, decimal qty)
         {
             await _warehouseService.EnsureDefaultWarehouseAsync();

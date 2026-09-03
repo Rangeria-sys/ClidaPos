@@ -31,6 +31,43 @@ namespace Clidapos.Wpf.Services
         public List<PurchaseReportRow> Purchases { get; set; } = new();
     }
 
+    public enum SalesBreakdownGranularity { Daily, Weekly, Monthly }
+
+    public class SalesBreakdownRow
+    {
+        public DateTime PeriodStart { get; set; }
+        public string PeriodLabel { get; set; } = "";
+        public int BillCount { get; set; }
+        public decimal GrandTotal { get; set; }
+    }
+
+    public class CashierSalesRow
+    {
+        public string Operator { get; set; } = "";
+        public string CashierName { get; set; } = "";
+        public int BillCount { get; set; }
+        public decimal GrandTotal { get; set; }
+        public decimal AverageSale { get; set; }
+    }
+
+    public class VoidedSaleRow
+    {
+        public string BillNo { get; set; } = "";
+        public DateTime? BillDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public string Operator { get; set; } = "";
+        public string PaymentMode { get; set; } = "";
+        public decimal GrandTotal { get; set; }
+        public string Reason { get; set; } = "";
+    }
+
+    public class VoidedSalesSummary
+    {
+        public int Count { get; set; }
+        public decimal TotalVoided { get; set; }
+        public List<VoidedSaleRow> Rows { get; set; } = new();
+    }
+
     public class ReportService
     {
         /// <summary>
@@ -168,6 +205,115 @@ namespace Clidapos.Wpf.Services
             }
 
             return summary;
+        }
+
+        /// <summary>
+        /// Groups every sale in [from, to] by day, ISO week (Monday start), or
+        /// calendar month - for the Sales Report's Daily/Weekly/Monthly Totals tab.
+        /// </summary>
+        public async Task<List<SalesBreakdownRow>> GetSalesBreakdownAsync(DateTime from, DateTime to, SalesBreakdownGranularity granularity)
+        {
+            using var db = new ClidaposDbContext();
+
+            var bills = await db.SaleBills
+                .Where(b => b.BillDate >= from && b.BillDate <= to)
+                .ToListAsync();
+
+            DateTime BucketStart(DateTime d) => granularity switch
+            {
+                SalesBreakdownGranularity.Daily => d.Date,
+                SalesBreakdownGranularity.Weekly => d.Date.AddDays(-(((int)d.DayOfWeek + 6) % 7)),
+                SalesBreakdownGranularity.Monthly => new DateTime(d.Year, d.Month, 1),
+                _ => d.Date
+            };
+
+            string Label(DateTime bucketStart) => granularity switch
+            {
+                SalesBreakdownGranularity.Daily => bucketStart.ToString("ddd, dd MMM yyyy"),
+                SalesBreakdownGranularity.Weekly => $"{bucketStart:dd MMM} - {bucketStart.AddDays(6):dd MMM yyyy}",
+                SalesBreakdownGranularity.Monthly => bucketStart.ToString("MMMM yyyy"),
+                _ => bucketStart.ToString("dd MMM yyyy")
+            };
+
+            return bills
+                .GroupBy(b => BucketStart(b.BillDate))
+                .Select(g => new SalesBreakdownRow
+                {
+                    PeriodStart = g.Key,
+                    PeriodLabel = Label(g.Key),
+                    BillCount = g.Count(),
+                    GrandTotal = g.Sum(b => b.GrandTotal ?? 0)
+                })
+                .OrderByDescending(r => r.PeriodStart)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Totals every sale in [from, to] by the cashier who rang it up (SaleBill.Operator,
+        /// matched against Registration.UserID for the display name) - for the Sales Report's
+        /// Sales by Cashier tab.
+        /// </summary>
+        public async Task<List<CashierSalesRow>> GetSalesByCashierAsync(DateTime from, DateTime to)
+        {
+            using var db = new ClidaposDbContext();
+
+            var bills = await db.SaleBills
+                .Where(b => b.BillDate >= from && b.BillDate <= to)
+                .ToListAsync();
+
+            if (bills.Count == 0) return new List<CashierSalesRow>();
+
+            var users = await db.Registrations.ToListAsync();
+            var nameLookup = users.ToDictionary(u => u.UserID.Trim(), u => u.Name.Trim());
+
+            return bills
+                .GroupBy(b => (b.Operator ?? "(unknown)").Trim())
+                .Select(g => new CashierSalesRow
+                {
+                    Operator = g.Key,
+                    CashierName = nameLookup.TryGetValue(g.Key, out var n) ? n : g.Key,
+                    BillCount = g.Count(),
+                    GrandTotal = g.Sum(b => b.GrandTotal ?? 0),
+                    AverageSale = g.Count() > 0 ? g.Sum(b => b.GrandTotal ?? 0) / g.Count() : 0
+                })
+                .OrderByDescending(c => c.GrandTotal)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Every counter sale voided in [from, to], read from the DeletedInvoices audit
+        /// trail (BillType == "TA") written by SaleService.VoidSaleAsync - for the Sales
+        /// Report's Voided Sales tab. Filtered on DeletedDate, since the bill itself no
+        /// longer exists once voided.
+        /// </summary>
+        public async Task<VoidedSalesSummary> GetVoidedSalesAsync(DateTime from, DateTime to)
+        {
+            using var db = new ClidaposDbContext();
+
+            var voided = await db.DeletedInvoices
+                .Where(d => d.BillType == "TA" && d.DeletedDate >= from && d.DeletedDate <= to)
+                .OrderByDescending(d => d.DeletedDate)
+                .ToListAsync();
+
+            // BillNo/Operator/PaymentMode/Reason are all nchar(N) columns - trim the
+            // fixed-width padding SQL Server returns before showing these on screen.
+            var rows = voided.Select(d => new VoidedSaleRow
+            {
+                BillNo = (d.BillNo ?? "").Trim(),
+                BillDate = d.BillDate,
+                DeletedDate = d.DeletedDate,
+                Operator = (d.Operator ?? "").Trim(),
+                PaymentMode = (d.PaymentMode ?? "").Trim(),
+                GrandTotal = d.GrandTotal ?? 0,
+                Reason = (d.Reason ?? "").Trim()
+            }).ToList();
+
+            return new VoidedSalesSummary
+            {
+                Count = rows.Count,
+                TotalVoided = rows.Sum(r => r.GrandTotal),
+                Rows = rows
+            };
         }
 
         /// <summary>

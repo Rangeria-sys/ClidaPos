@@ -10,92 +10,94 @@
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
-    <Window.Resources>
-        <Style x:Key="PopupInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
+	<Window.Resources>
+		<Style x:Key="PopupInput" TargetType="TextBox">
+			<Setter Property="Background" Value="#F5F5F7"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
 
-        <Style x:Key="PopupCombo" TargetType="ComboBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="IsEditable" Value="True"/>
-        </Style>
+		<Style x:Key="PopupCombo" TargetType="ComboBox">
+			<Setter Property="Background" Value="#F5F5F7"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="IsEditable" Value="True"/>
+		</Style>
 
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#6B6B72"/>
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Margin" Value="0,0,0,3"/>
-        </Style>
+		<Style x:Key="FieldLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#6B6B72"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Margin" Value="0,0,0,3"/>
+		</Style>
 
-        <Style x:Key="ActionBtn" TargetType="Button">
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="ActionBtn" TargetType="Button">
+			<Setter Property="Height" Value="48"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}" CornerRadius="8">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
 
-    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-        <Border.Effect>
-            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-        </Border.Effect>
-        <StackPanel Margin="24">
+	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
+		<Border.Effect>
+			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
+		</Border.Effect>
+		<StackPanel Margin="24">
 
-            <Grid Margin="0,0,0,16">
-                <TextBlock Text="JOURNAL ENTRY" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
-                        Width="30" Height="30" Background="Transparent" Foreground="#888888"
-                        FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
-            </Grid>
+			<Grid Margin="0,0,0,16">
+				<TextBlock Text="JOURNAL ENTRY" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+				<Button Click="Close_Click" HorizontalAlignment="Right"
+                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                           Width="28" Height="28"/>
+				</Button>
+			</Grid>
 
-            <TextBlock Text="Debit Account (increases here)" Style="{StaticResource FieldLabel}"/>
-            <ComboBox x:Name="DebitAccountInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,12"/>
+			<TextBlock Text="Debit Account (increases here)" Style="{StaticResource FieldLabel}"/>
+			<ComboBox x:Name="DebitAccountInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,12"/>
 
-            <TextBlock Text="Credit Account (decreases / source)" Style="{StaticResource FieldLabel}"/>
-            <ComboBox x:Name="CreditAccountInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,12"/>
+			<TextBlock Text="Credit Account (decreases / source)" Style="{StaticResource FieldLabel}"/>
+			<ComboBox x:Name="CreditAccountInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,12"/>
 
-            <Grid Margin="0,0,0,12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Amount" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="AmountInput" Style="{StaticResource PopupInput}"/>
-                </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="Date" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker x:Name="DateInput"/>
-                </StackPanel>
-            </Grid>
+			<Grid Margin="0,0,0,12">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="16"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<StackPanel Grid.Column="0">
+					<TextBlock Text="Amount" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="AmountInput" Style="{StaticResource PopupInput}"/>
+				</StackPanel>
+				<StackPanel Grid.Column="2">
+					<TextBlock Text="Date" Style="{StaticResource FieldLabel}"/>
+					<DatePicker x:Name="DateInput"/>
+				</StackPanel>
+			</Grid>
 
-            <TextBlock Text="Remarks" Style="{StaticResource FieldLabel}"/>
-            <TextBox x:Name="RemarksInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+			<TextBlock Text="Remarks" Style="{StaticResource FieldLabel}"/>
+			<TextBox x:Name="RemarksInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
 
-            <Button Content="💾  Post Journal Entry" Click="Post_Click"
+			<Button Content="💾  Post Journal Entry" Click="Post_Click"
                     Style="{StaticResource ActionBtn}" Background="#F3A123"/>
 
-            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
+			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
                        Margin="0,12,0,0" TextWrapping="Wrap"/>
-        </StackPanel>
-    </Border>
+		</StackPanel>
+	</Border>
 </Window>

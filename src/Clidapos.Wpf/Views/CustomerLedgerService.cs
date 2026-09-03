@@ -18,26 +18,28 @@ namespace Clidapos.Wpf.Services
 
     public class CustomerLedgerService
     {
-        /// <summary>Every customer, with a running balance from real linked ledger entries.
-        /// Debit increases what they owe, Credit (a payment) reduces it - standard
+        /// <summary>Every credit customer, with a running balance from real linked ledger
+        /// entries. Debit increases what they owe, Credit (a payment) reduces it - standard
         /// accounts-receivable convention, the opposite of Supplier Ledger.</summary>
         public async Task<List<CustomerBalanceRow>> GetCustomerBalancesAsync()
         {
             using var db = new ClidaposDbContext();
 
-            var customers = await db.Set<Customer>().ToListAsync();
+            var customers = await db.Set<CreditCustomer>().ToListAsync();
             var entries = await db.Set<CustomerLedgerEntry>().ToListAsync();
 
             return customers.Select(c =>
             {
-                var customerEntries = entries.Where(e => e.CreditCustomer_ID == c.ID).ToList();
+                var customerEntries = entries.Where(e => e.CreditCustomer_ID == c.CC_ID).ToList();
 
                 return new CustomerBalanceRow
                 {
-                    CustomerId = c.ID,
-                    CustomerCode = c.CustomerID.Trim(),
-                    CustomerName = c.Name.Trim(),
-                    Balance = customerEntries.Sum(e => e.Debit ?? 0) - customerEntries.Sum(e => e.Credit ?? 0)
+                    CustomerId = c.CC_ID,
+                    CustomerCode = c.CreditCustomerID.Trim(),
+                    CustomerName = c.Name?.Trim() ?? "",
+                    Balance = (c.OpeningBalance ?? 0)
+                              + customerEntries.Sum(e => e.Debit ?? 0)
+                              - customerEntries.Sum(e => e.Credit ?? 0)
                 };
             })
             .OrderByDescending(r => r.Balance)
@@ -71,11 +73,10 @@ namespace Clidapos.Wpf.Services
         {
             using var db = new ClidaposDbContext();
 
-            var maxId = await db.Set<CustomerLedgerEntry>().Select(e => (int?)e.Id).MaxAsync() ?? 0;
-
+            // Id is a real IDENTITY column in CreditCustomerLedger - SQL Server
+            // auto-generates it, so it must never be set explicitly here.
             db.Set<CustomerLedgerEntry>().Add(new CustomerLedgerEntry
             {
-                Id = maxId + 1,
                 Date = DateTime.Now,
                 LedgerNo = "",
                 Label = label.Trim(),

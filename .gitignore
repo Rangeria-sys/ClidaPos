@@ -1,4 +1,12 @@
 bin/
 obj/
+*.user
 .vs/
-*.user"publish/" 
+backup.Wpf/
+Clidapos.Wpf_old/
+*_old/
+*_prev*/
+.DS_Store
+Thumbs.db
+publish/ 
+build_log.txt 

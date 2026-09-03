@@ -10,6 +10,8 @@ namespace Clidapos.Wpf.Views
     {
         private readonly Registration _currentUser;
         private readonly ShiftService _shiftService = new();
+        private readonly ClockService _clockService = new();
+        private readonly LogService _logService = new();
         private readonly DispatcherTimer _clockTimer;
 
         public FrontOfficeHubView(Registration currentUser)
@@ -26,11 +28,23 @@ namespace Clidapos.Wpf.Views
             _clockTimer.Tick += (s, e) => UpdateClock();
             _clockTimer.Start();
             UpdateClock();
+
+            Loaded += async (s, e) => await RefreshClockStatus();
         }
 
         private void UpdateClock()
         {
             DateTimeText.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy  hh:mm:ss tt");
+        }
+
+        // Shows whether the current operator is currently clocked in, and since when -
+        // so the tile's own state is visible before they even click it.
+        private async System.Threading.Tasks.Task RefreshClockStatus()
+        {
+            var open = await _clockService.GetOpenEntryAsync(_currentUser.UserID.Trim());
+            ClockStatusText.Text = open != null
+                ? $"Clocked in since {open.ClockInTime:hh:mm tt}"
+                : "Not clocked in";
         }
 
         private void WorkPeriod_Click(object sender, RoutedEventArgs e)
@@ -70,9 +84,27 @@ namespace Clidapos.Wpf.Views
             Close();
         }
 
-        private void ClockInOut_Click(object sender, RoutedEventArgs e)
+        // One tile does both jobs: clocks the operator in if they're not already,
+        // or clocks them out (showing how long the shift ran) if they are.
+        private async void ClockInOut_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Clock In / Clock Out is coming in the next update.", "Clidapos");
+            var result = await _clockService.ToggleAsync(_currentUser.UserID.Trim(), _currentUser.Name.Trim());
+
+            if (result.JustClockedIn)
+            {
+                await _logService.LogAsync(CurrentSession.UserId, "Clocked in");
+                MessageBox.Show($"Clocked in at {result.ClockInTime:hh:mm tt}.", "Clidapos");
+            }
+            else
+            {
+                await _logService.LogAsync(CurrentSession.UserId,
+                    $"Clocked out at {result.ClockOutTime:hh:mm tt} (shift: {result.Duration:hh\\:mm})");
+                MessageBox.Show(
+                    $"Clocked out at {result.ClockOutTime:hh:mm tt}.\n\nShift duration: {result.Duration:hh\\:mm}",
+                    "Clidapos");
+            }
+
+            await RefreshClockStatus();
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)

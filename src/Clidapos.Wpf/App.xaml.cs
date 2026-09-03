@@ -10,6 +10,12 @@ namespace Clidapos.Wpf
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            // QuestPDF is free under the Community license for individuals and
+            // organizations under $1M annual gross revenue. Change this if that
+            // ever stops being true for Clidapos - see https://www.questpdf.com/license/
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
             base.OnStartup(e);
         }
 

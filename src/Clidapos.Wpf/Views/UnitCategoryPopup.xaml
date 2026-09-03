@@ -57,9 +57,11 @@
 
             <Grid Margin="0,0,0,16">
                 <TextBlock Text="UNIT CATEGORY" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
-                        Width="30" Height="30" Background="Transparent" Foreground="#888888"
-                        FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                <Button Click="Close_Click" HorizontalAlignment="Right"
+                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                    <Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                           Width="28" Height="28"/>
+                </Button>
             </Grid>
 
             <TextBlock Text="Unit Name" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>

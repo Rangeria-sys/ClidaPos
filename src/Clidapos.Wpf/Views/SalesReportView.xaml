@@ -73,6 +73,93 @@
 			</Setter>
 		</Style>
 
+		<Style x:Key="ExportBtn" TargetType="Button">
+			<Setter Property="Height" Value="38"/>
+			<Setter Property="Foreground" Value="#1E1E24"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#1E1E24"/>
+			<Setter Property="Padding" Value="14,0"/>
+			<Setter Property="Margin" Value="8,0,0,0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Background" Value="#F0F0F2"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Tab strip button - IsChecked (via ToggleButton) drives the active/inactive look -->
+		<Style x:Key="TabBtn" TargetType="ToggleButton">
+			<Setter Property="Height" Value="42"/>
+			<Setter Property="Foreground" Value="#8A8A92"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="0,0,0,3"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="Padding" Value="18,0"/>
+			<Setter Property="Margin" Value="0,0,4,0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ToggleButton">
+						<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter Property="Foreground" Value="#F3A123"/>
+								<Setter Property="BorderBrush" Value="#F3A123"/>
+							</Trigger>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Foreground" Value="#1E1E24"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="GranularityBtn" TargetType="ToggleButton">
+			<Setter Property="Height" Value="34"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="Background" Value="#F0F0F2"/>
+			<Setter Property="Padding" Value="14,0"/>
+			<Setter Property="Margin" Value="0,0,8,0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ToggleButton">
+						<Border Background="{TemplateBinding Background}" CornerRadius="6">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter Property="Background" Value="#F3A123"/>
+								<Setter Property="Foreground" Value="White"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
 		<Style x:Key="CardBorder" TargetType="Border">
 			<Setter Property="Background" Value="#FAFAFB"/>
 			<Setter Property="BorderBrush" Value="#E4E4E8"/>
@@ -101,6 +188,103 @@
 			<Setter Property="HorizontalAlignment" Value="Right"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
 		</Style>
+
+		<!-- Selection colour override so a clicked row highlights in the app's amber
+             accent instead of the default Windows blue - makes the grid feel native
+             to the rest of Clidapos rather than a generic system control. -->
+		<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#F3A123"/>
+		<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+		<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#F6C77A"/>
+		<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+
+		<!-- Dark header bar to match the window chrome, with a thin amber-tinted
+             separator between columns instead of a flat grey strip. -->
+		<Style x:Key="GridHeaderLeft" TargetType="DataGridColumnHeader">
+			<Setter Property="Background" Value="#1E1E24"/>
+			<Setter Property="Foreground" Value="#F3A123"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="11.5"/>
+			<Setter Property="Padding" Value="12,10"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="SeparatorBrush" Value="#3A3A42"/>
+			<Setter Property="SeparatorVisibility" Value="Visible"/>
+		</Style>
+
+		<!-- Same header, but content (and therefore the label) sits flush right -
+             used above numeric columns so the header lines up exactly with the
+             right-aligned figures underneath it. -->
+		<Style x:Key="GridHeaderRight" TargetType="DataGridColumnHeader" BasedOn="{StaticResource GridHeaderLeft}">
+			<Setter Property="HorizontalContentAlignment" Value="Right"/>
+		</Style>
+
+		<!-- Cell content styles - applied via each column's ElementStyle. Text
+             columns align left, numeric/currency columns align right so the
+             decimal points and digits stack cleanly row over row. -->
+		<Style x:Key="CellTextLeft" TargetType="TextBlock">
+			<Setter Property="Padding" Value="12,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		</Style>
+
+		<Style x:Key="CellTextRight" TargetType="TextBlock" BasedOn="{StaticResource CellTextLeft}">
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="TextAlignment" Value="Right"/>
+		</Style>
+
+		<Style x:Key="CellTextRightBold" TargetType="TextBlock" BasedOn="{StaticResource CellTextRight}">
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Foreground" Value="#1E1E24"/>
+		</Style>
+
+		<!-- Row hover + selection feedback, and zebra striping via AlternationIndex
+             (set with DataGrid.AlternationCount below) rather than the flat
+             RowBackground/AlternatingRowBackground pair, so hover/selection can
+             still take priority over the stripe colour. -->
+		<Style x:Key="ReportGridRow" TargetType="DataGridRow">
+			<Setter Property="MinHeight" Value="40"/>
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Style.Triggers>
+				<Trigger Property="AlternationIndex" Value="1">
+					<Setter Property="Background" Value="#F7F7F9"/>
+				</Trigger>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Background" Value="#FDEFD9"/>
+				</Trigger>
+				<Trigger Property="IsSelected" Value="True">
+					<Setter Property="Background" Value="#F3A123"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
+		<Style x:Key="ReportGrid" TargetType="DataGrid">
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="BorderBrush" Value="#E4E4E8"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="RowHeaderWidth" Value="0"/>
+			<Setter Property="HeadersVisibility" Value="Column"/>
+			<Setter Property="GridLinesVisibility" Value="Horizontal"/>
+			<Setter Property="HorizontalGridLinesBrush" Value="#EDEDF0"/>
+			<Setter Property="ColumnHeaderStyle" Value="{StaticResource GridHeaderLeft}"/>
+			<Setter Property="RowStyle" Value="{StaticResource ReportGridRow}"/>
+			<Setter Property="AlternationCount" Value="2"/>
+			<Setter Property="RowHeight" Value="40"/>
+			<Setter Property="ColumnHeaderHeight" Value="40"/>
+			<Setter Property="MinColumnWidth" Value="70"/>
+			<Setter Property="IsReadOnly" Value="True"/>
+			<Setter Property="CanUserAddRows" Value="False"/>
+			<Setter Property="CanUserDeleteRows" Value="False"/>
+			<Setter Property="CanUserSortColumns" Value="True"/>
+			<Setter Property="CanUserResizeColumns" Value="True"/>
+			<Setter Property="CanUserReorderColumns" Value="False"/>
+			<Setter Property="SelectionMode" Value="Single"/>
+			<Setter Property="SelectionUnit" Value="FullRow"/>
+			<Setter Property="EnableRowVirtualization" Value="True"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+		</Style>
 	</Window.Resources>
 
 	<Grid>
@@ -111,94 +295,44 @@
 
 		<Border Grid.Row="0" Background="#1E1E24">
 			<Grid>
-                <Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="15,0,0,0" HorizontalAlignment="Left" ToolTip="Back">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FFD98F" Offset="0"/>
-												<GradientStop Color="#F3A123" Offset="0.5"/>
-												<GradientStop Color="#B5741A" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-										<Ellipse.Effect>
-											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-										</Ellipse.Effect>
-									</Ellipse>
-									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
-					</Button>
-				<TextBlock Text="SALES REPORT" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
 
-					
-					<Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-                            ToolTip="Minimize">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FFE9A6" Offset="0"/>
-												<GradientStop Color="#E8B830" Offset="0.4"/>
-												<GradientStop Color="#B8860B" Offset="0.85"/>
-												<GradientStop Color="#8A6408" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-										<Ellipse.Effect>
-											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-										</Ellipse.Effect>
-									</Ellipse>
-									<TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
+				<Button Grid.Column="0" Click="Back_Click" Width="56" Height="56"
+						Background="Transparent" BorderThickness="0" Cursor="Hand"
+						Margin="15,0,0,0" ToolTip="Back">
+					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+						   Width="42" Height="42"/>
+				</Button>
+
+				<TextBlock Grid.Column="1" Text="SALES REPORT" Foreground="#F3A123" FontSize="16"
+						   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+							Margin="0,0,15,0">
+
+					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+							BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+							   Width="42" Height="42"/>
 					</Button>
 
-					<Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FF7B8C" Offset="0"/>
-												<GradientStop Color="#DC143C" Offset="0.5"/>
-												<GradientStop Color="#8F0C25" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-										<Ellipse.Effect>
-											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-										</Ellipse.Effect>
-									</Ellipse>
-									<Viewbox Width="16" Height="16">
-										<Canvas Width="24" Height="24">
-											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-										</Canvas>
-									</Viewbox>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
+					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+							BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+							   Width="42" Height="42"/>
 					</Button>
 				</StackPanel>
 			</Grid>
 		</Border>
 
 		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-			<StackPanel x:Name="ReportContent" HorizontalAlignment="Center" Margin="0,24,0,30" Width="640">
+			<StackPanel x:Name="ReportContent" HorizontalAlignment="Center" Margin="0,24,0,30" Width="780">
 
-				<!-- DATE RANGE -->
+				<!-- DATE RANGE + EXPORT -->
 				<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
 					<StackPanel>
 						<TextBlock Text="DATE RANGE" Style="{StaticResource CardTitle}"/>
@@ -224,7 +358,9 @@
 							<Button Content="This Month" Style="{StaticResource QuickRangeBtn}" Click="ThisMonth_Click"/>
 							<Button Content="Run Report" Style="{StaticResource RunBtn}" Click="RunReport_Click"/>
 							<Button x:Name="PrintButton" Content="🖨 Print" Style="{StaticResource QuickRangeBtn}"
-                                    Margin="0" Click="Print_Click"/>
+                                    Margin="8,0,0,0" Click="Print_Click"/>
+							<Button Content="⭳ Excel" Style="{StaticResource ExportBtn}" Click="ExportExcel_Click"/>
+							<Button Content="⭳ PDF" Style="{StaticResource ExportBtn}" Click="ExportPdf_Click"/>
 						</StackPanel>
 					</StackPanel>
 				</Border>
@@ -236,85 +372,222 @@
 				<!-- RESULTS -->
 				<StackPanel x:Name="ResultsPanel" Visibility="Collapsed">
 
-					<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-						<StackPanel>
-							<TextBlock Text="TOTAL TAKINGS" Style="{StaticResource CardTitle}"/>
-							<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#1B8A3D"
-                                       FontSize="42" FontWeight="Bold"/>
-
-							<Border Height="1" Background="#E4E4E8" Margin="0,16,0,14"/>
-
-							<Grid Margin="0,0,0,8">
-								<TextBlock Text="Sales (bills)" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="BillCountText" Style="{StaticResource RowValue}"/>
-							</Grid>
-							<Grid Margin="0,0,0,8">
-								<TextBlock Text="Items sold" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="ItemCountText" Style="{StaticResource RowValue}"/>
-							</Grid>
-							<Grid>
-								<TextBlock Text="Average sale" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="AverageText" Style="{StaticResource RowValue}"/>
-							</Grid>
+					<!-- TAB STRIP -->
+					<Border BorderBrush="#E4E4E8" BorderThickness="0,0,0,1" Margin="0,0,0,16">
+						<StackPanel Orientation="Horizontal">
+							<ToggleButton x:Name="TabTotalsBtn" Content="TOTALS" Style="{StaticResource TabBtn}"
+										  IsChecked="True" Click="TabTotals_Click"/>
+							<ToggleButton x:Name="TabPaymentBtn" Content="PAYMENT MODE" Style="{StaticResource TabBtn}"
+										  Click="TabPayment_Click"/>
+							<ToggleButton x:Name="TabTopItemsBtn" Content="TOP SELLING ITEMS" Style="{StaticResource TabBtn}"
+										  Click="TabTopItems_Click"/>
+							<ToggleButton x:Name="TabCashierBtn" Content="BY CASHIER" Style="{StaticResource TabBtn}"
+										  Click="TabCashier_Click"/>
+							<ToggleButton x:Name="TabVoidedBtn" Content="VOIDED SALES" Style="{StaticResource TabBtn}"
+										  Click="TabVoided_Click"/>
 						</StackPanel>
 					</Border>
 
-					<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-						<StackPanel>
-							<TextBlock Text="BY PAYMENT METHOD" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
-							<Grid Margin="0,0,0,8">
-								<TextBlock Text="Cash" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="CashText" Style="{StaticResource RowValue}" Foreground="#1B8A3D"/>
-							</Grid>
-							<Grid Margin="0,0,0,8">
-								<TextBlock Text="M-Pesa" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="MpesaText" Style="{StaticResource RowValue}"/>
-							</Grid>
-							<Grid Margin="0,0,0,8">
-								<TextBlock Text="Card" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="CardText" Style="{StaticResource RowValue}"/>
-							</Grid>
-							<Grid x:Name="OtherRow" Visibility="Collapsed">
-								<TextBlock Text="Other" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="OtherText" Style="{StaticResource RowValue}"/>
-							</Grid>
-						</StackPanel>
-					</Border>
+					<!-- TAB 1: DAILY/WEEKLY/MONTHLY TOTALS -->
+					<StackPanel x:Name="TotalsTab">
+						<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+							<StackPanel>
+								<TextBlock Text="TOTAL TAKINGS (SELECTED RANGE)" Style="{StaticResource CardTitle}"/>
+								<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#1B8A3D"
+                                           FontSize="42" FontWeight="Bold"/>
 
-					<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-						<StackPanel>
-							<TextBlock Text="TAX" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
-							<Grid Margin="0,0,0,8">
-								<TextBlock Text="Net of VAT" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="TaxableText" Style="{StaticResource RowValue}"/>
-							</Grid>
-							<Grid>
-								<TextBlock x:Name="VatLabel" Style="{StaticResource RowLabel}"/>
-								<TextBlock x:Name="VatText" Style="{StaticResource RowValue}" Foreground="#F3A123"/>
-							</Grid>
-						</StackPanel>
-					</Border>
+								<Border Height="1" Background="#E4E4E8" Margin="0,16,0,14"/>
 
-					<Border x:Name="TopItemsCard" Style="{StaticResource CardBorder}" Visibility="Collapsed">
-						<StackPanel>
-							<TextBlock Text="TOP SELLERS" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
-							<ItemsControl x:Name="TopItemsList">
-								<ItemsControl.ItemTemplate>
-									<DataTemplate>
-										<Grid Margin="0,6">
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="{Binding Qty, StringFormat=N0}" Foreground="#F3A123"
-                                                           FontSize="14" FontWeight="Bold" Width="40"/>
-												<TextBlock Text="{Binding Name}" Foreground="#4A4A50" FontSize="14"/>
-											</StackPanel>
-											<TextBlock Text="{Binding Value, StringFormat=N2}" Foreground="#1C1C1F"
-                                                       FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Right"/>
-										</Grid>
-									</DataTemplate>
-								</ItemsControl.ItemTemplate>
-							</ItemsControl>
-						</StackPanel>
-					</Border>
+								<Grid Margin="0,0,0,8">
+									<TextBlock Text="Sales (bills)" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="BillCountText" Style="{StaticResource RowValue}"/>
+								</Grid>
+								<Grid Margin="0,0,0,8">
+									<TextBlock Text="Items sold" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="ItemCountText" Style="{StaticResource RowValue}"/>
+								</Grid>
+								<Grid>
+									<TextBlock Text="Average sale" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="AverageText" Style="{StaticResource RowValue}"/>
+								</Grid>
+							</StackPanel>
+						</Border>
+
+						<Border Style="{StaticResource CardBorder}">
+							<StackPanel>
+								<Grid Margin="0,0,0,10">
+									<TextBlock Text="BREAKDOWN" Style="{StaticResource CardTitle}" VerticalAlignment="Center"/>
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+										<ToggleButton x:Name="DailyBtn" Content="Daily" Style="{StaticResource GranularityBtn}"
+													  IsChecked="True" Click="Granularity_Click"/>
+										<ToggleButton x:Name="WeeklyBtn" Content="Weekly" Style="{StaticResource GranularityBtn}"
+													  Click="Granularity_Click"/>
+										<ToggleButton x:Name="MonthlyBtn" Content="Monthly" Style="{StaticResource GranularityBtn}"
+													  Margin="0" Click="Granularity_Click"/>
+									</StackPanel>
+								</Grid>
+								<DataGrid x:Name="BreakdownGrid" Style="{StaticResource ReportGrid}">
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="Period" Binding="{Binding PeriodLabel}" Width="*"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+										<DataGridTextColumn Header="Bills" Binding="{Binding BillCount, StringFormat=N0}" Width="100"
+                                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+										<DataGridTextColumn Header="Total" Binding="{Binding GrandTotal, StringFormat=N2}" Width="150"
+                                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRightBold}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+
+					<!-- TAB 2: PAYMENT MODE -->
+					<StackPanel x:Name="PaymentTab" Visibility="Collapsed">
+						<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+							<StackPanel>
+								<TextBlock Text="BY PAYMENT METHOD" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
+								<Grid Margin="0,0,0,8">
+									<TextBlock Text="Cash" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="CashText" Style="{StaticResource RowValue}" Foreground="#1B8A3D"/>
+								</Grid>
+								<Grid Margin="0,0,0,8">
+									<TextBlock Text="M-Pesa" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="MpesaText" Style="{StaticResource RowValue}"/>
+								</Grid>
+								<Grid Margin="0,0,0,8">
+									<TextBlock Text="Card" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="CardText" Style="{StaticResource RowValue}"/>
+								</Grid>
+								<Grid x:Name="OtherRow" Visibility="Collapsed">
+									<TextBlock Text="Other" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="OtherText" Style="{StaticResource RowValue}"/>
+								</Grid>
+							</StackPanel>
+						</Border>
+
+						<Border Style="{StaticResource CardBorder}">
+							<StackPanel>
+								<TextBlock Text="TAX" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
+								<Grid Margin="0,0,0,8">
+									<TextBlock Text="Net of VAT" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="TaxableText" Style="{StaticResource RowValue}"/>
+								</Grid>
+								<Grid>
+									<TextBlock x:Name="VatLabel" Style="{StaticResource RowLabel}"/>
+									<TextBlock x:Name="VatText" Style="{StaticResource RowValue}" Foreground="#F3A123"/>
+								</Grid>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+
+					<!-- TAB 3: TOP SELLING ITEMS -->
+					<StackPanel x:Name="TopItemsTab" Visibility="Collapsed">
+						<Border Style="{StaticResource CardBorder}">
+							<StackPanel>
+								<TextBlock Text="TOP SELLERS" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
+
+								<!-- Column header row, kept in step with the item rows below via matching column widths -->
+								<Grid Margin="12,0,12,6">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="60"/>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="130"/>
+									</Grid.ColumnDefinitions>
+									<TextBlock Grid.Column="0" Text="QTY" Foreground="#8A8A92" FontSize="11" FontWeight="Bold"/>
+									<TextBlock Grid.Column="1" Text="ITEM" Foreground="#8A8A92" FontSize="11" FontWeight="Bold"/>
+									<TextBlock Grid.Column="2" Text="VALUE" Foreground="#8A8A92" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right"/>
+								</Grid>
+								<Border Height="1" Background="#E4E4E8" Margin="0,0,0,4"/>
+
+								<ItemsControl x:Name="TopItemsList">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<Border x:Name="RowBorder" Padding="12,10" CornerRadius="4"
+                                                    BorderBrush="#F0F0F2" BorderThickness="0,0,0,1">
+												<Grid>
+													<Grid.ColumnDefinitions>
+														<ColumnDefinition Width="60"/>
+														<ColumnDefinition Width="*"/>
+														<ColumnDefinition Width="130"/>
+													</Grid.ColumnDefinitions>
+													<TextBlock Grid.Column="0" Text="{Binding Qty, StringFormat=N0}" Foreground="#F3A123"
+                                                               FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+													<TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="#1C1C1F" FontSize="14"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+													<TextBlock Grid.Column="2" Text="{Binding Value, StringFormat=N2}" Foreground="#1C1C1F"
+                                                               FontSize="14" FontWeight="Bold" HorizontalAlignment="Right"
+                                                               TextAlignment="Right" VerticalAlignment="Center"/>
+												</Grid>
+											</Border>
+											<DataTemplate.Triggers>
+												<Trigger SourceName="RowBorder" Property="IsMouseOver" Value="True">
+													<Setter TargetName="RowBorder" Property="Background" Value="#FDEFD9"/>
+												</Trigger>
+											</DataTemplate.Triggers>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+								<TextBlock x:Name="NoTopItemsText" Text="No items sold in this range."
+										   Foreground="#8A8A92" FontSize="13" Margin="12,8,0,0" Visibility="Collapsed"/>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+
+					<!-- TAB 4: BY CASHIER -->
+					<StackPanel x:Name="CashierTab" Visibility="Collapsed">
+						<Border Style="{StaticResource CardBorder}">
+							<StackPanel>
+								<TextBlock Text="SALES BY CASHIER" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
+								<DataGrid x:Name="CashierGrid" Style="{StaticResource ReportGrid}">
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="Cashier" Binding="{Binding CashierName}" Width="*"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+										<DataGridTextColumn Header="Bills" Binding="{Binding BillCount, StringFormat=N0}" Width="90"
+                                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+										<DataGridTextColumn Header="Average Sale" Binding="{Binding AverageSale, StringFormat=N2}" Width="150"
+                                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+										<DataGridTextColumn Header="Total" Binding="{Binding GrandTotal, StringFormat=N2}" Width="150"
+                                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRightBold}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+
+					<!-- TAB 5: VOIDED SALES -->
+					<StackPanel x:Name="VoidedTab" Visibility="Collapsed">
+						<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+							<StackPanel>
+								<TextBlock Text="TOTAL VOIDED" Style="{StaticResource CardTitle}"/>
+								<TextBlock x:Name="VoidedTotalText" Text="0.00" Foreground="#B23A3A"
+                                           FontSize="36" FontWeight="Bold"/>
+								<TextBlock x:Name="VoidedCountText" Text="0 voided sales" Foreground="#8A8A92" FontSize="13" Margin="0,4,0,0"/>
+							</StackPanel>
+						</Border>
+
+						<Border Style="{StaticResource CardBorder}">
+							<StackPanel>
+								<TextBlock Text="VOIDED SALES" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
+								<DataGrid x:Name="VoidedGrid" Style="{StaticResource ReportGrid}">
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="Bill No" Binding="{Binding BillNo}" Width="110"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+										<DataGridTextColumn Header="Sale Date" Binding="{Binding BillDate, StringFormat='dd MMM yyyy HH:mm'}" Width="150"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+										<DataGridTextColumn Header="Voided" Binding="{Binding DeletedDate, StringFormat='dd MMM yyyy HH:mm'}" Width="150"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+										<DataGridTextColumn Header="Cashier" Binding="{Binding Operator}" Width="110"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+										<DataGridTextColumn Header="Amount" Binding="{Binding GrandTotal, StringFormat=N2}" Width="120"
+                                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRightBold}"/>
+										<DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="*"
+                                                             ElementStyle="{StaticResource CellTextLeft}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+								<TextBlock x:Name="NoVoidedText" Text="No sales were voided in this range."
+										   Foreground="#8A8A92" FontSize="13" Visibility="Collapsed"/>
+							</StackPanel>
+						</Border>
+					</StackPanel>
 
 				</StackPanel>
 			</StackPanel>

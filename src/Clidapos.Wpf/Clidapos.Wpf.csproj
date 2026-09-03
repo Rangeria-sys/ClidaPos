@@ -15,6 +15,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+		<PackageReference Include="ClosedXML" Version="0.105.1" />
+		<PackageReference Include="QuestPDF" Version="2026.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -78,7 +80,11 @@
 		<Resource Include="Assets\exit_button.png" />
 		<Resource Include="Assets\back-arrow.png" />
 		<Resource Include="Assets\minimize.png" />
-		
+		<Resource Include="Assets\workp.png" />
+		<Resource Include="Assets\pos.png" />
+		<Resource Include="Assets\report.png" />
+		<Resource Include="Assets\clockin.png" />
+		<Resource Include="Assets\logout.png" />
 	</ItemGroup>
 
 </Project>

@@ -34,7 +34,6 @@
 			<Setter Property="HorizontalContentAlignment" Value="Left"/>
 		</Style>
 	</Window.Resources>
-
 	<Grid Background="{StaticResource AppOverlay}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60"/>
@@ -88,8 +87,8 @@
                      Margin="0,0,0,8" TextChanged="SearchBox_TextChanged"
                      Tag="Search customers..."/>
 
-			<TextBlock Grid.Row="1" Text="Double-click a customer to see their full transaction history and record credit or payment."
-                       Foreground="#999999" FontSize="12" Margin="2,0,0,12"/>
+			<TextBlock Grid.Row="1" Text="Double-click a customer to manage their credit - see full transaction history and record a payment or new credit."
+                       Foreground="#999999" FontSize="12" Margin="2,0,0,12" TextWrapping="Wrap"/>
 
 			<Border Grid.Row="2" Background="#1A1A1F" CornerRadius="8" Padding="16">
 				<DataGrid x:Name="CustomerGrid" AutoGenerateColumns="False"

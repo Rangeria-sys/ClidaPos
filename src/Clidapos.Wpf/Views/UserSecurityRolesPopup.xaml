@@ -10,174 +10,176 @@
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
-    <Window.Resources>
-        <Style x:Key="PopupInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
+	<Window.Resources>
+		<Style x:Key="PopupInput" TargetType="TextBox">
+			<Setter Property="Background" Value="#F5F5F7"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="FontSize" Value="13"/>
+		</Style>
 
-        <Style x:Key="PopupCombo" TargetType="ComboBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="IsEditable" Value="True"/>
-        </Style>
+		<Style x:Key="PopupCombo" TargetType="ComboBox">
+			<Setter Property="Background" Value="#F5F5F7"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="IsEditable" Value="True"/>
+		</Style>
 
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#6B6B72"/>
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Margin" Value="0,0,0,3"/>
-        </Style>
+		<Style x:Key="FieldLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#6B6B72"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="Margin" Value="0,0,0,3"/>
+		</Style>
 
-        <Style x:Key="IconActionButton" TargetType="Button">
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Opacity" Value="0.85"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+		<Style x:Key="IconActionButton" TargetType="Button">
+			<Setter Property="Height" Value="48"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="IconBtnText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Margin" Value="8,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="IconBtnText" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Margin" Value="8,0,0,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+	</Window.Resources>
 
-    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-        <Border.Effect>
-            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-        </Border.Effect>
-        <StackPanel Margin="24">
+	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
+		<Border.Effect>
+			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
+		</Border.Effect>
+		<StackPanel Margin="24">
 
-            <Grid Margin="0,0,0,16">
-                <TextBlock Text="USER SECURITY ROLES" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
-                        Width="30" Height="30" Background="Transparent" Foreground="#888888"
-                        FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
-            </Grid>
+			<Grid Margin="0,0,0,16">
+				<TextBlock Text="USER SECURITY ROLES" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+				<Button Click="Close_Click" HorizontalAlignment="Right"
+                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                           Width="28" Height="28"/>
+				</Button>
+			</Grid>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="16"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="User ID" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="UserIdInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+				<StackPanel Grid.Column="0">
+					<TextBlock Text="User ID" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="UserIdInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Name" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<TextBlock Text="Name" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="PIN / Password" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="PasswordInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<TextBlock Text="PIN / Password" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="PasswordInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="User Type" Style="{StaticResource FieldLabel}"/>
-                    <ComboBox x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
-                        <ComboBoxItem Content="Admin"/>
-                        <ComboBoxItem Content="Manager"/>
-                        <ComboBoxItem Content="Cashier"/>
-                    </ComboBox>
+					<TextBlock Text="User Type" Style="{StaticResource FieldLabel}"/>
+					<ComboBox x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
+						<ComboBoxItem Content="Admin"/>
+						<ComboBoxItem Content="Manager"/>
+						<ComboBoxItem Content="Cashier"/>
+					</ComboBox>
 
-                    <TextBlock Text="Active" Style="{StaticResource FieldLabel}"/>
-                    <ComboBox x:Name="ActiveInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
-                        <ComboBoxItem Content="Y"/>
-                        <ComboBoxItem Content="N"/>
-                    </ComboBox>
+					<TextBlock Text="Active" Style="{StaticResource FieldLabel}"/>
+					<ComboBox x:Name="ActiveInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
+						<ComboBoxItem Content="Y"/>
+						<ComboBoxItem Content="N"/>
+					</ComboBox>
 
-                    <TextBlock Text="Joining Date" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker x:Name="JoiningDateInput" Margin="0,0,0,10"/>
-                </StackPanel>
+					<TextBlock Text="Joining Date" Style="{StaticResource FieldLabel}"/>
+					<DatePicker x:Name="JoiningDateInput" Margin="0,0,0,10"/>
+				</StackPanel>
 
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="Contact No" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="ContactInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+				<StackPanel Grid.Column="2">
+					<TextBlock Text="Contact No" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="ContactInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Email" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="EmailInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<TextBlock Text="Email" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="EmailInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="SSN" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="SsnInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<TextBlock Text="SSN" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="SsnInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Payroll Type" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="PayrollTypeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<TextBlock Text="Payroll Type" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="PayrollTypeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Card No" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="CardNoInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<TextBlock Text="Card No" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="CardNoInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Auto Logout" Style="{StaticResource FieldLabel}"/>
-                    <TextBox x:Name="AutoLogoutInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-                </StackPanel>
-            </Grid>
+					<TextBlock Text="Auto Logout" Style="{StaticResource FieldLabel}"/>
+					<TextBox x:Name="AutoLogoutInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+				</StackPanel>
+			</Grid>
 
-            <Grid Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+			<Grid Margin="0,10,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="8"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="8"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="8"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="8"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="➕" FontSize="15"/>
-                        <TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="2" Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="💾" FontSize="15"/>
-                        <TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="4" Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="✎" FontSize="15"/>
-                        <TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="6" Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🗑" FontSize="15"/>
-                        <TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="8" Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🔍" FontSize="15"/>
-                        <TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
+				<Button Grid.Column="0" Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="➕" FontSize="15"/>
+						<TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
+					</StackPanel>
+				</Button>
+				<Button Grid.Column="2" Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="💾" FontSize="15"/>
+						<TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
+					</StackPanel>
+				</Button>
+				<Button Grid.Column="4" Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="✎" FontSize="15"/>
+						<TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
+					</StackPanel>
+				</Button>
+				<Button Grid.Column="6" Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="🗑" FontSize="15"/>
+						<TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
+					</StackPanel>
+				</Button>
+				<Button Grid.Column="8" Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="🔍" FontSize="15"/>
+						<TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
+					</StackPanel>
+				</Button>
+			</Grid>
 
-            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
+			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
                        Margin="0,12,0,0" TextWrapping="Wrap"/>
-        </StackPanel>
-    </Border>
+		</StackPanel>
+	</Border>
 </Window>

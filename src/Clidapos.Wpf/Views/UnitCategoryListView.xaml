@@ -43,85 +43,35 @@
 
         <Border Grid.Row="0" Background="#1E1E24">
             <Grid>
-                <Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="15,0,0,0" HorizontalAlignment="Left" ToolTip="Back">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFD98F" Offset="0"/>
-                                                <GradientStop Color="#F3A123" Offset="0.5"/>
-                                                <GradientStop Color="#B5741A" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                <TextBlock Text="UNIT CATEGORY DATA" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Click="Back_Click" Width="56" Height="56"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Margin="15,0,0,0" ToolTip="Back">
+                    <Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+                           Width="42" Height="42"/>
+                </Button>
+
+                <TextBlock Grid.Column="1" Text="UNIT CATEGORY DATA" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
                             Margin="0,0,15,0">
 
-                    
-                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-                            ToolTip="Minimize">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFE9A6" Offset="0"/>
-                                                <GradientStop Color="#E8B830" Offset="0.4"/>
-                                                <GradientStop Color="#B8860B" Offset="0.85"/>
-                                                <GradientStop Color="#8A6408" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+                        <Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
                     </Button>
 
-                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FF7B8C" Offset="0"/>
-                                                <GradientStop Color="#DC143C" Offset="0.5"/>
-                                                <GradientStop Color="#8F0C25" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Viewbox Width="16" Height="16">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                        </Canvas>
-                                    </Viewbox>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+                        <Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
                     </Button>
                 </StackPanel>
             </Grid>

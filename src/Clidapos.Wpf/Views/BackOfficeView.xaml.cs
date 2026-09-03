@@ -15,17 +15,10 @@ namespace Clidapos.Wpf.Views
             _currentUser = currentUser;
             WelcomeText.Text = $"{currentUser.Name.Trim()} ({currentUser.UserType.Trim()})";
 
-            // Every Back Office screen is reached through here, so this is where
-            // the audit-log session gets set for the whole session.
             CurrentSession.UserId = currentUser.UserID.Trim();
 
-            // Safe to call every time - EnsureStarted() does nothing if the
-            // background checker is already running from earlier this session.
             AutoBackupScheduler.EnsureStarted();
 
-            // Stock Transfer is restaurant-only for now (its underlying table is
-            // built around Warehouse -> Kitchen transfers) - hidden in Supermarket mode,
-            // same pattern as Menu Layout and Table Setting in Master Settings.
             StockTransferTile.Visibility = AppSettings.Mode == StoreMode.Restaurant
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -173,8 +166,8 @@ namespace Clidapos.Wpf.Views
 
             if (tag == "Customers")
             {
-                var customerPopup = new CustomerPopup { Owner = this };
-                customerPopup.Show();
+                var creditCustomerPopup = new CreditCustomerPopup(_currentUser) { Owner = this };
+                creditCustomerPopup.Show();
                 return;
             }
 

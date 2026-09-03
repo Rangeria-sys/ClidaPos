@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using Clidapos.Wpf.Services;
 
@@ -6,9 +7,15 @@ namespace Clidapos.Wpf.Views
     public partial class CustomerLedgerDetailPopup : Window
     {
         private readonly CustomerLedgerService _ledgerService = new();
+        private readonly CreditCustomerService _customerService = new();
         private readonly LogService _logService = new();
         private readonly int _customerId;
         private readonly string _customerName;
+
+        /// <summary>Fired after a credit or payment is successfully recorded, so the
+        /// screen that opened this popup (the Ledger list) can refresh its balances
+        /// immediately instead of only showing them from when it first loaded.</summary>
+        public event EventHandler? BalanceChanged;
 
         public CustomerLedgerDetailPopup(int customerId, string customerName)
         {
@@ -25,7 +32,12 @@ namespace Clidapos.Wpf.Views
             var entries = await _ledgerService.GetEntriesForCustomerAsync(_customerId);
             HistoryGrid.ItemsSource = entries;
 
-            var balance = 0m;
+            // Balance must include Opening Balance to match what the Ledger list
+            // shows - summing only ledger entries here would silently disagree
+            // with GetCustomerBalancesAsync() for anyone with a non-zero opening figure.
+            var customer = await _customerService.GetByIdAsync(_customerId);
+            var balance = customer?.OpeningBalance ?? 0;
+
             foreach (var entry in entries)
                 balance += (entry.Debit ?? 0) - (entry.Credit ?? 0);
 
@@ -63,6 +75,7 @@ namespace Clidapos.Wpf.Views
             LabelInput.Clear();
             AmountInput.Clear();
             await LoadHistory();
+            BalanceChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private async void RecordPayment_Click(object sender, RoutedEventArgs e)
@@ -76,6 +89,7 @@ namespace Clidapos.Wpf.Views
             LabelInput.Clear();
             AmountInput.Clear();
             await LoadHistory();
+            BalanceChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

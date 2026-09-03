@@ -5,7 +5,7 @@
         WindowStyle="None"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        Background="{StaticResource AppBackground}">
+        Background="White">
 
 	<Window.Resources>
 		<Style x:Key="RoundTopButton" TargetType="Button">
@@ -16,26 +16,114 @@
 		</Style>
 
 		<Style x:Key="SearchInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#1E1E24"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderBrush" Value="#F3A123"/>
-			<Setter Property="Padding" Value="10"/>
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="Foreground" Value="#1E1E24"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="CaretBrush" Value="#F3A123"/>
+			<Setter Property="Padding" Value="14,0,10,0"/>
 			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="TextBox">
+						<Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+							<ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsFocused" Value="True">
+								<Setter TargetName="Bd" Property="BorderBrush" Value="#F3A123"/>
+								<Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 
-		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#2A2A32"/>
+		<!-- Dark header bar with amber text, sitting on a white grid body - same
+             language as the report screens. Numeric columns use GridHeaderRight so
+             their header lines up with the right-aligned figures underneath. -->
+		<Style x:Key="GridHeaderLeft" TargetType="DataGridColumnHeader">
+			<Setter Property="Background" Value="#1E1E24"/>
 			<Setter Property="Foreground" Value="#F3A123"/>
 			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="Padding" Value="10,8"/>
-			<Setter Property="BorderBrush" Value="#3A3A42"/>
-			<Setter Property="BorderThickness" Value="0,0,0,2"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="Padding" Value="12,10"/>
 			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="SeparatorBrush" Value="#3A3A42"/>
+			<Setter Property="SeparatorVisibility" Value="Visible"/>
+		</Style>
+
+		<Style x:Key="GridHeaderRight" TargetType="DataGridColumnHeader" BasedOn="{StaticResource GridHeaderLeft}">
+			<Setter Property="HorizontalContentAlignment" Value="Right"/>
+		</Style>
+
+		<Style x:Key="CellTextLeft" TargetType="TextBlock">
+			<Setter Property="Padding" Value="12,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		</Style>
+
+		<Style x:Key="CellTextRight" TargetType="TextBlock" BasedOn="{StaticResource CellTextLeft}">
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="TextAlignment" Value="Right"/>
+		</Style>
+
+		<Style x:Key="ProductGridRow" TargetType="DataGridRow">
+			<Setter Property="MinHeight" Value="38"/>
+			<Setter Property="Background" Value="White"/>
+			<Style.Triggers>
+				<Trigger Property="AlternationIndex" Value="1">
+					<Setter Property="Background" Value="#F7F7F9"/>
+				</Trigger>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Background" Value="#FDEFD9"/>
+				</Trigger>
+				<Trigger Property="IsSelected" Value="True">
+					<Setter Property="Background" Value="#F3A123"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
+		<!-- "Fancy" card-style toolbar button with a slot for a real icon image -
+             just point the Image's Source at your file once it's added to Assets. -->
+		<Style x:Key="ToolbarBtn" TargetType="Button">
+			<Setter Property="Height" Value="46"/>
+			<Setter Property="Foreground" Value="#1E1E24"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="BorderBrush" Value="#F3A123"/>
+			<Setter Property="Padding" Value="16,0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+							<Border.Effect>
+								<DropShadowEffect Color="#000000" ShadowDepth="1" BlurRadius="6" Opacity="0.12"/>
+							</Border.Effect>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="Bd" Property="Background" Value="#FFF6E9"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 	</Window.Resources>
 
-	<Grid Background="{StaticResource AppOverlay}">
+	<Grid Background="White">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60"/>
 			<RowDefinition Height="*"/>
@@ -43,119 +131,126 @@
 
 		<Border Grid.Row="0" Background="#1E1E24">
 			<Grid>
-                <Button Click="Close_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="15,0,0,0" HorizontalAlignment="Left" ToolTip="Back">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FFD98F" Offset="0"/>
-												<GradientStop Color="#F3A123" Offset="0.5"/>
-												<GradientStop Color="#B5741A" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-										<Ellipse.Effect>
-											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-										</Ellipse.Effect>
-									</Ellipse>
-									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
-					</Button>
-				<TextBlock Text="PRODUCT DATA" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
 
-					
-					<Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-                            ToolTip="Minimize">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FFE9A6" Offset="0"/>
-												<GradientStop Color="#E8B830" Offset="0.4"/>
-												<GradientStop Color="#B8860B" Offset="0.85"/>
-												<GradientStop Color="#8A6408" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-										<Ellipse.Effect>
-											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-										</Ellipse.Effect>
-									</Ellipse>
-									<TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
+				<Button Grid.Column="0" Click="Close_Click" Width="56" Height="56"
+						Background="Transparent" BorderThickness="0" Cursor="Hand"
+						Margin="15,0,0,0" ToolTip="Back">
+					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+						   Width="42" Height="42"/>
+				</Button>
+
+				<TextBlock Grid.Column="1" Text="PRODUCT DATA" Foreground="#F3A123" FontSize="16"
+						   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+							Margin="0,0,15,0">
+
+					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+							BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+							   Width="42" Height="42"/>
 					</Button>
 
-					<Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FF7B8C" Offset="0"/>
-												<GradientStop Color="#DC143C" Offset="0.5"/>
-												<GradientStop Color="#8F0C25" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-										<Ellipse.Effect>
-											<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-										</Ellipse.Effect>
-									</Ellipse>
-									<Viewbox Width="16" Height="16">
-										<Canvas Width="24" Height="24">
-											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-										</Canvas>
-									</Viewbox>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
+					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+							BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+							   Width="42" Height="42"/>
 					</Button>
 				</StackPanel>
 			</Grid>
 		</Border>
 
-		<Grid Grid.Row="1" Margin="20">
+		<Grid Grid.Row="1" Margin="24,20,24,24">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 
-			<TextBox x:Name="SearchBox" Grid.Row="0" Style="{StaticResource SearchInput}"
-                     Margin="0,0,0,12" TextChanged="SearchBox_TextChanged"
-                     Tag="Search by name, code, or category..."/>
+			<Grid Grid.Row="0" Margin="0,0,0,16">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
 
-			<Border Grid.Row="1" Background="#1A1A1F" CornerRadius="8" Padding="16">
+				<!-- Fixed-width search box with a real visible placeholder ("tag") that
+                     disappears once the person starts typing, instead of the old Tag
+                     property which was set but never actually displayed anywhere. -->
+				<Grid Grid.Column="0" Width="340" HorizontalAlignment="Left">
+					<TextBox x:Name="SearchBox" Style="{StaticResource SearchInput}" Height="44"
+                             TextChanged="SearchBox_TextChanged"/>
+					<TextBlock Text="🔍  Search by name, code, or category..." Foreground="#9A9AA2" FontSize="13"
+                               Margin="14,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock">
+								<Setter Property="Visibility" Value="Collapsed"/>
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+										<Setter Property="Visibility" Value="Visible"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
+				</Grid>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal">
+					<Button Style="{StaticResource ToolbarBtn}" Click="ExportExcel_Click">
+						<StackPanel Orientation="Horizontal">
+							<Image Source="pack://application:,,,/Assets/export.png" Width="20" Height="20" Margin="0,0,8,0"/>
+							<TextBlock Text="Export Excel" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+					<Button Style="{StaticResource ToolbarBtn}" Margin="10,0,0,0" Click="ImportExcel_Click">
+						<StackPanel Orientation="Horizontal">
+							<Image Source="pack://application:,,,/Assets/import.png" Width="20" Height="20" Margin="0,0,8,0"/>
+							<TextBlock Text="Import Excel" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Grid>
+
+			<Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#E4E4E8" BorderThickness="1">
+				<Border.Effect>
+					<DropShadowEffect Color="#000000" ShadowDepth="2" BlurRadius="10" Opacity="0.08"/>
+				</Border.Effect>
 				<DataGrid x:Name="ProductGrid" AutoGenerateColumns="False"
-                          Background="#1A1A1F" Foreground="White" BorderThickness="0"
-                          RowBackground="#1A1A1F" AlternatingRowBackground="#22222A"
-                          HeadersVisibility="Column" GridLinesVisibility="None"
+                          Background="White" Foreground="#1C1C1F" BorderThickness="0"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#EDEDF0"
                           RowHeaderWidth="0"
-                          ColumnHeaderStyle="{StaticResource GridHeader}"
-                          IsReadOnly="True" SelectionMode="Single"
+                          ColumnHeaderStyle="{StaticResource GridHeaderLeft}"
+                          RowStyle="{StaticResource ProductGridRow}"
+                          AlternationCount="2"
+                          RowHeight="38" ColumnHeaderHeight="42" MinColumnWidth="60"
+                          CanUserSortColumns="True" CanUserResizeColumns="True" CanUserReorderColumns="False"
+                          IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow"
+                          FontSize="13"
                           MouseDoubleClick="ProductGrid_MouseDoubleClick">
 					<DataGrid.Columns>
-						<DataGridTextColumn Header="ID" Binding="{Binding Product.PID}" Width="55"/>
-						<DataGridTextColumn Header="Code" Binding="{Binding Product.ProductCode}" Width="95"/>
-						<DataGridTextColumn Header="Name" Binding="{Binding Product.ProductName}" Width="*"/>
-						<DataGridTextColumn Header="Category" Binding="{Binding Product.Category}" Width="130"/>
-						<DataGridTextColumn Header="Unit" Binding="{Binding Product.Unit}" Width="70"/>
-						<DataGridTextColumn Header="Selling Price" Binding="{Binding Product.Price, StringFormat=N2}" Width="100"/>
-						<DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice, StringFormat=N2}" Width="100"/>
-						<DataGridTextColumn Header="Reorder At" Binding="{Binding Product.ReorderPoint}" Width="85"/>
-						<DataGridTextColumn Header="Supplier" Binding="{Binding Product.P_Supplier}" Width="130"/>
+						<DataGridTextColumn Header="ID" Binding="{Binding Product.PID}" Width="60"
+                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+						<DataGridTextColumn Header="Code" Binding="{Binding Product.ProductCode}" Width="100"
+                                             ElementStyle="{StaticResource CellTextLeft}"/>
+						<DataGridTextColumn Header="Name" Binding="{Binding Product.ProductName}" Width="*"
+                                             ElementStyle="{StaticResource CellTextLeft}"/>
+						<DataGridTextColumn Header="Category" Binding="{Binding Product.Category}" Width="140"
+                                             ElementStyle="{StaticResource CellTextLeft}"/>
+						<DataGridTextColumn Header="Unit" Binding="{Binding Product.Unit}" Width="80"
+                                             ElementStyle="{StaticResource CellTextLeft}"/>
+						<DataGridTextColumn Header="Selling Price" Binding="{Binding Product.Price, StringFormat=N2}" Width="120"
+                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+						<DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice, StringFormat=N2}" Width="120"
+                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+						<DataGridTextColumn Header="Reorder At" Binding="{Binding Product.ReorderPoint}" Width="100"
+                                             HeaderStyle="{StaticResource GridHeaderRight}" ElementStyle="{StaticResource CellTextRight}"/>
+						<DataGridTextColumn Header="Supplier" Binding="{Binding Product.P_Supplier}" Width="150"
+                                             ElementStyle="{StaticResource CellTextLeft}"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</Border>

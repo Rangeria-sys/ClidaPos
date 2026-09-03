@@ -7,153 +7,103 @@
         ResizeMode="NoResize"
         Background="{StaticResource AppBackground}">
 
-    <Window.Resources>
-        <Style x:Key="TileButton" TargetType="Button">
-            <Setter Property="Width" Value="220"/>
-            <Setter Property="Height" Value="220"/>
-            <Setter Property="Margin" Value="20"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Base" Background="#17171C" CornerRadius="16">
-                            <ContentPresenter/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Base" Property="Background" Value="#222228"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+	<Window.Resources>
+		<Style x:Key="TileButton" TargetType="Button">
+			<Setter Property="Width" Value="220"/>
+			<Setter Property="Height" Value="220"/>
+			<Setter Property="Margin" Value="20"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="Base" Background="#17171C" CornerRadius="16">
+							<ContentPresenter/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="Base" Property="Background" Value="#222228"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="TileLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,16,0,0"/>
-        </Style>
+		<Style x:Key="TileLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="0,16,0,0"/>
+		</Style>
 
-        <Style x:Key="RoundTopButton" TargetType="Button">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="RoundTopButton" TargetType="Button">
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+	</Window.Resources>
 
-    <Grid Background="{StaticResource AppOverlay}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+	<Grid Background="{StaticResource AppOverlay}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#1E1E24">
-            <Grid>
-                <Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="15,0,0,0" HorizontalAlignment="Left" ToolTip="Back">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFD98F" Offset="0"/>
-                                                <GradientStop Color="#F3A123" Offset="0.5"/>
-                                                <GradientStop Color="#B5741A" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                <TextBlock Text="VOUCHERS &amp; PROMOTIONS" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+		<Border Grid.Row="0" Background="#1E1E24">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<Button Grid.Column="0" Click="Back_Click" Width="56" Height="56"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Margin="15,0,0,0" ToolTip="Back">
+					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+                           Width="42" Height="42"/>
+				</Button>
+
+				<TextBlock Grid.Column="1" Text="VOUCHERS &amp; PROMOTIONS" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
                             Margin="0,0,15,0">
 
-                    
-                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-                            ToolTip="Minimize">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFE9A6" Offset="0"/>
-                                                <GradientStop Color="#E8B830" Offset="0.4"/>
-                                                <GradientStop Color="#B8860B" Offset="0.85"/>
-                                                <GradientStop Color="#8A6408" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
 
-                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FF7B8C" Offset="0"/>
-                                                <GradientStop Color="#DC143C" Offset="0.5"/>
-                                                <GradientStop Color="#8F0C25" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Viewbox Width="16" Height="16">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                        </Canvas>
-                                    </Viewbox>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
+					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
+				</StackPanel>
+			</Grid>
+		</Border>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <Button Style="{StaticResource TileButton}" Click="Vouchers_Click">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="🧾" FontSize="56" Foreground="#F3A123" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Payment Vouchers" Style="{StaticResource TileLabel}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource TileButton}" Click="Vouchers_Click">
+				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+					<TextBlock Text="🧾" FontSize="56" Foreground="#F3A123" HorizontalAlignment="Center"/>
+					<TextBlock Text="Payment Vouchers" Style="{StaticResource TileLabel}"/>
+				</StackPanel>
+			</Button>
 
-            <Button Style="{StaticResource TileButton}" Click="Promotions_Click">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="🏷️" FontSize="56" Foreground="#F3A123" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Promotions" Style="{StaticResource TileLabel}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource TileButton}" Click="Promotions_Click">
+				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+					<TextBlock Text="🏷️" FontSize="56" Foreground="#F3A123" HorizontalAlignment="Center"/>
+					<TextBlock Text="Promotions" Style="{StaticResource TileLabel}"/>
+				</StackPanel>
+			</Button>
 
-        </StackPanel>
-    </Grid>
+		</StackPanel>
+	</Grid>
 </Window>

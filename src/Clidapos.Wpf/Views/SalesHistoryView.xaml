@@ -45,11 +45,17 @@
 		</Style>
 
 		<Style x:Key="PanelInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#1E1E24"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="Background" Value="#F5F5F7"/>
+			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
 			<Setter Property="Padding" Value="8"/>
 			<Setter Property="FontSize" Value="14"/>
+		</Style>
+
+		<Style x:Key="ReceiptRow" TargetType="Border">
+			<Setter Property="BorderBrush" Value="#EBEBEF"/>
+			<Setter Property="BorderThickness" Value="0,0,0,1"/>
+			<Setter Property="Padding" Value="0,10"/>
 		</Style>
 	</Window.Resources>
 
@@ -61,53 +67,33 @@
 
 		<Border Grid.Row="0" Background="#1E1E24">
 			<Grid>
-				<TextBlock Text="SALES HISTORY" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
-					<Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="0,0,10,0" ToolTip="Back to Counter Sale">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FFD98F" Offset="0"/>
-												<GradientStop Color="#F3A123" Offset="0.5"/>
-												<GradientStop Color="#B5741A" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-									</Ellipse>
-									<TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
-					</Button>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
 
-					<Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Grid>
-									<Ellipse>
-										<Ellipse.Fill>
-											<RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-												<GradientStop Color="#FF7B8C" Offset="0"/>
-												<GradientStop Color="#DC143C" Offset="0.5"/>
-												<GradientStop Color="#8F0C25" Offset="1"/>
-											</RadialGradientBrush>
-										</Ellipse.Fill>
-									</Ellipse>
-									<Viewbox Width="16" Height="16">
-										<Canvas Width="24" Height="24">
-											<Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-										</Canvas>
-									</Viewbox>
-								</Grid>
-							</ControlTemplate>
-						</Button.Template>
+				<Button Grid.Column="0" Click="Back_Click" Width="56" Height="56"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Margin="15,0,0,0" ToolTip="Back">
+					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+                           Width="42" Height="42"/>
+				</Button>
+
+				<TextBlock Grid.Column="1" Text="SALES HISTORY" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                            Margin="0,0,15,0">
+					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
+					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
 					</Button>
 				</StackPanel>
 			</Grid>
@@ -120,11 +106,11 @@
 				<ColumnDefinition Width="1.0*"/>
 			</Grid.ColumnDefinitions>
 
+			<!-- LEFT: Sales list -->
 			<Border Grid.Column="0" Background="#1A1A1F" CornerRadius="10" Padding="16">
 				<DockPanel>
 					<TextBlock DockPanel.Dock="Top" Text="RECENT SALES" Foreground="#F3A123" FontSize="15"
                                FontWeight="Bold" Margin="0,0,0,12"/>
-
 					<DataGrid x:Name="SalesGrid" AutoGenerateColumns="False" FontSize="14"
                               Background="#141419" Foreground="White" BorderThickness="0"
                               RowBackground="#141419" AlternatingRowBackground="#1E1E24"
@@ -147,59 +133,185 @@
 				</DockPanel>
 			</Border>
 
-			<Border Grid.Column="2" Background="#1A1A1F" CornerRadius="10" Padding="16">
+			<!-- RIGHT: Receipt panel - always white, real receipt design -->
+			<Border Grid.Column="2" Background="White" CornerRadius="10" Padding="0"
+                    BorderBrush="#E0E0E6" BorderThickness="1.5">
 				<DockPanel>
-					<TextBlock DockPanel.Dock="Top" Text="RECEIPT" Foreground="#F3A123" FontSize="15"
-                               FontWeight="Bold" Margin="0,0,0,4"/>
-					<TextBlock DockPanel.Dock="Top" x:Name="ReceiptHeaderText" Foreground="#888888" FontSize="12"
-                               Margin="0,0,0,12" TextWrapping="Wrap"/>
 
-					<StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
-						<TextBlock x:Name="ReceiptTotalText" Foreground="#34C759" FontSize="24" FontWeight="Bold"
-                                   HorizontalAlignment="Right"/>
+					<!-- Receipt header band - orange like the CART title band in Sales -->
+					<Border DockPanel.Dock="Top" Background="#F3A123" CornerRadius="10,10,0,0" Padding="18,14">
+						<Grid>
+							<TextBlock Text="RECEIPT" Foreground="White" FontSize="16" FontWeight="ExtraBold"/>
+							<TextBlock x:Name="ReceiptHeaderText" Foreground="#FFF3E0" FontSize="11"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       TextWrapping="Wrap" MaxWidth="300" TextAlignment="Right"/>
+						</Grid>
+					</Border>
+
+					<!-- Bottom action buttons -->
+					<StackPanel DockPanel.Dock="Bottom" Margin="16,0,16,16">
+						<TextBlock x:Name="ReceiptTotalText" Foreground="#2D6CDF" FontSize="28"
+                                   FontWeight="ExtraBold" HorizontalAlignment="Right" Margin="0,0,0,12"/>
 
 						<!-- Normal action row -->
-						<StackPanel x:Name="ReceiptActionsPanel" Orientation="Horizontal" Margin="0,12,0,0">
-							<Button Content="PRINT (COMING SOON)" Background="#3A3A42" Style="{StaticResource ActionBtn}"
-                                    Margin="0,0,10,0" Click="Print_Click"/>
+						<StackPanel x:Name="ReceiptActionsPanel" Orientation="Horizontal">
+							<Button Content="🖨 PRINT" Background="#F3A123" Style="{StaticResource ActionBtn}"
+                                    Margin="0,0,10,0" Width="120" Click="Print_Click"/>
 							<Button Content="VOID / REFUND" Background="#DC143C" Style="{StaticResource ActionBtn}"
-                                    Click="StartVoid_Click"/>
+                                    Width="140" Click="StartVoid_Click"/>
 						</StackPanel>
 
 						<!-- Reason entry, hidden until Void is clicked -->
 						<StackPanel x:Name="VoidReasonPanel" Visibility="Collapsed" Margin="0,12,0,0">
-							<TextBlock Text="REASON FOR VOID / REFUND (required)" Foreground="#FF6B6B" FontSize="11"
-                                       FontWeight="Bold" Margin="0,0,0,6"/>
+							<TextBlock Text="REASON FOR VOID / REFUND (required)" Foreground="#DC143C"
+                                       FontSize="11" FontWeight="Bold" Margin="0,0,0,6"/>
 							<TextBox x:Name="VoidReasonInput" Style="{StaticResource PanelInput}" Height="60"
                                      TextWrapping="Wrap" AcceptsReturn="True"/>
-							<TextBlock x:Name="VoidErrorText" Foreground="#FF6B6B" FontSize="11"
+							<TextBlock x:Name="VoidErrorText" Foreground="#DC143C" FontSize="11"
                                        Margin="0,6,0,0" TextWrapping="Wrap"/>
 							<StackPanel Orientation="Horizontal" Margin="0,8,0,0">
 								<Button Content="CONFIRM VOID" Background="#DC143C" Style="{StaticResource ActionBtn}"
                                         Margin="0,0,10,0" Click="ConfirmVoid_Click"/>
-								<Button Content="CANCEL" Background="#3A3A42" Style="{StaticResource ActionBtn}"
+								<Button Content="CANCEL" Background="#6B6B72" Style="{StaticResource ActionBtn}"
                                         Click="CancelVoid_Click"/>
 							</StackPanel>
 						</StackPanel>
 					</StackPanel>
 
-					<ListBox x:Name="ReceiptItemsList" Background="#141419" Foreground="White" BorderThickness="0">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<Grid Margin="0,6">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Text="{Binding Dish}" Foreground="White" FontSize="14"/>
-										<TextBlock Foreground="#888888" FontSize="12" Margin="8,0,0,0">
-											<Run Text="x"/>
-											<Run Text="{Binding Quantity, StringFormat=N2}"/>
-										</TextBlock>
-									</StackPanel>
-									<TextBlock Text="{Binding TotalAmount, StringFormat=N2}" Foreground="#CCCCCC"
-                                               FontSize="14" HorizontalAlignment="Right"/>
-								</Grid>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+					<!-- Receipt body - scrollable -->
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0">
+						<StackPanel x:Name="ReceiptBody" Margin="18,14">
+
+							<!-- Store info block - filled by code-behind from Hotel Profile -->
+							<TextBlock x:Name="StoreNameBlock" FontSize="18" FontWeight="ExtraBold"
+                                       Foreground="Black" HorizontalAlignment="Center" TextAlignment="Center"
+                                       Margin="0,0,0,2"/>
+							<TextBlock x:Name="StoreAddressBlock" FontSize="12" Foreground="#6B6B72"
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       TextWrapping="Wrap" Margin="0,0,0,2"/>
+							<TextBlock x:Name="StoreTelBlock" FontSize="12" Foreground="#6B6B72"
+                                       HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,2"/>
+							<TextBlock x:Name="StorePinBlock" FontSize="12" Foreground="#6B6B72"
+                                       HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,10"/>
+
+							<Border BorderBrush="#E0E0E6" BorderThickness="0,1,0,0" Margin="0,0,0,10"/>
+
+							<!-- Bill meta -->
+							<Grid Margin="0,0,0,4">
+								<TextBlock Text="Bill No" Foreground="#6B6B72" FontSize="12"/>
+								<TextBlock x:Name="BillNoBlock" Foreground="Black" FontSize="12"
+                                           FontWeight="Bold" HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid Margin="0,0,0,4">
+								<TextBlock Text="Date" Foreground="#6B6B72" FontSize="12"/>
+								<TextBlock x:Name="BillDateBlock" Foreground="Black" FontSize="12"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid Margin="0,0,0,4">
+								<TextBlock Text="Cashier" Foreground="#6B6B72" FontSize="12"/>
+								<TextBlock x:Name="BillCashierBlock" Foreground="Black" FontSize="12"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid x:Name="BillCustomerRow" Margin="0,0,0,4" Visibility="Collapsed">
+								<TextBlock Text="Customer" Foreground="#6B6B72" FontSize="12"/>
+								<TextBlock x:Name="BillCustomerBlock" Foreground="Black" FontSize="12"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+
+							<Border BorderBrush="#E0E0E6" BorderThickness="0,1,0,0" Margin="0,8,0,8"/>
+
+							<!-- Column headers for items -->
+							<Grid Margin="0,0,0,6">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="70"/>
+									<ColumnDefinition Width="90"/>
+								</Grid.ColumnDefinitions>
+								<TextBlock Grid.Column="0" Text="ITEM" Foreground="#F3A123"
+                                           FontSize="11" FontWeight="ExtraBold"/>
+								<TextBlock Grid.Column="1" Text="QTY" Foreground="#F3A123"
+                                           FontSize="11" FontWeight="ExtraBold" HorizontalAlignment="Right"/>
+								<TextBlock Grid.Column="2" Text="AMOUNT" Foreground="#F3A123"
+                                           FontSize="11" FontWeight="ExtraBold" HorizontalAlignment="Right"/>
+							</Grid>
+
+							<!-- Items - filled dynamically -->
+							<ItemsControl x:Name="ReceiptItemsList">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<Border BorderBrush="#F0F0F4" BorderThickness="0,0,0,1" Padding="0,8">
+											<Grid>
+												<Grid.ColumnDefinitions>
+													<ColumnDefinition Width="*"/>
+													<ColumnDefinition Width="70"/>
+													<ColumnDefinition Width="90"/>
+												</Grid.ColumnDefinitions>
+												<TextBlock Grid.Column="0" Text="{Binding Dish}"
+                                                           Foreground="Black" FontSize="14" FontWeight="Bold"
+                                                           TextWrapping="Wrap"/>
+												<TextBlock Grid.Column="1" Text="{Binding Quantity, StringFormat=N2}"
+                                                           Foreground="#6B6B72" FontSize="13"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+												<TextBlock Grid.Column="2" Text="{Binding TotalAmount, StringFormat=N2}"
+                                                           Foreground="#2D6CDF" FontSize="14" FontWeight="Bold"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+											</Grid>
+										</Border>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+
+							<Border BorderBrush="#E0E0E6" BorderThickness="0,1,0,0" Margin="0,8,0,8"/>
+
+							<!-- Totals -->
+							<Grid Margin="0,0,0,4">
+								<TextBlock Text="Subtotal" Foreground="#6B6B72" FontSize="13"/>
+								<TextBlock x:Name="SubtotalBlock" Foreground="Black" FontSize="13"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid x:Name="DiscountRow" Margin="0,0,0,4" Visibility="Collapsed">
+								<TextBlock x:Name="DiscountLabelBlock" Foreground="#6B6B72" FontSize="13"/>
+								<TextBlock x:Name="DiscountBlock" Foreground="#DC143C" FontSize="13"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid x:Name="VatRow" Margin="0,0,0,4" Visibility="Collapsed">
+								<TextBlock Text="VAT" Foreground="#6B6B72" FontSize="13"/>
+								<TextBlock x:Name="VatBlock" Foreground="Black" FontSize="13"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid Margin="0,4,0,4">
+								<TextBlock Text="TOTAL" Foreground="Black" FontSize="16" FontWeight="ExtraBold"/>
+								<TextBlock x:Name="TotalBlock" Foreground="#2D6CDF" FontSize="16"
+                                           FontWeight="ExtraBold" HorizontalAlignment="Right"/>
+							</Grid>
+
+							<Border BorderBrush="#E0E0E6" BorderThickness="0,1,0,0" Margin="0,8,0,8"/>
+
+							<!-- Payment details -->
+							<Grid Margin="0,0,0,4">
+								<TextBlock Text="Payment" Foreground="#6B6B72" FontSize="13"/>
+								<TextBlock x:Name="PaymentModeBlock" Foreground="Black" FontSize="13"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid x:Name="CashRow" Margin="0,0,0,4" Visibility="Collapsed">
+								<TextBlock Text="Cash Received" Foreground="#6B6B72" FontSize="13"/>
+								<TextBlock x:Name="CashBlock" Foreground="Black" FontSize="13"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+							<Grid x:Name="ChangeRow" Margin="0,0,0,4" Visibility="Collapsed">
+								<TextBlock Text="Change" Foreground="#6B6B72" FontSize="13"/>
+								<TextBlock x:Name="ChangeBlock" Foreground="Black" FontSize="13"
+                                           HorizontalAlignment="Right"/>
+							</Grid>
+
+							<Border BorderBrush="#E0E0E6" BorderThickness="0,1,0,0" Margin="0,12,0,12"/>
+
+							<!-- Footer -->
+							<TextBlock x:Name="FooterBlock" Text="Thank you for shopping with us!"
+                                       Foreground="#6B6B72" FontSize="12" HorizontalAlignment="Center"
+                                       TextAlignment="Center" TextWrapping="Wrap"/>
+						</StackPanel>
+					</ScrollViewer>
 				</DockPanel>
 			</Border>
 		</Grid>

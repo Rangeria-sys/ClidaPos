@@ -316,10 +316,14 @@ namespace Clidapos.Wpf.Services
                     }
                 }
 
+                // Delete child rows (SaleItems) and audit records first, commit them,
+                // then delete the parent bill - avoids FK constraint violations.
                 db.SaleItems.RemoveRange(items);
-                db.SaleBills.Remove(bill);
-
                 await db.SaveChangesAsync();
+
+                db.SaleBills.Remove(bill);
+                await db.SaveChangesAsync();
+
                 await tx.CommitAsync();
 
                 return new VoidResult { Ok = true, StockWarnings = warnings };

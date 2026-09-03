@@ -7,142 +7,92 @@
         ResizeMode="NoResize"
         Background="{StaticResource AppBackground}">
 
-    <Window.Resources>
-        <Style x:Key="RoundTopButton" TargetType="Button">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
+	<Window.Resources>
+		<Style x:Key="RoundTopButton" TargetType="Button">
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
 
-        <Style x:Key="SearchInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#1E1E24"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#F3A123"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
+		<Style x:Key="SearchInput" TargetType="TextBox">
+			<Setter Property="Background" Value="#1E1E24"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderBrush" Value="#F3A123"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
 
-        <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#2A2A32"/>
-            <Setter Property="Foreground" Value="#F3A123"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="BorderBrush" Value="#3A3A42"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
+			<Setter Property="Background" Value="#2A2A32"/>
+			<Setter Property="Foreground" Value="#F3A123"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#3A3A42"/>
+			<Setter Property="BorderThickness" Value="0,0,0,2"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		</Style>
+	</Window.Resources>
 
-    <Grid Background="{StaticResource AppOverlay}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+	<Grid Background="{StaticResource AppOverlay}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#1E1E24">
-            <Grid>
-                <Button Click="Back_Click" Style="{StaticResource RoundTopButton}"
-                            Margin="15,0,0,0" HorizontalAlignment="Left" ToolTip="Back">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFD98F" Offset="0"/>
-                                                <GradientStop Color="#F3A123" Offset="0.5"/>
-                                                <GradientStop Color="#B5741A" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="⌂" FontSize="18" FontWeight="Bold" Foreground="Black"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                <TextBlock Text="WAREHOUSE TYPE DATA" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+		<Border Grid.Row="0" Background="#1E1E24">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<Button Grid.Column="0" Click="Back_Click" Width="56" Height="56"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Margin="15,0,0,0" ToolTip="Back">
+					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
+                           Width="42" Height="42"/>
+				</Button>
+
+				<TextBlock Grid.Column="1" Text="WAREHOUSE TYPE DATA" Foreground="#F3A123" FontSize="16"
+                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
                             Margin="0,0,15,0">
 
-                    
-                    <Button Click="Minimize_Click" Style="{StaticResource RoundTopButton}" Margin="0,0,10,0"
-                            ToolTip="Minimize">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FFE9A6" Offset="0"/>
-                                                <GradientStop Color="#E8B830" Offset="0.4"/>
-                                                <GradientStop Color="#B8860B" Offset="0.85"/>
-                                                <GradientStop Color="#8A6408" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <TextBlock Text="—" FontSize="16" FontWeight="Bold" Foreground="White"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
+						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
 
-                    <Button Click="Exit_Click" Style="{StaticResource RoundTopButton}" ToolTip="Exit">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Grid>
-                                    <Ellipse>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                                                <GradientStop Color="#FF7B8C" Offset="0"/>
-                                                <GradientStop Color="#DC143C" Offset="0.5"/>
-                                                <GradientStop Color="#8F0C25" Offset="1"/>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="4" Opacity="0.4"/>
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Viewbox Width="16" Height="16">
-                                        <Canvas Width="24" Height="24">
-                                            <Path Data="M6,6 L18,18 M18,6 L6,18" Stroke="White" StrokeThickness="2.6"
-                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-                                        </Canvas>
-                                    </Viewbox>
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
+					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
+						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                               Width="42" Height="42"/>
+					</Button>
+				</StackPanel>
+			</Grid>
+		</Border>
 
-        <Grid Grid.Row="1" Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+		<Grid Grid.Row="1" Margin="20">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
 
-            <TextBox x:Name="SearchBox" Grid.Row="0" Style="{StaticResource SearchInput}"
+			<TextBox x:Name="SearchBox" Grid.Row="0" Style="{StaticResource SearchInput}"
                      Margin="0,0,0,8" TextChanged="SearchBox_TextChanged"
                      Tag="Search warehouse types..."/>
 
-            <TextBlock Grid.Row="1" Text="Double-click a warehouse type to open it for editing."
+			<TextBlock Grid.Row="1" Text="Double-click a warehouse type to open it for editing."
                        Foreground="#999999" FontSize="12" Margin="2,0,0,12"/>
 
-            <Border Grid.Row="2" Background="#1A1A1F" CornerRadius="8" Padding="16">
-                <DataGrid x:Name="WarehouseTypeGrid" AutoGenerateColumns="False"
+			<Border Grid.Row="2" Background="#1A1A1F" CornerRadius="8" Padding="16">
+				<DataGrid x:Name="WarehouseTypeGrid" AutoGenerateColumns="False"
                           Background="#1A1A1F" Foreground="White" BorderThickness="0"
                           RowBackground="#1A1A1F" AlternatingRowBackground="#22222A"
                           HeadersVisibility="Column" GridLinesVisibility="None"
@@ -150,11 +100,11 @@
                           ColumnHeaderStyle="{StaticResource GridHeader}"
                           IsReadOnly="True" SelectionMode="Single"
                           MouseDoubleClick="WarehouseTypeGrid_MouseDoubleClick">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Warehouse Type Name" Binding="{Binding}" Width="*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
-        </Grid>
-    </Grid>
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Warehouse Type Name" Binding="{Binding}" Width="*"/>
+					</DataGrid.Columns>
+				</DataGrid>
+			</Border>
+		</Grid>
+	</Grid>
 </Window>

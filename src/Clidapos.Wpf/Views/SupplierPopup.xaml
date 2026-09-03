@@ -10,101 +10,103 @@
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
-    <Window.Resources>
-        <Style x:Key="PopupInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
+	<Window.Resources>
+		<Style x:Key="PopupInput" TargetType="TextBox">
+			<Setter Property="Background" Value="#F5F5F7"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="FontSize" Value="14"/>
+		</Style>
 
-        <Style x:Key="IconActionButton" TargetType="Button">
-            <Setter Property="Height" Value="52"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Opacity" Value="0.85"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+		<Style x:Key="IconActionButton" TargetType="Button">
+			<Setter Property="Height" Value="52"/>
+			<Setter Property="Margin" Value="0,0,0,8"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
-        <Style x:Key="IconBtnText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Margin" Value="10,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
+		<Style x:Key="IconBtnText" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Margin" Value="10,0,0,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+	</Window.Resources>
 
-    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-        <Border.Effect>
-            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-        </Border.Effect>
-        <StackPanel Margin="24">
+	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
+		<Border.Effect>
+			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
+		</Border.Effect>
+		<StackPanel Margin="24">
 
-            <Grid Margin="0,0,0,16">
-                <TextBlock Text="SUPPLIER" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Content="✕" Click="Close_Click" HorizontalAlignment="Right"
-                        Width="30" Height="30" Background="Transparent" Foreground="#888888"
-                        FontSize="16" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
-            </Grid>
+			<Grid Margin="0,0,0,16">
+				<TextBlock Text="SUPPLIER" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
+				<Button Click="Close_Click" HorizontalAlignment="Right"
+                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                           Width="28" Height="28"/>
+				</Button>
+			</Grid>
 
-            <TextBlock Text="Supplier Code (leave blank to auto-generate)" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <TextBox x:Name="CodeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
+			<TextBlock Text="Supplier Code (leave blank to auto-generate)" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+			<TextBox x:Name="CodeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
 
-            <TextBlock Text="Supplier Name" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+			<TextBlock Text="Supplier Name" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
+			<TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="➕" FontSize="18"/>
-                    <TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="➕" FontSize="18"/>
+					<TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
+				</StackPanel>
+			</Button>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="💾" FontSize="18"/>
-                    <TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="💾" FontSize="18"/>
+					<TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
+				</StackPanel>
+			</Button>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="✎" FontSize="18"/>
-                    <TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="✎" FontSize="18"/>
+					<TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
+				</StackPanel>
+			</Button>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="🗑" FontSize="18"/>
-                    <TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="🗑" FontSize="18"/>
+					<TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
+				</StackPanel>
+			</Button>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click" Margin="0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="🔍" FontSize="18"/>
-                    <TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+			<Button Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click" Margin="0">
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="🔍" FontSize="18"/>
+					<TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
+				</StackPanel>
+			</Button>
 
-            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
+			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
                        Margin="0,12,0,0" TextWrapping="Wrap"/>
-        </StackPanel>
-    </Border>
+		</StackPanel>
+	</Border>
 </Window>

@@ -52,6 +52,10 @@ namespace Clidapos.Wpf.Data
         public DbSet<TerminalSetting> TerminalSettings => Set<TerminalSetting>();
         public DbSet<LicenseSetting> LicenseSettings => Set<LicenseSetting>();
         public DbSet<WorkPeriodSetting> WorkPeriodSettings => Set<WorkPeriodSetting>();
+        public DbSet<CreditCustomer> CreditCustomers => Set<CreditCustomer>();
+        public DbSet<ClockEntry> ClockEntries => Set<ClockEntry>();
+        public DbSet<HeldSale> HeldSales => Set<HeldSale>();
+        public DbSet<HeldSaleItem> HeldSaleItems => Set<HeldSaleItem>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -364,7 +368,7 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Email).HasColumnType("nchar(150)");
             });
 
-            // ---------- CUSTOMER LEDGER (linked to real Customer via int CreditCustomer_ID) ----------
+            // ---------- CUSTOMER LEDGER (linked to real CreditCustomer via int CreditCustomer_ID) ----------
             modelBuilder.Entity<CustomerLedgerEntry>(b =>
             {
                 b.ToTable("CreditCustomerLedger", "dbo");
@@ -615,6 +619,61 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.DefaultEndTime).HasColumnType("nchar(10)");
                 b.Property(x => x.AutoCloseEnabled).HasColumnType("nchar(10)");
                 b.Property(x => x.ReminderMinutesBeforeClose).HasColumnType("int");
+            });
+
+            // ---------- CREDIT CUSTOMER (real, separate table - what CreditCustomerLedger actually links to) ----------
+            modelBuilder.Entity<CreditCustomer>(b =>
+            {
+                b.ToTable("CreditCustomer", "dbo");
+                b.HasKey(x => x.CC_ID);
+                b.Property(x => x.CC_ID).ValueGeneratedNever();
+                b.Property(x => x.CreditCustomerID).HasColumnType("nchar(30)");
+                b.Property(x => x.Name).HasColumnType("nchar(200)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(50)");
+                b.Property(x => x.Address).HasColumnType("nvarchar(max)");
+                b.Property(x => x.OpeningBalance).HasColumnType("decimal(18,2)");
+                b.Property(x => x.OpeningBalanceType).HasColumnType("nchar(10)");
+                b.Property(x => x.RegistrationDate).HasColumnType("datetime");
+                b.Property(x => x.Active).HasColumnType("nchar(10)");
+                b.Property(x => x.EmailID).HasColumnType("nchar(100)");
+            });
+
+            // ---------- CLOCK ENTRY (real, newly created table) ----------
+            modelBuilder.Entity<ClockEntry>(b =>
+            {
+                b.ToTable("ClockEntry", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Id).ValueGeneratedNever();
+                b.Property(x => x.UserID).HasColumnType("nchar(100)");
+                b.Property(x => x.UserName).HasColumnType("nchar(150)");
+                b.Property(x => x.WorkDate).HasColumnType("date");
+                b.Property(x => x.ClockInTime).HasColumnType("datetime");
+                b.Property(x => x.ClockOutTime).HasColumnType("datetime");
+            });
+
+            // ---------- HELD SALES (parked carts, real newly created tables) ----------
+            modelBuilder.Entity<HeldSale>(b =>
+            {
+                b.ToTable("HeldSale", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Id).ValueGeneratedNever();
+                b.Property(x => x.HeldDate).HasColumnType("datetime");
+                b.Property(x => x.Operator).HasColumnType("nchar(100)");
+                b.Property(x => x.DiscountPercent).HasColumnType("decimal(18,4)");
+                b.Property(x => x.CustomerName).HasColumnType("nchar(150)");
+                b.Property(x => x.Label).HasColumnType("nvarchar(250)");
+            });
+
+            modelBuilder.Entity<HeldSaleItem>(b =>
+            {
+                b.ToTable("HeldSaleItem", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Id).ValueGeneratedNever();
+                b.Property(x => x.ProductName).HasColumnType("nvarchar(max)");
+                b.Property(x => x.ProductCode).HasColumnType("nchar(50)");
+                b.Property(x => x.Category).HasColumnType("nchar(200)");
+                b.Property(x => x.Rate).HasColumnType("decimal(18,2)");
+                b.Property(x => x.Quantity).HasColumnType("decimal(18,2)");
             });
         }
     }
