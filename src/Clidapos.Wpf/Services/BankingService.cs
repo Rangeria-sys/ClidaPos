@@ -11,6 +11,7 @@ namespace Clidapos.Wpf.Services
     public class BankAccountRow
     {
         public string AccountNo { get; set; } = "";
+        public string MaskedAccountNo => AccountNumberMasker.Mask(AccountNo);
         public string AccountName { get; set; } = "";
         public string AccountType { get; set; } = "";
         public string BankName { get; set; } = "";
@@ -107,6 +108,20 @@ namespace Clidapos.Wpf.Services
             await db.SaveChangesAsync();
         }
 
+        /// <summary>Deleting a bank account never removes its ledger history - those
+        /// entries stay as a permanent record even if the account itself is closed.</summary>
+        public async Task DeleteAccountAsync(string accountNo)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<BankAccountRegistration>()
+                .FirstOrDefaultAsync(a => a.AccountNo.Trim() == accountNo.Trim());
+            if (existing != null)
+            {
+                db.Set<BankAccountRegistration>().Remove(existing);
+                await db.SaveChangesAsync();
+            }
+        }
+
         /// <summary>Every account with a real running balance: opening balance plus all ledger activity.</summary>
         public async Task<List<BankAccountRow>> GetAccountBalancesAsync()
         {
@@ -154,11 +169,8 @@ namespace Clidapos.Wpf.Services
         {
             using var db = new ClidaposDbContext();
 
-            var maxId = await db.Set<BankAccountLedger>().Select(e => (int?)e.Id).MaxAsync() ?? 0;
-
             db.Set<BankAccountLedger>().Add(new BankAccountLedger
             {
-                Id = maxId + 1,
                 Date = DateTime.Now,
                 AccNo = accountNo.Trim(),
                 LedgerNo = "",

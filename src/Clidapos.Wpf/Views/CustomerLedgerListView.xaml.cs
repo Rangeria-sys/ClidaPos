@@ -24,21 +24,22 @@ namespace Clidapos.Wpf.Views
         private async System.Threading.Tasks.Task LoadData()
         {
             _all = await _ledgerService.GetCustomerBalancesAsync();
-
-            var q = SearchBox.Text.Trim().ToLower();
-            CustomerGrid.ItemsSource = string.IsNullOrEmpty(q)
-                ? _all
-                : _all.Where(r => r.CustomerName.ToLower().Contains(q)
-                               || r.CustomerCode.ToLower().Contains(q)).ToList();
+            ApplyFilter();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
         {
             var q = SearchBox.Text.Trim().ToLower();
             CustomerGrid.ItemsSource = string.IsNullOrEmpty(q)
                 ? _all
                 : _all.Where(r => r.CustomerName.ToLower().Contains(q)
-                               || r.CustomerCode.ToLower().Contains(q)).ToList();
+                               || r.CustomerCode.ToLower().Contains(q)
+                               || r.ContactNo.ToLower().Contains(q)).ToList();
         }
 
         // Every click on a row here does exactly one thing: manage credit

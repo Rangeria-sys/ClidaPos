@@ -13,7 +13,10 @@ namespace Clidapos.Wpf.Services
 		public int SupplierId { get; set; }
 		public string SupplierCode { get; set; } = "";
 		public string SupplierName { get; set; } = "";
+		public string ContactNo { get; set; } = "";
 		public decimal Balance { get; set; } // positive = we owe this supplier
+		public bool IsOwing => Balance > 0;
+		public bool IsCredit => Balance < 0;
 	}
 
 	public class SupplierLedgerService
@@ -36,6 +39,7 @@ namespace Clidapos.Wpf.Services
 					SupplierId = s.ID,
 					SupplierCode = code,
 					SupplierName = s.Name.Trim(),
+					ContactNo = s.ContactNo?.Trim() ?? "",
 					Balance = supplierEntries.Sum(e => e.Credit) - supplierEntries.Sum(e => e.Debit)
 				};
 			})
@@ -63,11 +67,8 @@ namespace Clidapos.Wpf.Services
 		{
 			using var db = new ClidaposDbContext();
 
-			var maxId = await db.Set<SupplierLedgerEntry>().Select(e => (int?)e.Id).MaxAsync() ?? 0;
-
 			db.Set<SupplierLedgerEntry>().Add(new SupplierLedgerEntry
 			{
-				Id = maxId + 1,
 				Date = DateTime.Now,
 				Name = supplierName.Trim(),
 				LedgerNo = invoiceNo.Trim(),
@@ -85,11 +86,8 @@ namespace Clidapos.Wpf.Services
 		{
 			using var db = new ClidaposDbContext();
 
-			var maxId = await db.Set<SupplierLedgerEntry>().Select(e => (int?)e.Id).MaxAsync() ?? 0;
-
 			db.Set<SupplierLedgerEntry>().Add(new SupplierLedgerEntry
 			{
-				Id = maxId + 1,
 				Date = DateTime.Now,
 				Name = supplierName.Trim(),
 				LedgerNo = "",

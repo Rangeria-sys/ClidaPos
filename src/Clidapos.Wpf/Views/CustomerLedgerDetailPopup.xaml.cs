@@ -1,5 +1,9 @@
 using System;
+using System.Media;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Clidapos.Wpf.Services;
 
 namespace Clidapos.Wpf.Views
@@ -68,6 +72,11 @@ namespace Clidapos.Wpf.Views
         {
             if (!TryGetValidatedInput(out var amount)) return;
 
+            var confirm = MessageBox.Show(
+                $"Are you sure you want to add {amount:N2} in credit for '{_customerName}'?\n\n{LabelInput.Text.Trim()}",
+                "Confirm Credit", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             await _ledgerService.AddCreditGivenAsync(_customerId, LabelInput.Text.Trim(), amount);
             await _logService.LogAsync(CurrentSession.UserId,
                 $"Recorded credit given to Customer '{_customerName}' - {amount:N2} ({LabelInput.Text.Trim()})");
@@ -82,6 +91,11 @@ namespace Clidapos.Wpf.Views
         {
             if (!TryGetValidatedInput(out var amount)) return;
 
+            var confirm = MessageBox.Show(
+                $"Are you sure '{_customerName}' has paid {amount:N2}?\n\n{LabelInput.Text.Trim()}",
+                "Confirm Payment", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             await _ledgerService.AddPaymentReceivedAsync(_customerId, LabelInput.Text.Trim(), amount);
             await _logService.LogAsync(CurrentSession.UserId,
                 $"Recorded payment from Customer '{_customerName}' - {amount:N2} ({LabelInput.Text.Trim()})");
@@ -95,6 +109,31 @@ namespace Clidapos.Wpf.Views
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private static readonly Regex NumericPattern = new(@"^[0-9]*\.?[0-9]*$");
+
+        private void NumericOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (sender is not TextBox textBox)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            var proposedText = textBox.Text
+                .Remove(textBox.SelectionStart, textBox.SelectionLength)
+                .Insert(textBox.SelectionStart, e.Text);
+
+            e.Handled = !NumericPattern.IsMatch(proposedText);
+        }
+
+        private void Backdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == sender)
+            {
+                SystemSounds.Exclamation.Play();
+            }
         }
     }
 }

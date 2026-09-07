@@ -17,7 +17,7 @@ namespace Clidapos.Wpf.Services
             if (hotel != null) return hotel;
 
             // Id is a real IDENTITY column - the database assigns it, we don't set it here.
-            hotel = new Hotel();
+            hotel = new Hotel { ShowLogo = "Y" };
             db.Set<Hotel>().Add(hotel);
             await db.SaveChangesAsync();
 

@@ -41,18 +41,17 @@ namespace Clidapos.Wpf.Views
         {
             if (AccountGrid.SelectedItem is BankAccountRow row)
             {
-                // Show() is non-blocking - reopen this screen (or re-search) after
-                // recording a transaction to see the updated balance here.
                 var detail = new BankLedgerDetailPopup(row.AccountNo, row.AccountName);
+                detail.BalanceChanged += async (s, args) => await LoadData();
                 detail.Show();
             }
         }
 
-        private async void RegisterAccount_Click(object sender, RoutedEventArgs e)
+        private void RegisterAccount_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new BankAccountPopup { Owner = this };
-            popup.ShowDialog();
-            await LoadData();
+            var popup = new BankAccountPopup(_currentUser);
+            popup.Show();
+            Close();
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

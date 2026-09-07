@@ -1,4 +1,6 @@
+using System.Media;
 using System.Windows;
+using System.Windows.Input;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -23,6 +25,14 @@ namespace Clidapos.Wpf.Views
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Backdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == sender)
+            {
+                SystemSounds.Exclamation.Play();
+            }
         }
     }
 }

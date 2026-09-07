@@ -190,6 +190,10 @@
 							<Trigger Property="IsMouseOver" Value="True">
 								<Setter TargetName="Bd" Property="BorderBrush" Value="#F3A123"/>
 							</Trigger>
+							<Trigger Property="IsEnabled" Value="False">
+								<Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+								<Setter Property="Cursor" Value="Arrow"/>
+							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
 				</Setter.Value>
@@ -293,7 +297,7 @@
 							</TextBlock>
 							<TextBox x:Name="BuyingPriceInput" Style="{StaticResource FormInput}"/>
 
-							<TextBlock Text="Quantity" Style="{StaticResource FormLabel}"/>
+							<TextBlock x:Name="QuantityLabel" Text="Quantity" Style="{StaticResource FormLabel}"/>
 							<TextBox x:Name="QuantityInput" Style="{StaticResource FormInput}"/>
 
 							<TextBlock Style="{StaticResource FormLabel}">
@@ -326,7 +330,7 @@
 						</StackPanel>
 					</Button>
 
-					<Button Style="{StaticResource IconActionButton}" Click="Save_Click">
+					<Button x:Name="SaveBtn" Style="{StaticResource IconActionButton}" Click="Save_Click">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 							<Grid Width="34" Height="34">
 								<Ellipse Style="{StaticResource IconBadge}" Fill="#2D6CDF"/>
@@ -340,7 +344,7 @@
 						</StackPanel>
 					</Button>
 
-					<Button Style="{StaticResource IconActionButton}" Click="Save_Click">
+					<Button x:Name="UpdateBtn" Style="{StaticResource IconActionButton}" Click="Update_Click">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 							<Grid Width="34" Height="34">
 								<Ellipse Style="{StaticResource IconBadge}" Fill="#F3A123"/>
@@ -354,7 +358,7 @@
 						</StackPanel>
 					</Button>
 
-					<Button Style="{StaticResource IconActionButton}" Click="Delete_Click">
+					<Button x:Name="DeleteBtn" Style="{StaticResource IconActionButton}" Click="Delete_Click">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 							<Grid Width="34" Height="34">
 								<Ellipse Style="{StaticResource IconBadge}" Fill="#DC143C"/>

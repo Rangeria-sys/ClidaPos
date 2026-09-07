@@ -24,6 +24,25 @@ namespace Clidapos.Wpf.Services
             return await db.Set<CreditCustomer>().FirstOrDefaultAsync(c => c.CC_ID == ccId);
         }
 
+        /// <summary>
+        /// The one deliberate way to correct a customer's Opening Balance after
+        /// creation - normal Update never touches this field. Returns the value
+        /// it replaced, so the caller can write a proper before/after audit log
+        /// entry rather than silently overwriting it.
+        /// </summary>
+        public async Task<decimal?> AdjustOpeningBalanceAsync(int ccId, decimal newBalance)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<CreditCustomer>().FirstOrDefaultAsync(c => c.CC_ID == ccId);
+            if (existing == null) return null;
+
+            var oldBalance = existing.OpeningBalance ?? 0;
+            existing.OpeningBalance = newBalance;
+            await db.SaveChangesAsync();
+
+            return oldBalance;
+        }
+
         public async Task<List<CreditCustomer>> SearchAsync(string term)
         {
             var t = (term ?? "").Trim();

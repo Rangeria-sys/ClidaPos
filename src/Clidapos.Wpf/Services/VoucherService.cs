@@ -126,13 +126,10 @@ namespace Clidapos.Wpf.Services
                 db.Set<Voucher>().Add(voucher);
                 await db.SaveChangesAsync();
 
-                var maxLineId = await db.Set<VoucherOtherDetail>().Select(l => (int?)l.VD_ID).MaxAsync() ?? 0;
                 foreach (var line in lines)
                 {
-                    maxLineId++;
                     db.Set<VoucherOtherDetail>().Add(new VoucherOtherDetail
                     {
-                        VD_ID = maxLineId,
                         VoucherID = newId,
                         Particulars = line.Particulars.Trim(),
                         Amount = Math.Round(line.Amount, 2),

@@ -1,5 +1,7 @@
 using System;
+using System.Media;
 using System.Windows;
+using System.Windows.Input;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -7,13 +9,15 @@ namespace Clidapos.Wpf.Views
 {
     public partial class BankAccountPopup : Window
     {
+        private readonly Registration _currentUser;
         private readonly BankingService _bankingService = new();
         private readonly LogService _logService = new();
         private BankAccountRegistration? _editing;
 
-        public BankAccountPopup(BankAccountRegistration? editAccount = null)
+        public BankAccountPopup(Registration currentUser, BankAccountRegistration? editAccount = null)
         {
             InitializeComponent();
+            _currentUser = currentUser;
 
             Loaded += async (s, e) =>
             {
@@ -34,8 +38,10 @@ namespace Clidapos.Wpf.Views
         private void LoadForEditing(BankAccountRegistration account)
         {
             _editing = account;
-            AccountNoInput.Text = account.AccountNo.Trim();
+            AccountNoInput.Text = AccountNumberMasker.Mask(account.AccountNo);
             AccountNoInput.IsEnabled = false; // account number is the key - not editable once created
+            RevealAccountNoBtn.Visibility = Visibility.Visible;
+            RevealAccountNoBtn.Tag = false; // tracks whether currently revealed
             AccountNameInput.Text = account.AccountName?.Trim() ?? "";
             AccountTypeInput.Text = account.AccountType?.Trim() ?? "";
             BalanceInput.Text = account.BalanceAmount?.ToString("0.00") ?? "0";
@@ -44,11 +50,24 @@ namespace Clidapos.Wpf.Views
             // Bank/Branch fields are shown blank on edit - update only touches account-level fields.
         }
 
+        private void RevealAccountNo_Click(object sender, RoutedEventArgs e)
+        {
+            if (_editing == null) return;
+
+            var currentlyRevealed = RevealAccountNoBtn.Tag is bool b && b;
+            AccountNoInput.Text = currentlyRevealed
+                ? AccountNumberMasker.Mask(_editing.AccountNo)
+                : _editing.AccountNo.Trim();
+            RevealAccountNoBtn.Tag = !currentlyRevealed;
+            RevealAccountNoBtn.Content = currentlyRevealed ? "👁" : "🙈";
+        }
+
         private void New_Click(object sender, RoutedEventArgs e)
         {
             _editing = null;
             AccountNoInput.IsEnabled = true;
             AccountNoInput.Text = "";
+            RevealAccountNoBtn.Visibility = Visibility.Collapsed;
             AccountNameInput.Text = "";
             AccountTypeInput.Text = "";
             BalanceInput.Text = "0";
@@ -115,8 +134,8 @@ namespace Clidapos.Wpf.Views
                 await _logService.LogAsync(CurrentSession.UserId,
                     $"Registered Bank Account '{account.AccountName}' ({account.AccountNo}) at {BankNameInput.Text.Trim()} - {BranchNameInput.Text.Trim()}");
 
+                MessageBox.Show("Saved.", "Clidapos");
                 New_Click(sender, e);
-                ErrorText.Text = "Saved.";
             }
             catch (Exception ex)
             {
@@ -145,6 +164,10 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            var confirm = MessageBox.Show($"Update bank account '{_editing.AccountName?.Trim()}'?",
+                "Confirm Update", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             try
             {
                 _editing.AccountName = AccountNameInput.Text.Trim();
@@ -155,7 +178,7 @@ namespace Clidapos.Wpf.Views
 
                 await _bankingService.UpdateAccountAsync(_editing);
                 await _logService.LogAsync(CurrentSession.UserId, $"Updated Bank Account '{_editing.AccountName}'");
-                ErrorText.Text = "Updated.";
+                MessageBox.Show("Updated.", "Clidapos");
             }
             catch (Exception ex)
             {
@@ -164,16 +187,47 @@ namespace Clidapos.Wpf.Views
             }
         }
 
+        private async void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            if (_editing == null)
+            {
+                ErrorText.Text = "Use Get Data, pick an account, then Delete.";
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                $"Remove bank account '{_editing.AccountName?.Trim()}'? Its ledger history will be kept as a permanent record.",
+                "Confirm Remove", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            var deletedName = _editing.AccountName?.Trim() ?? "";
+            await _bankingService.DeleteAccountAsync(_editing.AccountNo);
+            await _logService.LogAsync(CurrentSession.UserId, $"Deleted Bank Account '{deletedName}'");
+
+            MessageBox.Show("Removed.", "Clidapos");
+            New_Click(sender, e);
+        }
+
         private void GetData_Click(object sender, RoutedEventArgs e)
         {
-            var listView = new BankAccountListView();
+            var listView = new BankAccountListView(_currentUser);
             listView.Show();
             Close();
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
+            var listView = new BankAccountListView(_currentUser);
+            listView.Show();
             Close();
+        }
+
+        private void Backdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == sender)
+            {
+                SystemSounds.Exclamation.Play();
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using Clidapos.Wpf.Services;
@@ -10,6 +11,12 @@ namespace Clidapos.Wpf.Views
         private readonly LogService _logService = new();
         private readonly string _accountNo;
         private readonly string _accountName;
+
+        /// <summary>Fired after a deposit or withdrawal is successfully recorded, so
+        /// the screen that opened this popup (the Finance & Banking list) can
+        /// refresh its balances immediately instead of only showing them from
+        /// when it first loaded.</summary>
+        public event EventHandler? BalanceChanged;
 
         public BankLedgerDetailPopup(string accountNo, string accountName)
         {
@@ -64,6 +71,7 @@ namespace Clidapos.Wpf.Views
             LabelInput.Clear();
             AmountInput.Clear();
             await LoadHistory();
+            BalanceChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private async void RecordWithdrawal_Click(object sender, RoutedEventArgs e)
@@ -77,6 +85,7 @@ namespace Clidapos.Wpf.Views
             LabelInput.Clear();
             AmountInput.Clear();
             await LoadHistory();
+            BalanceChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

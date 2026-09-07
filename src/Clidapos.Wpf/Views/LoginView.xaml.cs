@@ -57,6 +57,8 @@ namespace Clidapos.Wpf.Views
         {
             var settingsService = new TerminalLicenseService();
             var setting = await settingsService.GetOrCreateLicenseAsync();
+            var hotel = await new HotelProfileService().GetOrCreateAsync();
+            var businessName = hotel.HotelName?.Trim() ?? "";
 
             var isActive = setting.IsActive?.Trim().ToUpper() == "Y";
             var storedKey = setting.LicenseKey?.Trim() ?? "";
@@ -64,8 +66,8 @@ namespace Clidapos.Wpf.Views
             if (!isActive || string.IsNullOrWhiteSpace(storedKey))
                 return (false, "This installation has not been activated. Contact your provider to purchase a license.");
 
-            if (!LicenseKeyService.TryValidate(storedKey, out var durationCode, out _))
-                return (false, "The license on record is invalid. Contact your provider for a new key.");
+            if (!LicenseKeyService.TryValidate(storedKey, businessName, out var durationCode, out var validationError))
+                return (false, $"The license on record is invalid: {validationError} Contact your provider for a new key.");
 
             var activatedDate = setting.ActivatedDate ?? DateTime.Now;
             var expiry = LicenseKeyService.ComputeExpiry(activatedDate, durationCode);

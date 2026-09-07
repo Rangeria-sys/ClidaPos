@@ -7,6 +7,13 @@ using Clidapos.Wpf.Services;
 
 namespace Clidapos.Wpf.Views
 {
+    /// <summary>Row-number + name pairing for display, since RMCategory has no numeric ID of its own - the number is just this list's position, not a database value.</summary>
+    public class NumberedRow
+    {
+        public int Number { get; set; }
+        public string Name { get; set; } = "";
+    }
+
     public partial class ItemCategoryListView : Window
     {
         private readonly CategoryService _categoryService = new();
@@ -21,22 +28,29 @@ namespace Clidapos.Wpf.Views
         private async System.Threading.Tasks.Task LoadData()
         {
             _all = await _categoryService.GetAllAsync();
-            CategoryGrid.ItemsSource = _all;
+            ApplyToGrid(_all);
+        }
+
+        private void ApplyToGrid(List<string> names)
+        {
+            CategoryGrid.ItemsSource = names
+                .Select((name, index) => new NumberedRow { Number = index + 1, Name = name })
+                .ToList();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var q = SearchBox.Text.Trim().ToLower();
-            CategoryGrid.ItemsSource = string.IsNullOrEmpty(q)
+            ApplyToGrid(string.IsNullOrEmpty(q)
                 ? _all
-                : _all.Where(c => c.ToLower().Contains(q)).ToList();
+                : _all.Where(c => c.ToLower().Contains(q)).ToList());
         }
 
         private void CategoryGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (CategoryGrid.SelectedItem is string name)
+            if (CategoryGrid.SelectedItem is NumberedRow row)
             {
-                var popup = new ItemCategoryPopup(name);
+                var popup = new ItemCategoryPopup(row.Name);
                 popup.Show();
                 Close();
             }

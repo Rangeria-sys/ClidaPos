@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
@@ -8,6 +11,7 @@ namespace Clidapos.Wpf.Views
     public partial class SMSSettingListView : Window
     {
         private readonly IntegrationSettingsService _settingsService = new();
+        private List<SMSSetting> _all = new();
 
         public SMSSettingListView()
         {
@@ -17,7 +21,18 @@ namespace Clidapos.Wpf.Views
 
         private async System.Threading.Tasks.Task LoadData()
         {
-            GatewayGrid.ItemsSource = await _settingsService.GetAllSMSAsync();
+            _all = await _settingsService.GetAllSMSAsync();
+            ApplyFilter();
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e) => ApplyFilter();
+
+        private void ApplyFilter()
+        {
+            var q = SearchBox.Text.Trim().ToLower();
+            GatewayGrid.ItemsSource = string.IsNullOrEmpty(q)
+                ? _all
+                : _all.Where(x => (x.IsDefault ?? "").ToLower().Contains(q) || (x.IsEnabled ?? "").ToLower().Contains(q)).ToList();
         }
 
         private async void AddGateway_Click(object sender, RoutedEventArgs e)
@@ -37,6 +52,16 @@ namespace Clidapos.Wpf.Views
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e) => Close();
+        private void Back_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

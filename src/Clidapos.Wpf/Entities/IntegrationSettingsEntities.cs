@@ -1,3 +1,5 @@
+using Clidapos.Wpf.Services;
+
 namespace Clidapos.Wpf.Entities
 {
     /// <summary>M-Pesa Daraja API configuration - a singleton, one row.</summary>
@@ -34,6 +36,7 @@ namespace Clidapos.Wpf.Entities
     {
         public int Id { get; set; }
         public string? APIURL { get; set; }
+        public string MaskedAPIURL => SecretEncryptionService.Mask(APIURL);
         public string? IsDefault { get; set; }
         public string? IsEnabled { get; set; }
     }

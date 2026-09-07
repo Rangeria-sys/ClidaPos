@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Clidapos.Wpf.Data;
 
 namespace Clidapos.Wpf.Services
@@ -45,6 +46,70 @@ namespace Clidapos.Wpf.Services
                     new SqlParameter("@name", "ClidaDB Backup"));
 
                 return new BackupResult { Ok = true, FilePath = fullPath };
+            }
+            catch (Exception ex)
+            {
+                var detail = ex.InnerException?.Message ?? ex.Message;
+                return new BackupResult { Ok = false, Error = detail };
+            }
+        }
+
+        /// <summary>
+        /// Restores ClidaDB from a .bak file, completely REPLACING all current data.
+        /// This has to run against the "master" database, not ClidaDB itself - SQL
+        /// Server refuses to restore over a database anything is actively connected
+        /// to, so this briefly forces ClidaDB into single-user mode (dropping every
+        /// other connection, including this app's own) to make the restore possible,
+        /// then returns it to normal multi-user mode. The app should be closed and
+        /// reopened immediately after, since every connection any screen was holding
+        /// is now stale.
+        /// </summary>
+        public async Task<BackupResult> RestoreBackupAsync(string backupFilePath)
+        {
+            try
+            {
+                if (!File.Exists(backupFilePath))
+                    return new BackupResult { Ok = false, Error = "That backup file no longer exists." };
+
+                var config = new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                    .Build();
+
+                var appConnectionString = config.GetConnectionString("ClidaDB")
+                    ?? throw new InvalidOperationException("No ClidaDB connection string configured.");
+
+                var masterBuilder = new SqlConnectionStringBuilder(appConnectionString)
+                {
+                    InitialCatalog = "master"
+                };
+
+                await using var connection = new SqlConnection(masterBuilder.ConnectionString);
+                await connection.OpenAsync();
+
+                async Task RunAsync(string sql, SqlParameter? param = null)
+                {
+                    await using var cmd = new SqlCommand(sql, connection) { CommandTimeout = 300 };
+                    if (param != null) cmd.Parameters.Add(param);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                await RunAsync($"ALTER DATABASE [{DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE");
+                try
+                {
+                    await RunAsync(
+                        $"RESTORE DATABASE [{DatabaseName}] FROM DISK = @path WITH REPLACE",
+                        new SqlParameter("@path", backupFilePath));
+                }
+                finally
+                {
+                    // Always try to bring the database back to normal, even if the
+                    // restore itself failed - leaving it stuck in single-user mode
+                    // would lock everyone out entirely.
+                    await RunAsync($"ALTER DATABASE [{DatabaseName}] SET MULTI_USER");
+                }
+
+                return new BackupResult { Ok = true, FilePath = backupFilePath };
             }
             catch (Exception ex)
             {

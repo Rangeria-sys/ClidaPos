@@ -43,7 +43,7 @@ namespace Clidapos.Wpf.Services
                     return;
 
                 var due = schedule.LastRunUtc == null
-                    || DateTime.UtcNow >= schedule.LastRunUtc.Value.AddHours(schedule.IntervalHours);
+                    || DateTime.UtcNow >= schedule.LastRunUtc.Value.AddMinutes(schedule.IntervalMinutes);
 
                 if (!due) return;
 

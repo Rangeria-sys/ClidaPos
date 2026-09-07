@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using System.Media;
 using System.Windows;
+using System.Windows.Input;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -10,7 +13,7 @@ namespace Clidapos.Wpf.Views
         private readonly ExpenseService _expenseService = new();
         private readonly ExpenseTypeService _expenseTypeService = new();
         private readonly LogService _logService = new();
-        private string? _editingOriginalName;
+        private string? _editing;
 
         public ExpensePopup(Expense? editExpense = null)
         {
@@ -22,9 +25,14 @@ namespace Clidapos.Wpf.Views
 
                 if (editExpense != null)
                 {
-                    _editingOriginalName = editExpense.ExpenseName.Trim();
+                    _editing = editExpense.ExpenseName.Trim();
                     NameInput.Text = editExpense.ExpenseName.Trim();
                     TypeCombo.Text = editExpense.ExpenseType.Trim();
+                    SetMode(isExisting: true);
+                }
+                else
+                {
+                    SetMode(isExisting: false);
                 }
             };
         }
@@ -35,12 +43,24 @@ namespace Clidapos.Wpf.Views
             TypeCombo.ItemsSource = types;
         }
 
+        /// <summary>
+        /// Save only ever creates a brand-new expense. Once something has been
+        /// loaded via Get Data (double-click), only Update can change it.
+        /// </summary>
+        private void SetMode(bool isExisting)
+        {
+            SaveBtn.IsEnabled = !isExisting;
+            UpdateBtn.IsEnabled = isExisting;
+            DeleteBtn.IsEnabled = isExisting;
+        }
+
         private void New_Click(object sender, RoutedEventArgs e)
         {
-            _editingOriginalName = null;
+            _editing = null;
             NameInput.Text = "";
             TypeCombo.Text = "";
             ErrorText.Text = "";
+            SetMode(isExisting: false);
             NameInput.Focus();
         }
 
@@ -62,6 +82,13 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            var existing = await _expenseService.GetAllAsync();
+            if (existing.Any(x => x.ExpenseName.Trim().Equals(name, StringComparison.OrdinalIgnoreCase)))
+            {
+                ErrorText.Text = $"An expense named '{name}' already exists.";
+                return;
+            }
+
             try
             {
                 await _expenseTypeService.EnsureExistsAsync(type);
@@ -74,11 +101,9 @@ namespace Clidapos.Wpf.Views
 
                 await _logService.LogAsync(CurrentSession.UserId, $"Added Expense '{name}' (Type: {type})");
 
-                _editingOriginalName = null;
-                NameInput.Text = "";
-                TypeCombo.Text = "";
                 await LoadTypes();
-                ErrorText.Text = "Saved.";
+                MessageBox.Show("Saved.", "Clidapos");
+                New_Click(sender, e);
             }
             catch (Exception ex)
             {
@@ -90,7 +115,7 @@ namespace Clidapos.Wpf.Views
         {
             ErrorText.Text = "";
 
-            if (_editingOriginalName == null)
+            if (_editing == null)
             {
                 ErrorText.Text = "Use Get Data, pick an expense, then edit and Update.";
                 return;
@@ -110,11 +135,25 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            var existing = await _expenseService.GetAllAsync();
+            var nameTaken = existing.Any(x =>
+                !x.ExpenseName.Trim().Equals(_editing, StringComparison.OrdinalIgnoreCase) &&
+                x.ExpenseName.Trim().Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (nameTaken)
+            {
+                ErrorText.Text = $"An expense named '{name}' already exists.";
+                return;
+            }
+
+            var confirm = MessageBox.Show($"Update expense '{_editing}'?",
+                "Confirm Update", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             try
             {
                 await _expenseTypeService.EnsureExistsAsync(type);
 
-                await _expenseService.UpdateAsync(_editingOriginalName, new Expense
+                await _expenseService.UpdateAsync(_editing, new Expense
                 {
                     ExpenseName = name,
                     ExpenseType = type
@@ -122,9 +161,9 @@ namespace Clidapos.Wpf.Views
 
                 await _logService.LogAsync(CurrentSession.UserId, $"Updated Expense '{name}'");
 
-                _editingOriginalName = name;
+                _editing = name;
                 await LoadTypes();
-                ErrorText.Text = "Updated.";
+                MessageBox.Show("Updated.", "Clidapos");
             }
             catch (Exception ex)
             {
@@ -134,23 +173,22 @@ namespace Clidapos.Wpf.Views
 
         private async void Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (_editingOriginalName == null)
+            if (_editing == null)
             {
                 ErrorText.Text = "Use Get Data, pick an expense, then Delete.";
                 return;
             }
 
-            var confirm = MessageBox.Show($"Remove expense '{_editingOriginalName}'?", "Confirm Remove",
+            var confirm = MessageBox.Show($"Remove expense '{_editing}'?", "Confirm Remove",
                 MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
-            var deletedName = _editingOriginalName;
-            await _expenseService.RemoveAsync(_editingOriginalName);
+            var deletedName = _editing;
+            await _expenseService.RemoveAsync(_editing);
             await _logService.LogAsync(CurrentSession.UserId, $"Deleted Expense '{deletedName}'");
-            _editingOriginalName = null;
-            NameInput.Text = "";
-            TypeCombo.Text = "";
-            ErrorText.Text = "Removed.";
+
+            MessageBox.Show("Removed.", "Clidapos");
+            New_Click(sender, e);
         }
 
         private void GetData_Click(object sender, RoutedEventArgs e)
@@ -163,6 +201,14 @@ namespace Clidapos.Wpf.Views
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Backdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == sender)
+            {
+                SystemSounds.Exclamation.Play();
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Clidapos.Wpf.Services
     public class BackupSchedule
     {
         public bool Enabled { get; set; }
-        public int IntervalHours { get; set; } = 24;
+        public int IntervalMinutes { get; set; } = 240;
         public string FolderPath { get; set; } = @"C:\ClidaPos_Backups";
         public DateTime? LastRunUtc { get; set; }
     }

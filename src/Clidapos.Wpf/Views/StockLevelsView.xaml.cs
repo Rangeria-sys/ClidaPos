@@ -10,13 +10,15 @@ namespace Clidapos.Wpf.Views
     public partial class StockLevelsView : Window
     {
         private readonly Registration _currentUser;
+        private readonly bool _cameFromPurchaseEntry;
         private readonly StockLevelsService _stockLevelsService = new();
         private List<StockLevelRow> _all = new();
 
-        public StockLevelsView(Registration currentUser)
+        public StockLevelsView(Registration currentUser, bool cameFromPurchaseEntry = false)
         {
             InitializeComponent();
             _currentUser = currentUser;
+            _cameFromPurchaseEntry = cameFromPurchaseEntry;
             Loaded += async (s, e) => await LoadData();
         }
 
@@ -39,8 +41,16 @@ namespace Clidapos.Wpf.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            var backOffice = new BackOfficeView(_currentUser);
-            backOffice.Show();
+            if (_cameFromPurchaseEntry)
+            {
+                var purchaseEntry = new PurchaseEntryView(_currentUser);
+                purchaseEntry.Show();
+            }
+            else
+            {
+                var backOffice = new BackOfficeView(_currentUser);
+                backOffice.Show();
+            }
             Close();
         }
 

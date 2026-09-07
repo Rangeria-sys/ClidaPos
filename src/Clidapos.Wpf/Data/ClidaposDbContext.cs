@@ -8,6 +8,7 @@ namespace Clidapos.Wpf.Data
     public class ClidaposDbContext : DbContext
     {
         public DbSet<Registration> Registrations => Set<Registration>();
+        public DbSet<UserRight> UserRights => Set<UserRight>();
         public DbSet<WorkPeriodStart> WorkPeriodStarts => Set<WorkPeriodStart>();
         public DbSet<WorkPeriodEnd> WorkPeriodEnds => Set<WorkPeriodEnd>();
         public DbSet<Product> Products => Set<Product>();
@@ -88,6 +89,15 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.AutoLogout).HasColumnType("nchar(10)");
             });
 
+            modelBuilder.Entity<UserRight>(b =>
+            {
+                b.ToTable("UserRights", "dbo");
+                b.HasKey(x => x.ID);
+                b.Property(x => x.ID).ValueGeneratedOnAdd();
+                b.Property(x => x.ModuleName).HasColumnType("nchar(200)");
+                b.Property(x => x.UserID).HasColumnType("nchar(100)");
+            });
+
             modelBuilder.Entity<WorkPeriodStart>(b =>
             {
                 b.ToTable("WorkPeriodStart", "dbo");
@@ -135,6 +145,17 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.ID).ValueGeneratedNever();
                 b.Property(x => x.SupplierID).HasColumnType("nchar(30)");
                 b.Property(x => x.Name).HasColumnType("nchar(200)");
+                b.Property(x => x.Address).HasColumnType("nvarchar(250)");
+                b.Property(x => x.City).HasColumnType("nchar(200)");
+                b.Property(x => x.ContactNo).HasColumnType("nchar(150)");
+                b.Property(x => x.EmailID).HasColumnType("nchar(200)");
+                b.Property(x => x.Bank).HasColumnType("nchar(150)");
+                b.Property(x => x.Branch).HasColumnType("nchar(150)");
+                b.Property(x => x.AccountName).HasColumnType("nchar(150)");
+                b.Property(x => x.AccountNumber).HasColumnType("nchar(100)");
+                b.Property(x => x.OpeningBalance).HasColumnType("decimal(18,2)");
+                b.Property(x => x.OpeningBalanceType).HasColumnType("nchar(30)");
+                b.Property(x => x.Remarks).HasColumnType("nvarchar(max)");
             });
 
             modelBuilder.Entity<Purchase>(b =>
@@ -332,6 +353,7 @@ namespace Clidapos.Wpf.Data
                 b.ToTable("EmployeeRegistration", "dbo");
                 b.HasKey(x => x.EmpId);
                 b.Property(x => x.EmployeeID).HasColumnType("nchar(15)");
+                b.Property(x => x.NationalID).HasColumnType("nchar(20)");
                 b.Property(x => x.EmployeeName).HasColumnType("nchar(150)");
                 b.Property(x => x.Address).HasColumnType("nvarchar(250)");
                 b.Property(x => x.City).HasColumnType("nchar(150)");

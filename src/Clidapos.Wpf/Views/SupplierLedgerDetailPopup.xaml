@@ -3,107 +3,153 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Supplier Ledger"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen"
-        Width="640" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
 	<Window.Resources>
-		<Style x:Key="PopupInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="10"/>
-			<Setter Property="FontSize" Value="14"/>
-		</Style>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
 
-		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#F0F0F2"/>
-			<Setter Property="Foreground" Value="#4A4A50"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="Padding" Value="8,6"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="BorderThickness" Value="0,0,0,2"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		</Style>
+			<Style x:Key="LedgerGridHeader" TargetType="DataGridColumnHeader">
+				<Setter Property="Background" Value="#1E1E24"/>
+				<Setter Property="Foreground" Value="#F3A123"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="FontSize" Value="11.5"/>
+				<Setter Property="Padding" Value="10,8"/>
+				<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			</Style>
 
-		<Style x:Key="ActionBtn" TargetType="Button">
-			<Setter Property="Height" Value="42"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" CornerRadius="6">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+			<Style x:Key="LedgerGridHeaderRight" TargetType="DataGridColumnHeader" BasedOn="{StaticResource LedgerGridHeader}">
+				<Setter Property="HorizontalContentAlignment" Value="Right"/>
+			</Style>
+
+			<Style x:Key="LedgerCellLeft" TargetType="TextBlock">
+				<Setter Property="Padding" Value="10,0"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+				<Setter Property="FontWeight" Value="SemiBold"/>
+				<Setter Property="Foreground" Value="#1C1C1F"/>
+			</Style>
+
+			<Style x:Key="LedgerCellRight" TargetType="TextBlock" BasedOn="{StaticResource LedgerCellLeft}">
+				<Setter Property="HorizontalAlignment" Value="Right"/>
+				<Setter Property="TextAlignment" Value="Right"/>
+			</Style>
+
+			<Style x:Key="LedgerGridRow" TargetType="DataGridRow">
+				<Setter Property="Background" Value="White"/>
+				<Style.Triggers>
+					<Trigger Property="AlternationIndex" Value="1">
+						<Setter Property="Background" Value="#F7F7F9"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+
+			<Style x:Key="LedgerActionBtn" TargetType="Button">
+				<Setter Property="Height" Value="46"/>
+				<Setter Property="Foreground" Value="White"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="FontSize" Value="13"/>
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Cursor" Value="Hand"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="Button">
+							<Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6">
+								<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Border>
+							<ControlTemplate.Triggers>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter TargetName="Bd" Property="Opacity" Value="0.85"/>
+								</Trigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
+		</ResourceDictionary>
 	</Window.Resources>
 
-	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-		<Border.Effect>
-			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-		</Border.Effect>
-		<StackPanel Margin="24">
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<Border Style="{StaticResource PopupCard}" Width="620" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel>
 
-			<Grid Margin="0,0,0,4">
-				<TextBlock x:Name="SupplierNameText" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-				<Button Click="Close_Click" HorizontalAlignment="Right"
-                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                           Width="28" Height="28"/>
-				</Button>
-			</Grid>
+				<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+					<Grid>
+						<TextBlock x:Name="SupplierNameText" Style="{StaticResource PopupTitle}" FontSize="17"/>
+						<Button Click="Close_Click" HorizontalAlignment="Right"
+                                Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+							<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                   Width="26" Height="26"/>
+						</Button>
+					</Grid>
+				</Border>
 
-			<Grid Margin="0,0,0,16">
-				<TextBlock Text="BALANCE OWED" Foreground="#8A8A92" FontSize="11" FontWeight="Bold"/>
-				<TextBlock x:Name="BalanceText" Text="0.00" Foreground="#B23A3A"
-                           FontSize="28" FontWeight="Bold" HorizontalAlignment="Right"/>
-			</Grid>
+				<ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+				<StackPanel Margin="20">
 
-			<Border Background="#FAFAFB" BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,16">
-				<DataGrid x:Name="HistoryGrid" AutoGenerateColumns="False" Height="220"
-                          Background="Transparent" BorderThickness="0"
-                          RowBackground="Transparent" AlternatingRowBackground="#F5F5F7"
-                          HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
-                          ColumnHeaderStyle="{StaticResource GridHeader}"
-                          IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
-                          FontSize="12" Foreground="#1C1C1F">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat='dd MMM yyyy'}" Width="100"/>
-						<DataGridTextColumn Header="Description" Binding="{Binding Label}" Width="*"/>
-						<DataGridTextColumn Header="Debit" Binding="{Binding Debit, StringFormat=N2}" Width="100"/>
-						<DataGridTextColumn Header="Credit" Binding="{Binding Credit, StringFormat=N2}" Width="100"/>
-					</DataGrid.Columns>
-				</DataGrid>
-			</Border>
+					<Border Background="#1A1A1F" CornerRadius="6" Padding="16,12" Margin="0,0,0,16">
+						<Grid>
+							<TextBlock Text="BALANCE (positive = we owe them)" Foreground="#B8B8C0" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
+							<TextBlock x:Name="BalanceText" Text="0.00" Foreground="#FF6B6B" FontSize="24" FontWeight="Black"
+                                       HorizontalAlignment="Right"/>
+						</Grid>
+					</Border>
 
-			<TextBlock Text="RECORD A PAYMENT (REDUCES BALANCE OWED)" Foreground="#8A8A92" FontSize="11" FontWeight="Bold" Margin="0,0,0,8"/>
+					<TextBlock Text="Purchases post here automatically. This form is only for recording a payment made to this supplier."
+                               Foreground="#8A8A92" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,16"/>
 
-			<Grid Margin="0,0,0,10">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="12"/>
-					<ColumnDefinition Width="140"/>
-					<ColumnDefinition Width="12"/>
-					<ColumnDefinition Width="120"/>
-				</Grid.ColumnDefinitions>
-				<TextBox Grid.Column="0" x:Name="LabelInput" Style="{StaticResource PopupInput}" Tag="Description"/>
-				<TextBox Grid.Column="2" x:Name="AmountInput" Style="{StaticResource PopupInput}" Tag="Amount Paid"/>
-				<Button Grid.Column="4" Content="Record Payment" Click="RecordPayment_Click"
-                        Style="{StaticResource ActionBtn}" Background="#2D6CDF"/>
-			</Grid>
+					<Border BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="6" ClipToBounds="True" Margin="0,0,0,16">
+						<DataGrid x:Name="HistoryGrid" AutoGenerateColumns="False"
+                                  Background="White" BorderThickness="0"
+                                  HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#EDEDF0"
+                                  RowHeaderWidth="0" MaxHeight="260"
+                                  RowStyle="{StaticResource LedgerGridRow}"
+                                  AlternationCount="2"
+                                  RowHeight="34" ColumnHeaderHeight="36"
+                                  CanUserAddRows="False" IsReadOnly="True"
+                                  SelectionMode="Single" FontSize="13">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat='dd MMM yyyy'}" Width="110"
+                                                     HeaderStyle="{StaticResource LedgerGridHeader}" ElementStyle="{StaticResource LedgerCellLeft}"/>
+								<DataGridTextColumn Header="Description" Binding="{Binding Label}" Width="*"
+                                                     HeaderStyle="{StaticResource LedgerGridHeader}" ElementStyle="{StaticResource LedgerCellLeft}"/>
+								<DataGridTextColumn Header="Owed More (Purchase)" Binding="{Binding Credit, StringFormat=N2}" Width="150"
+                                                     HeaderStyle="{StaticResource LedgerGridHeaderRight}" ElementStyle="{StaticResource LedgerCellRight}"/>
+								<DataGridTextColumn Header="Paid" Binding="{Binding Debit, StringFormat=N2}" Width="120"
+                                                     HeaderStyle="{StaticResource LedgerGridHeaderRight}" ElementStyle="{StaticResource LedgerCellRight}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+					</Border>
 
-			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12" TextWrapping="Wrap"/>
-		</StackPanel>
-	</Border>
+					<Grid Margin="0,0,0,16">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*"/>
+							<ColumnDefinition Width="12"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+						<StackPanel Grid.Column="0">
+							<TextBlock Text="Note (e.g. paid via bank transfer, M-Pesa, cheque...)" Style="{StaticResource PopupFieldLabel}" Margin="0,0,0,4"/>
+							<TextBox x:Name="LabelInput" Style="{StaticResource PopupInput}"/>
+						</StackPanel>
+						<StackPanel Grid.Column="2">
+							<TextBlock Text="Amount" Style="{StaticResource PopupFieldLabel}" Margin="0,0,0,4"/>
+							<TextBox x:Name="AmountInput" Style="{StaticResource PopupInput}" PreviewTextInput="NumericOnly_PreviewTextInput"/>
+						</StackPanel>
+					</Grid>
+
+					<Button Content="Record Payment Made (owe them less)" Click="RecordPayment_Click"
+                            Style="{StaticResource LedgerActionBtn}" Background="#34C759" Margin="0,0,0,10"/>
+
+					<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+				</StackPanel>
+				</ScrollViewer>
+			</StackPanel>
+		</Border>
+	</Grid>
 </Window>

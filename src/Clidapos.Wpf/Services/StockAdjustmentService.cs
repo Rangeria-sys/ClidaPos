@@ -60,9 +60,13 @@ namespace Clidapos.Wpf.Services
         /// <summary>
         /// Records a stock adjustment and applies it immediately to ProductOpeningStock -
         /// "Increase" adds qty, "Decrease" subtracts it - all inside one transaction.
+        /// An expiry date only makes sense on an Increase (you're adding new stock with
+        /// its own shelf life); it's ignored on a Decrease, since that's removing from
+        /// stock that's already there, not introducing a new batch.
         /// </summary>
         public async Task<StockAdjustmentResult> SaveAdjustmentAsync(
-            int productId, string warehouseName, string adjustmentType, decimal qty, string reason)
+            int productId, string warehouseName, string adjustmentType, decimal qty, string reason,
+            DateTime? expiryDate = null)
         {
             if (qty <= 0)
                 return new StockAdjustmentResult { Ok = false, Error = "Quantity must be greater than zero." };
@@ -99,6 +103,12 @@ namespace Clidapos.Wpf.Services
                 if (stockRow != null)
                 {
                     stockRow.Qty += delta;
+
+                    if (adjustmentType == "Increase" && expiryDate.HasValue)
+                    {
+                        stockRow.HasExpiryDate = "Y";
+                        stockRow.ExpiryDate = expiryDate.Value.ToString(StockLevelsService.ExpiryDateFormat);
+                    }
                 }
                 else
                 {
@@ -107,7 +117,10 @@ namespace Clidapos.Wpf.Services
                         ProductID = productId,
                         Warehouse = warehouseName,
                         Qty = delta,
-                        HasExpiryDate = "N"
+                        HasExpiryDate = adjustmentType == "Increase" && expiryDate.HasValue ? "Y" : "N",
+                        ExpiryDate = adjustmentType == "Increase" && expiryDate.HasValue
+                            ? expiryDate.Value.ToString(StockLevelsService.ExpiryDateFormat)
+                            : null
                     });
                 }
 

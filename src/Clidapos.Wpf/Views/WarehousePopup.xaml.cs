@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using System.Media;
 using System.Windows;
+using System.Windows.Input;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -27,6 +30,11 @@ namespace Clidapos.Wpf.Views
                     AddressInput.Text = editWarehouse.Address?.Trim() ?? "";
                     CityInput.Text = editWarehouse.City?.Trim() ?? "";
                     TypeInput.Text = editWarehouse.WarehouseType?.Trim() ?? "";
+                    SetMode(isExisting: true);
+                }
+                else
+                {
+                    SetMode(isExisting: false);
                 }
             };
         }
@@ -37,6 +45,17 @@ namespace Clidapos.Wpf.Views
             TypeInput.ItemsSource = types;
         }
 
+        /// <summary>
+        /// Save only ever creates a brand-new warehouse. Once something has been
+        /// loaded via Get Data (double-click), only Update can change it.
+        /// </summary>
+        private void SetMode(bool isExisting)
+        {
+            SaveBtn.IsEnabled = !isExisting;
+            UpdateBtn.IsEnabled = isExisting;
+            DeleteBtn.IsEnabled = isExisting;
+        }
+
         private void New_Click(object sender, RoutedEventArgs e)
         {
             _editingOriginalName = null;
@@ -45,6 +64,7 @@ namespace Clidapos.Wpf.Views
             CityInput.Text = "";
             TypeInput.Text = "";
             ErrorText.Text = "";
+            SetMode(isExisting: false);
             NameInput.Focus();
         }
 
@@ -54,6 +74,13 @@ namespace Clidapos.Wpf.Views
             if (string.IsNullOrEmpty(name))
             {
                 ErrorText.Text = "Warehouse Name is required.";
+                return;
+            }
+
+            var existing = await _warehouseService.GetAllAsync();
+            if (existing.Any(w => w.WarehouseName.Trim().Equals(name, StringComparison.OrdinalIgnoreCase)))
+            {
+                ErrorText.Text = $"A warehouse named '{name}' already exists.";
                 return;
             }
 
@@ -74,13 +101,15 @@ namespace Clidapos.Wpf.Views
 
                 await _warehouseService.AddAsync(warehouse);
                 await _logService.LogAsync(CurrentSession.UserId, $"Added Warehouse '{name}'");
+
                 _editingOriginalName = null;
                 NameInput.Text = "";
                 AddressInput.Text = "";
                 CityInput.Text = "";
                 TypeInput.Text = "";
                 await LoadTypes();
-                ErrorText.Text = "Saved.";
+
+                MessageBox.Show("Saved.", "Clidapos");
             }
             catch (Exception ex)
             {
@@ -103,6 +132,20 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            var existing = await _warehouseService.GetAllAsync();
+            var nameTaken = existing.Any(w =>
+                !w.WarehouseName.Trim().Equals(_editingOriginalName, StringComparison.OrdinalIgnoreCase) &&
+                w.WarehouseName.Trim().Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (nameTaken)
+            {
+                ErrorText.Text = $"A warehouse named '{name}' already exists.";
+                return;
+            }
+
+            var confirm = MessageBox.Show($"Update warehouse '{_editingOriginalName}'?",
+                "Confirm Update", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             try
             {
                 if (!string.IsNullOrWhiteSpace(TypeInput.Text))
@@ -120,9 +163,11 @@ namespace Clidapos.Wpf.Views
 
                 await _warehouseService.UpdateAsync(_editingOriginalName, warehouse);
                 await _logService.LogAsync(CurrentSession.UserId, $"Updated Warehouse '{name}'");
+
                 _editingOriginalName = name;
                 await LoadTypes();
-                ErrorText.Text = "Updated.";
+
+                MessageBox.Show("Updated.", "Clidapos");
             }
             catch (Exception ex)
             {
@@ -143,14 +188,25 @@ namespace Clidapos.Wpf.Views
             if (confirm != MessageBoxResult.Yes) return;
 
             var deletedName = _editingOriginalName;
-            await _warehouseService.RemoveAsync(_editingOriginalName);
-            await _logService.LogAsync(CurrentSession.UserId, $"Deleted Warehouse '{deletedName}'");
-            _editingOriginalName = null;
-            NameInput.Text = "";
-            AddressInput.Text = "";
-            CityInput.Text = "";
-            TypeInput.Text = "";
-            ErrorText.Text = "Removed.";
+
+            try
+            {
+                await _warehouseService.RemoveAsync(_editingOriginalName);
+                await _logService.LogAsync(CurrentSession.UserId, $"Deleted Warehouse '{deletedName}'");
+
+                _editingOriginalName = null;
+                NameInput.Text = "";
+                AddressInput.Text = "";
+                CityInput.Text = "";
+                TypeInput.Text = "";
+                SetMode(isExisting: false);
+
+                MessageBox.Show("Removed.", "Clidapos");
+            }
+            catch (Exception ex)
+            {
+                ErrorText.Text = ex.Message;
+            }
         }
 
         private void GetData_Click(object sender, RoutedEventArgs e)
@@ -163,6 +219,14 @@ namespace Clidapos.Wpf.Views
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Backdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == sender)
+            {
+                SystemSounds.Exclamation.Play();
+            }
         }
     }
 }

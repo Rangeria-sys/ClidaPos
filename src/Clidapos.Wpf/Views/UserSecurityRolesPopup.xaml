@@ -3,183 +3,269 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="User Security Roles"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="640" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
 	<Window.Resources>
-		<Style x:Key="PopupInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="8"/>
-			<Setter Property="FontSize" Value="13"/>
-		</Style>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
 
-		<Style x:Key="PopupCombo" TargetType="ComboBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="8"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="IsEditable" Value="True"/>
-		</Style>
+			<!-- Editable checkbox grid, local to this popup - Module Permissions is
+                 the one place in the app where the grid itself is data entry, not a
+                 read-only list. -->
+			<Style x:Key="RightsGridHeader" TargetType="DataGridColumnHeader">
+				<Setter Property="Background" Value="#1E1E24"/>
+				<Setter Property="Foreground" Value="#F3A123"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="FontSize" Value="11.5"/>
+				<Setter Property="Padding" Value="8,8"/>
+				<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			</Style>
 
-		<Style x:Key="FieldLabel" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="#6B6B72"/>
-			<Setter Property="FontSize" Value="11"/>
-			<Setter Property="Margin" Value="0,0,0,3"/>
-		</Style>
+			<Style x:Key="RightsGridHeaderLeft" TargetType="DataGridColumnHeader" BasedOn="{StaticResource RightsGridHeader}">
+				<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			</Style>
 
-		<Style x:Key="IconActionButton" TargetType="Button">
-			<Setter Property="Height" Value="48"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+			<Style x:Key="RightsModuleText" TargetType="TextBlock">
+				<Setter Property="Padding" Value="10,0"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+				<Setter Property="FontWeight" Value="SemiBold"/>
+				<Setter Property="Foreground" Value="#1C1C1F"/>
+			</Style>
 
-		<Style x:Key="IconBtnText" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="Margin" Value="8,0,0,0"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-		</Style>
+			<Style x:Key="RightsCheckBox" TargetType="CheckBox">
+				<Setter Property="HorizontalAlignment" Value="Center"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+			</Style>
+
+			<Style x:Key="RightsGridRow" TargetType="DataGridRow">
+				<Setter Property="Background" Value="White"/>
+				<Style.Triggers>
+					<Trigger Property="AlternationIndex" Value="1">
+						<Setter Property="Background" Value="#F7F7F9"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
 	</Window.Resources>
 
-	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-		<Border.Effect>
-			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-		</Border.Effect>
-		<StackPanel Margin="24">
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-			<Grid Margin="0,0,0,16">
-				<TextBlock Text="USER SECURITY ROLES" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-				<Button Click="Close_Click" HorizontalAlignment="Right"
-                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                           Width="28" Height="28"/>
-				</Button>
-			</Grid>
+			<Border Style="{StaticResource PopupCard}" Width="520">
+				<StackPanel>
 
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="16"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
+					<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+						<Grid>
+							<TextBlock Text="USER SECURITY ROLES" Style="{StaticResource PopupTitle}" FontSize="17"/>
+							<Button Click="Close_Click" HorizontalAlignment="Right"
+                                    Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+								<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                       Width="30" Height="30"/>
+							</Button>
+						</Grid>
+					</Border>
 
-				<StackPanel Grid.Column="0">
-					<TextBlock Text="User ID" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="UserIdInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+					<StackPanel Margin="20">
 
-					<TextBlock Text="Name" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="User ID "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="UserIdInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
 
-					<TextBlock Text="PIN / Password" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="PasswordInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Name "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="NameInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
 
-					<TextBlock Text="User Type" Style="{StaticResource FieldLabel}"/>
-					<ComboBox x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
-						<ComboBoxItem Content="Admin"/>
-						<ComboBoxItem Content="Manager"/>
-						<ComboBoxItem Content="Cashier"/>
-					</ComboBox>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="PIN / Password "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="PasswordInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
 
-					<TextBlock Text="Active" Style="{StaticResource FieldLabel}"/>
-					<ComboBox x:Name="ActiveInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
-						<ComboBoxItem Content="Y"/>
-						<ComboBoxItem Content="N"/>
-					</ComboBox>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="User Type "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<ComboBox Grid.Column="1" x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" IsEditable="True">
+								<ComboBoxItem Content="Admin"/>
+								<ComboBoxItem Content="Manager"/>
+								<ComboBoxItem Content="Cashier"/>
+							</ComboBox>
+						</Grid>
 
-					<TextBlock Text="Joining Date" Style="{StaticResource FieldLabel}"/>
-					<DatePicker x:Name="JoiningDateInput" Margin="0,0,0,10"/>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Active" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<ComboBox Grid.Column="1" x:Name="ActiveInput" Style="{StaticResource PopupCombo}">
+								<ComboBoxItem Content="Y"/>
+								<ComboBoxItem Content="N"/>
+							</ComboBox>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Joining Date" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<DatePicker Grid.Column="1" x:Name="JoiningDateInput"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Contact No" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="ContactInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Email" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="EmailInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<TextBlock Text="Module Permissions" Style="{StaticResource PopupFieldLabel}" Margin="0,16,0,4"
+                                   FontSize="14" Foreground="#1E1E24"/>
+
+						<Border BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+							<DataGrid x:Name="RightsGrid" AutoGenerateColumns="False"
+                                      Background="White" BorderThickness="0"
+                                      HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#EDEDF0"
+                                      RowHeaderWidth="0" MaxHeight="260"
+                                      RowStyle="{StaticResource RightsGridRow}"
+                                      AlternationCount="2"
+                                      RowHeight="34" ColumnHeaderHeight="36"
+                                      CanUserAddRows="False" CanUserDeleteRows="False"
+                                      CanUserSortColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False"
+                                      SelectionMode="Single" SelectionUnit="Cell"
+                                      FontSize="13">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="Module" Binding="{Binding ModuleName}" Width="*"
+                                                         HeaderStyle="{StaticResource RightsGridHeaderLeft}"
+                                                         ElementStyle="{StaticResource RightsModuleText}"/>
+									<DataGridTemplateColumn Header="Save" Width="70" HeaderStyle="{StaticResource RightsGridHeader}">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<CheckBox IsChecked="{Binding UR_Save, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsThreeState="False" Style="{StaticResource RightsCheckBox}"/>
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTemplateColumn Header="Update" Width="70" HeaderStyle="{StaticResource RightsGridHeader}">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<CheckBox IsChecked="{Binding UR_Update, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsThreeState="False" Style="{StaticResource RightsCheckBox}"/>
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTemplateColumn Header="Delete" Width="70" HeaderStyle="{StaticResource RightsGridHeader}">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<CheckBox IsChecked="{Binding UR_Delete, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsThreeState="False" Style="{StaticResource RightsCheckBox}"/>
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTemplateColumn Header="View" Width="70" HeaderStyle="{StaticResource RightsGridHeader}">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<CheckBox IsChecked="{Binding UR_View, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsThreeState="False" Style="{StaticResource RightsCheckBox}"/>
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+								</DataGrid.Columns>
+							</DataGrid>
+						</Border>
+
+						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+					</StackPanel>
+					</ScrollViewer>
 				</StackPanel>
+			</Border>
 
-				<StackPanel Grid.Column="2">
-					<TextBlock Text="Contact No" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="ContactInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+			<StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
 
-					<TextBlock Text="Email" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="EmailInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="SSN" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="SsnInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Payroll Type" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="PayrollTypeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Card No" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="CardNoInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Auto Logout" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="AutoLogoutInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-				</StackPanel>
-			</Grid>
-
-			<Grid Margin="0,10,0,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="8"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="8"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="8"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="8"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-
-				<Button Grid.Column="0" Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="➕" FontSize="15"/>
-						<TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
+				<Button x:Name="NewBtn" Style="{StaticResource PopupIconButton}" Click="New_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/new.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="New" Style="{StaticResource PopupIconLabel}"/>
 					</StackPanel>
 				</Button>
-				<Button Grid.Column="2" Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="💾" FontSize="15"/>
-						<TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
-					</StackPanel>
-				</Button>
-				<Button Grid.Column="4" Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="✎" FontSize="15"/>
-						<TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
-					</StackPanel>
-				</Button>
-				<Button Grid.Column="6" Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="🗑" FontSize="15"/>
-						<TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
-					</StackPanel>
-				</Button>
-				<Button Grid.Column="8" Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="🔍" FontSize="15"/>
-						<TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
-					</StackPanel>
-				</Button>
-			</Grid>
 
-			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,12,0,0" TextWrapping="Wrap"/>
+				<Button x:Name="SaveBtn" Style="{StaticResource PopupIconButton}" Click="Save_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/save.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Save" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
+
+				<Button x:Name="UpdateBtn" Style="{StaticResource PopupIconButton}" Click="Update_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/edit.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Update" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
+
+				<Button x:Name="DeleteBtn" Style="{StaticResource PopupIconButton}" Click="Delete_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/delete.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Delete" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
+
+				<Button Style="{StaticResource PopupIconButton}" Click="GetData_Click" Margin="0">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/get.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Get Data" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
+
+			</StackPanel>
+
 		</StackPanel>
-	</Border>
+	</Grid>
 </Window>

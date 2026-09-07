@@ -11,6 +11,7 @@ namespace Clidapos.Wpf.Entities
     {
         public int EmpId { get; set; }
         public string EmployeeID { get; set; } = "";
+        public string NationalID { get; set; } = "";
         public string EmployeeName { get; set; } = "";
         public string Address { get; set; } = "";
         public string City { get; set; } = "";

@@ -11,7 +11,10 @@ namespace Clidapos.Wpf.Services
     public class PayrollHistoryRow
     {
         public int Id { get; set; }
+        public int EmpId { get; set; }
         public string EmployeeName { get; set; } = "";
+        public string EmployeeID { get; set; } = "";
+        public string NationalID { get; set; } = "";
         public DateTime PaymentDate { get; set; }
         public string? PayMonth { get; set; }
         public int? PayYear { get; set; }
@@ -39,16 +42,62 @@ namespace Clidapos.Wpf.Services
 
             var employees = await db.Set<EmployeeRegistration>().ToListAsync();
 
-            return runs.Select(r => new PayrollHistoryRow
+            return runs.Select(r =>
             {
-                Id = r.Id,
-                EmployeeName = employees.FirstOrDefault(e => e.EmpId == r.EmpId)?.EmployeeName.Trim() ?? "(unknown employee)",
-                PaymentDate = r.PaymentDate,
-                PayMonth = r.PayMonth?.Trim(),
-                PayYear = r.PayYear,
-                GrossSalary = r.GrossSalary,
-                NetPay = r.NetPay
+                var emp = employees.FirstOrDefault(e => e.EmpId == r.EmpId);
+                return new PayrollHistoryRow
+                {
+                    Id = r.Id,
+                    EmpId = r.EmpId,
+                    EmployeeName = emp?.EmployeeName.Trim() ?? "(unknown employee)",
+                    EmployeeID = emp?.EmployeeID.Trim() ?? "",
+                    NationalID = emp?.NationalID?.Trim() ?? "",
+                    PaymentDate = r.PaymentDate,
+                    PayMonth = r.PayMonth?.Trim(),
+                    PayYear = r.PayYear,
+                    GrossSalary = r.GrossSalary,
+                    NetPay = r.NetPay
+                };
             }).ToList();
+        }
+
+        public async Task<PayrollRun?> GetByIdAsync(int id)
+        {
+            using var db = new ClidaposDbContext();
+            return await db.Set<PayrollRun>().FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task UpdateAsync(PayrollRun run)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<PayrollRun>().FirstOrDefaultAsync(p => p.Id == run.Id);
+            if (existing == null) return;
+
+            existing.PaymentDate = run.PaymentDate;
+            existing.PayMonth = run.PayMonth;
+            existing.PayYear = run.PayYear;
+            existing.GrossSalary = run.GrossSalary;
+            existing.NSSFPer = run.NSSFPer;
+            existing.NSSF = run.NSSF;
+            existing.SHAPer = run.SHAPer;
+            existing.SHA = run.SHA;
+            existing.HousingLevyPer = run.HousingLevyPer;
+            existing.HousingLevy = run.HousingLevy;
+            existing.PAYEPer = run.PAYEPer;
+            existing.PAYE = run.PAYE;
+            existing.NetPay = run.NetPay;
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<PayrollRun>().FirstOrDefaultAsync(p => p.Id == id);
+            if (existing == null) return;
+
+            db.Set<PayrollRun>().Remove(existing);
+            await db.SaveChangesAsync();
         }
 
         public async Task AddAsync(PayrollRun run)

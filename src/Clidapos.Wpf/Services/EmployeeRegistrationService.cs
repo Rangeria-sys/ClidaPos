@@ -26,8 +26,8 @@ namespace Clidapos.Wpf.Services
         {
             using var db = new ClidaposDbContext();
 
-            // Photo is NOT NULL in the real database - an empty placeholder satisfies
-            // that constraint until a real photo-upload feature is built.
+            // Photo is optional in the UI but NOT NULL in the real database -
+            // an empty placeholder satisfies that constraint when no photo is set.
             employee.Photo ??= System.Array.Empty<byte>();
 
             db.Set<EmployeeRegistration>().Add(employee);
@@ -41,6 +41,7 @@ namespace Clidapos.Wpf.Services
             if (existing == null) return;
 
             existing.EmployeeID = employee.EmployeeID;
+            existing.NationalID = employee.NationalID;
             existing.EmployeeName = employee.EmployeeName;
             existing.Address = employee.Address;
             existing.City = employee.City;
@@ -48,6 +49,7 @@ namespace Clidapos.Wpf.Services
             existing.Email = employee.Email;
             existing.DateOfJoining = employee.DateOfJoining;
             existing.Active = employee.Active;
+            existing.Photo = employee.Photo;
 
             await db.SaveChangesAsync();
         }

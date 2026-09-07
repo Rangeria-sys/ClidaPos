@@ -50,11 +50,11 @@ namespace Clidapos.Wpf.Views
             }
         }
 
-        private async void RecordPayment_Click(object sender, RoutedEventArgs e)
+        private void RecordPayment_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new BillPaymentPopup { Owner = this };
-            popup.ShowDialog();
-            await LoadData();
+            var picker = new ExpensePickerView(_currentUser);
+            picker.Show();
+            Close();
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

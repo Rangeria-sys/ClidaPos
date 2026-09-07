@@ -3,144 +3,150 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Stock Adjustment"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="440" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
-    <Window.Resources>
-        <Style x:Key="PopupInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
 
-        <Style x:Key="PopupCombo" TargetType="ComboBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
+			<Style x:Key="ResultsList" TargetType="ListBox">
+				<Setter Property="Background" Value="#F5F5F7"/>
+				<Setter Property="BorderBrush" Value="#D8D8DE"/>
+				<Setter Property="BorderThickness" Value="1"/>
+				<Setter Property="MaxHeight" Value="130"/>
+			</Style>
 
-        <Style x:Key="ResultsList" TargetType="ListBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="MaxHeight" Value="130"/>
-        </Style>
+			<Style x:Key="ReadOnlyBox" TargetType="Border">
+				<Setter Property="Background" Value="#F0F0F3"/>
+				<Setter Property="BorderBrush" Value="#D8D8DE"/>
+				<Setter Property="BorderThickness" Value="1"/>
+				<Setter Property="CornerRadius" Value="6"/>
+				<Setter Property="Padding" Value="10,9"/>
+			</Style>
+		</ResourceDictionary>
+	</Window.Resources>
 
-        <Style x:Key="ReadOnlyBox" TargetType="Border">
-            <Setter Property="Background" Value="#F0F0F2"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="Padding" Value="10"/>
-        </Style>
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        <Style x:Key="IconActionButton" TargetType="Button">
-            <Setter Property="Height" Value="52"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Opacity" Value="0.85"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+			<Border Style="{StaticResource PopupCard}" Width="420">
+				<StackPanel>
 
-        <Style x:Key="IconBtnText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Margin" Value="10,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
+					<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+						<Grid>
+							<TextBlock Text="STOCK ADJUSTMENT" Style="{StaticResource PopupTitle}" FontSize="17"/>
+							<Button Click="Close_Click" HorizontalAlignment="Right"
+                                    Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+								<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                       Width="26" Height="26"/>
+							</Button>
+						</Grid>
+					</Border>
 
-    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-        <Border.Effect>
-            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-        </Border.Effect>
-        <StackPanel Margin="24">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+					<StackPanel Margin="20">
 
-            <Grid Margin="0,0,0,16">
-                <TextBlock Text="STOCK ADJUSTMENT" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Click="Close_Click" HorizontalAlignment="Right"
-                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-                    <Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                           Width="28" Height="28"/>
-                </Button>
-            </Grid>
+						<TextBlock Text="Product" Style="{StaticResource PopupFieldLabel}" Margin="0,0,0,4"/>
+						<TextBox x:Name="SearchBox" Style="{StaticResource PopupInput}"
+                                 TextChanged="SearchBox_TextChanged" Margin="0,0,0,4"/>
+						<ListBox x:Name="ResultsList" Style="{StaticResource ResultsList}"
+                                 SelectionChanged="ResultsList_SelectionChanged" Margin="0,0,0,4">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding ProductName}" FontSize="14" Padding="4"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+						<TextBlock x:Name="SelectedProductText" Foreground="#127C6B" FontSize="13" FontWeight="Bold"
+                                   Margin="0,0,0,14" TextWrapping="Wrap"/>
 
-            <TextBlock Text="Product" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <TextBox x:Name="SearchBox" Style="{StaticResource PopupInput}"
-                     TextChanged="SearchBox_TextChanged" Margin="0,0,0,4"/>
-            <ListBox x:Name="ResultsList" Style="{StaticResource ResultsList}"
-                     SelectionChanged="ResultsList_SelectionChanged" Margin="0,0,0,4">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding ProductName}" FontSize="14" Padding="4"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <TextBlock x:Name="SelectedProductText" Foreground="#127C6B" FontSize="13" FontWeight="Bold"
-                       Margin="0,0,0,14" TextWrapping="Wrap"/>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Current Quantity" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<Border Grid.Column="1" Style="{StaticResource ReadOnlyBox}">
+								<TextBlock x:Name="CurrentQtyText" Text="—" FontSize="14" FontWeight="Bold" Foreground="#1C1C1F"/>
+							</Border>
+						</Grid>
 
-            <TextBlock Text="Current Quantity" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <Border Style="{StaticResource ReadOnlyBox}" Margin="0,0,0,14">
-                <TextBlock x:Name="CurrentQtyText" Text="—" FontSize="16" FontWeight="Bold" Foreground="#1C1C1F"/>
-            </Border>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Adjustment Type "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<ComboBox Grid.Column="1" x:Name="TypeCombo" Style="{StaticResource PopupCombo}"
+                                      SelectionChanged="Recompute_Changed">
+								<ComboBoxItem Content="Increase"/>
+								<ComboBoxItem Content="Decrease"/>
+							</ComboBox>
+						</Grid>
 
-            <TextBlock Text="Adjustment Type" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <ComboBox x:Name="TypeCombo" Style="{StaticResource PopupCombo}"
-                      SelectionChanged="Recompute_Changed" Margin="0,0,0,14">
-                <ComboBoxItem Content="Increase"/>
-                <ComboBoxItem Content="Decrease"/>
-            </ComboBox>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Adjust Quantity "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="QtyInput" Style="{StaticResource PopupInputRequired}"
+                                     TextChanged="Recompute_Changed"/>
+						</Grid>
 
-            <TextBlock Text="Adjust Quantity" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <TextBox x:Name="QtyInput" Style="{StaticResource PopupInput}"
-                     TextChanged="Recompute_Changed" Margin="0,0,0,14"/>
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Final Quantity" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<Border Grid.Column="1" Style="{StaticResource ReadOnlyBox}">
+								<TextBlock x:Name="FinalQtyText" Text="—" FontSize="14" FontWeight="Bold" Foreground="#F3A123"/>
+							</Border>
+						</Grid>
 
-            <TextBlock Text="Final Quantity" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <Border Style="{StaticResource ReadOnlyBox}" Margin="0,0,0,14">
-                <TextBlock x:Name="FinalQtyText" Text="—" FontSize="16" FontWeight="Bold" Foreground="#F3A123"/>
-            </Border>
+						<TextBlock Style="{StaticResource PopupFieldLabel}" Margin="0,4,0,4">
+							<Run Text="Reason "/>
+							<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+						</TextBlock>
+						<TextBox x:Name="ReasonInput" Style="{StaticResource PopupInputRequired}"/>
 
-            <TextBlock Text="Reason" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <TextBox x:Name="ReasonInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+					</StackPanel>
+					</ScrollViewer>
+				</StackPanel>
+			</Border>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click" Margin="0,0,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="💾" FontSize="18"/>
-                    <TextBlock Text="Save Adjustment" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+			<StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
 
-            <Button Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click" Margin="0,8,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="🔍" FontSize="18"/>
-                    <TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+				<Button Style="{StaticResource PopupIconButton}" Click="Save_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/save.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Save" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,12,0,0" TextWrapping="Wrap"/>
-        </StackPanel>
-    </Border>
+				<Button Style="{StaticResource PopupIconButton}" Click="GetData_Click" Margin="0">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/get.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Get Data" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
+
+			</StackPanel>
+
+		</StackPanel>
+	</Grid>
 </Window>

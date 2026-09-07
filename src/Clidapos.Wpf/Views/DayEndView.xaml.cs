@@ -11,6 +11,8 @@ namespace Clidapos.Wpf.Views
         private readonly ReportService _reportService = new();
         private readonly ShiftService _shiftService = new();
         private readonly LogService _logService = new();
+        private readonly HotelProfileService _hotelService = new();
+        private readonly EmailService _emailService = new();
         private readonly int _periodId;
 
         public DayEndView(Registration currentUser, int periodId)
@@ -82,13 +84,67 @@ namespace Clidapos.Wpf.Views
             if (closed)
             {
                 await _logService.LogAsync(CurrentSession.UserId, "Ended Work Period");
-                MessageBox.Show("Period closed.", "Clidapos");
+                var emailNote = await SendClosingReportEmailAsync();
+                MessageBox.Show($"Period closed.{emailNote}", "Clidapos");
                 await LoadSummary();
             }
             else
             {
                 MessageBox.Show("There was no open period to close.", "Clidapos");
             }
+        }
+
+        /// <summary>
+        /// Emails the just-closed period's summary to the address set under
+        /// Business Profile. Returns a short note to append to the close
+        /// confirmation - a failure here never blocks the close itself, since
+        /// the period is already closed by the time this runs.
+        /// </summary>
+        private async System.Threading.Tasks.Task<string> SendClosingReportEmailAsync()
+        {
+            var hotel = await _hotelService.GetOrCreateAsync();
+            var toAddress = hotel.EmailID?.Trim();
+
+            if (string.IsNullOrWhiteSpace(toAddress))
+                return "\n\n(No email set in Business Profile - closing report was not sent.)";
+
+            var s = await _reportService.GetPeriodSummaryAsync(_periodId);
+            if (s == null) return "";
+
+            var cur = AppSettings.CurrencySymbol;
+            var body = new System.Text.StringBuilder();
+            body.AppendLine($"{AppSettings.StoreName.ToUpper()} - WORK PERIOD CLOSING REPORT");
+            body.AppendLine($"Period {s.PeriodId}: {s.StartedAt:dd MMM yyyy, hh:mm tt} to {s.EndedAt:dd MMM yyyy, hh:mm tt}");
+            body.AppendLine();
+            body.AppendLine($"Grand Total: {cur} {s.GrandTotal:N2}");
+            body.AppendLine($"Bills: {s.BillCount:N0}");
+            body.AppendLine($"Items Sold: {s.ItemCount:N2}");
+            body.AppendLine($"Average Sale: {cur} {s.AverageSale:N2}");
+            body.AppendLine();
+            body.AppendLine("Payment Breakdown");
+            body.AppendLine($"  Cash:   {cur} {s.CashTotal:N2}");
+            body.AppendLine($"  M-Pesa: {cur} {s.MpesaTotal:N2}");
+            body.AppendLine($"  Card:   {cur} {s.CardTotal:N2}");
+            if (s.OtherTotal > 0)
+                body.AppendLine($"  Other:  {cur} {s.OtherTotal:N2}");
+            body.AppendLine();
+            body.AppendLine($"Net of VAT: {cur} {s.TaxableTotal:N2}");
+            body.AppendLine($"VAT at {AppSettings.VatPercent:0.##}%: {cur} {s.VatTotal:N2}");
+
+            if (s.TopItems.Count > 0)
+            {
+                body.AppendLine();
+                body.AppendLine("Top Selling Items");
+                foreach (var item in s.TopItems)
+                    body.AppendLine($"  {item.Qty:N0} x {item.Name} - {cur} {item.Value:N2}");
+            }
+
+            var subject = $"{AppSettings.StoreName} - Period {s.PeriodId} Closing Report ({s.EndedAt:dd MMM yyyy})";
+            var result = await _emailService.SendAsync(toAddress, subject, body.ToString());
+
+            return result.Success
+                ? $"\n\nClosing report emailed to {toAddress}."
+                : $"\n\n(Closing report email failed: {result.Message})";
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

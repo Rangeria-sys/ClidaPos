@@ -16,6 +16,7 @@ namespace Clidapos.Wpf.Services
         public decimal Qty { get; set; }
         public decimal Price { get; set; }
         public decimal Amount => Qty * Price;
+        public string? ExpiryDate { get; set; }
     }
 
     public class PurchaseResult
@@ -24,6 +25,24 @@ namespace Clidapos.Wpf.Services
         public string InvoiceNo { get; set; } = "";
         public decimal GrandTotal { get; set; }
         public string Error { get; set; } = "";
+    }
+
+    public class PurchaseHistoryRow
+    {
+        public int PurchaseId { get; set; }
+        public string InvoiceNo { get; set; } = "";
+        public DateTime Date { get; set; }
+        public string SupplierName { get; set; } = "";
+        public string PurchaseType { get; set; } = "";
+        public decimal GrandTotal { get; set; }
+    }
+
+    public class PurchaseLineHistoryRow
+    {
+        public string ProductName { get; set; } = "";
+        public decimal Qty { get; set; }
+        public decimal Price { get; set; }
+        public decimal Amount { get; set; }
     }
 
     public class PurchaseService
@@ -54,6 +73,51 @@ namespace Clidapos.Wpf.Services
             await db.SaveChangesAsync();
 
             return newSupplier.ID;
+        }
+
+        /// <summary>
+        /// Every real restock made through Purchase Entry, newest first - deliberately
+        /// excludes the "Initial" entries Items creates when a Buying Price is set on
+        /// a new product, since those aren't restocks and don't belong in this history.
+        /// </summary>
+        public async Task<List<PurchaseHistoryRow>> GetHistoryAsync()
+        {
+            using var db = new ClidaposDbContext();
+
+            var purchases = await db.Purchases
+                .Where(p => p.PurchaseType == "Restock")
+                .OrderByDescending(p => p.Date)
+                .ToListAsync();
+            var suppliers = await db.Suppliers.ToListAsync();
+            var supplierLookup = suppliers.ToDictionary(s => s.ID);
+
+            return purchases.Select(p => new PurchaseHistoryRow
+            {
+                PurchaseId = p.ST_ID,
+                InvoiceNo = p.InvoiceNo.Trim(),
+                Date = p.Date,
+                SupplierName = supplierLookup.TryGetValue(p.Supplier_ID, out var s) ? (s.Name?.Trim() ?? "") : "",
+                PurchaseType = p.PurchaseType?.Trim() ?? "",
+                GrandTotal = p.GrandTotal
+            }).ToList();
+        }
+
+        /// <summary>The individual products received on one specific purchase - the drill-down behind a history row.</summary>
+        public async Task<List<PurchaseLineHistoryRow>> GetPurchaseLinesAsync(int purchaseId)
+        {
+            using var db = new ClidaposDbContext();
+
+            var lines = await db.PurchaseJoins.Where(j => j.PurchaseID == purchaseId).ToListAsync();
+            var products = await db.Products.ToListAsync();
+            var productLookup = products.ToDictionary(p => p.PID);
+
+            return lines.Select(l => new PurchaseLineHistoryRow
+            {
+                ProductName = productLookup.TryGetValue(l.ProductID, out var p) ? p.ProductName.Trim() : "(unknown product)",
+                Qty = l.Qty,
+                Price = l.Price,
+                Amount = l.TotalAmount
+            }).ToList();
         }
 
         public async Task RecordBuyingPriceAsync(int productId, decimal qty, decimal buyingPrice)
@@ -153,6 +217,20 @@ namespace Clidapos.Wpf.Services
             if (lines.Any(l => l.Qty <= 0))
                 return new PurchaseResult { Ok = false, Error = "Every line needs a quantity above zero." };
 
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line.ExpiryDate) &&
+                    !DateTime.TryParseExact(line.ExpiryDate.Trim(), StockLevelsService.ExpiryDateFormat,
+                        null, System.Globalization.DateTimeStyles.None, out _))
+                {
+                    return new PurchaseResult
+                    {
+                        Ok = false,
+                        Error = $"'{line.ProductName}' has an invalid expiry date - use yyyy-MM-dd (e.g. 2026-12-31), or leave it blank."
+                    };
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(invoiceNo))
                 return new PurchaseResult { Ok = false, Error = "Invoice number is required." };
 
@@ -211,7 +289,8 @@ namespace Clidapos.Wpf.Services
                         Warehouse = warehouseName
                     });
 
-                    await AddStockAsync(db, line.ProductId, warehouseName, line.Qty);
+                    await AddStockAsync(db, line.ProductId, warehouseName, line.Qty,
+                        string.IsNullOrWhiteSpace(line.ExpiryDate) ? null : line.ExpiryDate.Trim());
                 }
 
                 await db.SaveChangesAsync();
@@ -241,8 +320,8 @@ namespace Clidapos.Wpf.Services
             }
         }
 
-        /// <summary>Adds qty to the existing stock row for this product+warehouse, or creates one.</summary>
-        private static async Task AddStockAsync(ClidaposDbContext db, int productId, string warehouseName, decimal qty)
+        /// <summary>Adds qty to the existing stock row for this product+warehouse, or creates one. If an expiry date string ("yyyy-MM-dd") is given, it's recorded on that row.</summary>
+        private static async Task AddStockAsync(ClidaposDbContext db, int productId, string warehouseName, decimal qty, string? expiryDate = null)
         {
             var existing = await db.ProductOpeningStocks
                 .FirstOrDefaultAsync(s => s.ProductID == productId && s.Warehouse.Trim() == warehouseName.Trim());
@@ -250,6 +329,12 @@ namespace Clidapos.Wpf.Services
             if (existing != null)
             {
                 existing.Qty += qty;
+
+                if (expiryDate != null)
+                {
+                    existing.HasExpiryDate = "Y";
+                    existing.ExpiryDate = expiryDate;
+                }
             }
             else
             {
@@ -258,7 +343,8 @@ namespace Clidapos.Wpf.Services
                     ProductID = productId,
                     Warehouse = warehouseName,
                     Qty = qty,
-                    HasExpiryDate = "N"
+                    HasExpiryDate = expiryDate != null ? "Y" : "N",
+                    ExpiryDate = expiryDate
                 });
             }
         }

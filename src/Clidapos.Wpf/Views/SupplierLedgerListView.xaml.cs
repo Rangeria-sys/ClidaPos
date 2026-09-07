@@ -24,28 +24,31 @@ namespace Clidapos.Wpf.Views
         private async System.Threading.Tasks.Task LoadData()
         {
             _all = await _ledgerService.GetSupplierBalancesAsync();
-            SupplierGrid.ItemsSource = _all;
+            ApplyFilter();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
         {
             var q = SearchBox.Text.Trim().ToLower();
             SupplierGrid.ItemsSource = string.IsNullOrEmpty(q)
                 ? _all
                 : _all.Where(r => r.SupplierName.ToLower().Contains(q)
-                               || r.SupplierCode.ToLower().Contains(q)).ToList();
+                               || r.SupplierCode.ToLower().Contains(q)
+                               || r.ContactNo.ToLower().Contains(q)).ToList();
         }
 
         private void SupplierGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SupplierGrid.SelectedItem is SupplierBalanceRow row)
-            {
-                // Show() is non-blocking, so this list's balances won't auto-refresh
-                // while the detail popup is open - reopen this screen (or re-search)
-                // after adding a manual entry to see the updated balance.
-                var detail = new SupplierLedgerDetailPopup(row.SupplierCode, row.SupplierName);
-                detail.Show();
-            }
+            if (SupplierGrid.SelectedItem is not SupplierBalanceRow row) return;
+
+            var detail = new SupplierLedgerDetailPopup(row.SupplierCode, row.SupplierName);
+            detail.BalanceChanged += async (s, args) => await LoadData();
+            detail.Show();
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

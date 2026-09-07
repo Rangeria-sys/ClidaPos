@@ -1,0 +1,137 @@
+<Window x:Class="Clidapos.Wpf.Views.PurchaseDetailView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Purchase Detail"
+        WindowStyle="None"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        Background="#96000000"
+        AllowsTransparency="True"
+        ShowInTaskbar="False">
+
+	<Window.Resources>
+		<Style x:Key="DocLabel" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#8A8A92"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+		</Style>
+
+		<Style x:Key="DocValue" TargetType="TextBlock">
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
+
+		<Style x:Key="DocGridHeader" TargetType="DataGridColumnHeader">
+			<Setter Property="Background" Value="#1E1E24"/>
+			<Setter Property="Foreground" Value="#F3A123"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="11.5"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		</Style>
+
+		<Style x:Key="DocGridHeaderRight" TargetType="DataGridColumnHeader" BasedOn="{StaticResource DocGridHeader}">
+			<Setter Property="HorizontalContentAlignment" Value="Right"/>
+		</Style>
+
+		<Style x:Key="DocCellLeft" TargetType="TextBlock">
+			<Setter Property="Padding" Value="10,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="Foreground" Value="#1C1C1F"/>
+		</Style>
+
+		<Style x:Key="DocCellRight" TargetType="TextBlock" BasedOn="{StaticResource DocCellLeft}">
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="TextAlignment" Value="Right"/>
+		</Style>
+
+		<Style x:Key="DocGridRow" TargetType="DataGridRow">
+			<Setter Property="Background" Value="White"/>
+			<Style.Triggers>
+				<Trigger Property="AlternationIndex" Value="1">
+					<Setter Property="Background" Value="#F7F7F9"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</Window.Resources>
+
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<Border Width="480" MaxHeight="700" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="White" CornerRadius="10" BorderBrush="#F3A123" BorderThickness="2">
+			<Border.Effect>
+				<DropShadowEffect Color="Black" ShadowDepth="4" BlurRadius="24" Opacity="0.35"/>
+			</Border.Effect>
+			<StackPanel>
+
+				<Border Background="#1A1A1F" CornerRadius="8,8,0,0" Padding="20,16">
+					<Grid>
+						<StackPanel>
+							<TextBlock Text="PURCHASE RECEIPT" Foreground="White" FontSize="17" FontWeight="Black"/>
+							<TextBlock x:Name="SubtitleText" Foreground="#B8B8C0" FontSize="11" Margin="0,2,0,0"/>
+						</StackPanel>
+						<Button Click="Close_Click" HorizontalAlignment="Right"
+                                Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+							<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform" Width="26" Height="26"/>
+						</Button>
+					</Grid>
+				</Border>
+
+				<StackPanel Margin="20">
+
+					<Grid Margin="0,0,0,16">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<StackPanel Grid.Column="0">
+							<TextBlock Text="INVOICE NO" Style="{StaticResource DocLabel}"/>
+							<TextBlock x:Name="InvoiceText" Style="{StaticResource DocValue}" Margin="0,2,0,0"/>
+						</StackPanel>
+						<StackPanel Grid.Column="1" HorizontalAlignment="Right">
+							<TextBlock Text="DATE" Style="{StaticResource DocLabel}" HorizontalAlignment="Right"/>
+							<TextBlock x:Name="DateText" Style="{StaticResource DocValue}" Margin="0,2,0,0"/>
+						</StackPanel>
+					</Grid>
+
+					<TextBlock Text="SUPPLIER" Style="{StaticResource DocLabel}"/>
+					<TextBlock x:Name="SupplierText" Style="{StaticResource DocValue}" FontSize="16" Margin="0,2,0,16"/>
+
+					<Border BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+						<DataGrid x:Name="LinesGrid" AutoGenerateColumns="False"
+                                  Background="White" BorderThickness="0"
+                                  HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#EDEDF0"
+                                  RowHeaderWidth="0" MaxHeight="280"
+                                  RowStyle="{StaticResource DocGridRow}"
+                                  AlternationCount="2"
+                                  RowHeight="34" ColumnHeaderHeight="34"
+                                  CanUserAddRows="False" IsReadOnly="True"
+                                  SelectionMode="Single" FontSize="13">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"
+                                                     HeaderStyle="{StaticResource DocGridHeader}" ElementStyle="{StaticResource DocCellLeft}"/>
+								<DataGridTextColumn Header="Qty" Binding="{Binding Qty, StringFormat=N2}" Width="70"
+                                                     HeaderStyle="{StaticResource DocGridHeaderRight}" ElementStyle="{StaticResource DocCellRight}"/>
+								<DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=N2}" Width="80"
+                                                     HeaderStyle="{StaticResource DocGridHeaderRight}" ElementStyle="{StaticResource DocCellRight}"/>
+								<DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=N2}" Width="90"
+                                                     HeaderStyle="{StaticResource DocGridHeaderRight}" ElementStyle="{StaticResource DocCellRight}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+					</Border>
+
+					<Border Background="#1A1A1F" CornerRadius="6" Padding="16,12" Margin="0,16,0,0">
+						<Grid>
+							<TextBlock Text="GRAND TOTAL" Foreground="#B8B8C0" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
+							<TextBlock x:Name="GrandTotalText" Foreground="#34C759" FontSize="22" FontWeight="Black"
+                                       HorizontalAlignment="Right"/>
+						</Grid>
+					</Border>
+
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Grid>
+</Window>

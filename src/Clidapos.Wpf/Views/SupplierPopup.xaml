@@ -3,110 +3,208 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Supplier"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="420" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
 	<Window.Resources>
-		<Style x:Key="PopupInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="10"/>
-			<Setter Property="FontSize" Value="14"/>
-		</Style>
-
-		<Style x:Key="IconActionButton" TargetType="Button">
-			<Setter Property="Height" Value="52"/>
-			<Setter Property="Margin" Value="0,0,0,8"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="IconBtnText" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="Margin" Value="10,0,0,0"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-		</Style>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</Window.Resources>
 
-	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-		<Border.Effect>
-			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-		</Border.Effect>
-		<StackPanel Margin="24">
+	<!-- Everything (the dark backdrop AND the white card) lives in this one
+         window now, instead of a separate always-on-top overlay window fighting
+         with the popup for Z-order. Clicking anywhere on screen necessarily
+         lands on this window since it covers the whole screen, so the tile grid
+         behind it can't be reached or interacted with - no manual Topmost/
+         ShowActivated tricks needed to make that true. -->
+	<Grid>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-			<Grid Margin="0,0,0,16">
-				<TextBlock Text="SUPPLIER" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-				<Button Click="Close_Click" HorizontalAlignment="Right"
-                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                           Width="28" Height="28"/>
+			<Border Style="{StaticResource PopupCard}" Width="460">
+				<StackPanel>
+
+					<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+						<Grid>
+							<TextBlock Text="SUPPLIER" Style="{StaticResource PopupTitle}" FontSize="17"/>
+							<Button Click="Close_Click" HorizontalAlignment="Right"
+                                    Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
+								<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                       Width="30" Height="30"/>
+							</Button>
+						</Grid>
+					</Border>
+
+					<ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+					<StackPanel Margin="20">
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Supplier Code" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="CodeInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Supplier Name "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="NameInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Contact No "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="ContactInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Email "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="EmailInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="City" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="CityInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Bank" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="BankInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Branch" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="BranchInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Account Name" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="AccountNameInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Account Number" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="AccountNumberInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Opening Balance" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="OpeningBalanceInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Balance Type" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<ComboBox Grid.Column="1" x:Name="OpeningBalanceTypeInput" Style="{StaticResource PopupCombo}">
+								<ComboBoxItem Content="Cr (We Owe Them)" IsSelected="True"/>
+								<ComboBoxItem Content="Dr (Advance Paid)"/>
+							</ComboBox>
+						</Grid>
+
+						<TextBlock Text="Address" Style="{StaticResource PopupFieldLabel}" Margin="0,4,0,4"/>
+						<TextBox x:Name="AddressInput" Style="{StaticResource PopupInputMultiline}"/>
+
+						<TextBlock Text="Remarks" Style="{StaticResource PopupFieldLabel}" Margin="0,10,0,4"/>
+						<TextBox x:Name="RemarksInput" Style="{StaticResource PopupInputMultiline}"/>
+
+						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+					</StackPanel>
+					</ScrollViewer>
+				</StackPanel>
+			</Border>
+
+			<StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+
+				<Button Style="{StaticResource PopupIconButton}" Click="New_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/new.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="New" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
 				</Button>
-			</Grid>
 
-			<TextBlock Text="Supplier Code (leave blank to auto-generate)" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-			<TextBox x:Name="CodeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
+				<Button Style="{StaticResource PopupIconButton}" Click="Save_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/save.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Save" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-			<TextBlock Text="Supplier Name" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-			<TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
+				<Button Style="{StaticResource PopupIconButton}" Click="Update_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/edit.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Update" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-			<Button Style="{StaticResource IconActionButton}" Background="#6B6B72" Click="New_Click">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="➕" FontSize="18"/>
-					<TextBlock Text="New" Style="{StaticResource IconBtnText}"/>
-				</StackPanel>
-			</Button>
+				<Button Style="{StaticResource PopupIconButton}" Click="Delete_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/delete.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Delete" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-			<Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="💾" FontSize="18"/>
-					<TextBlock Text="Save" Style="{StaticResource IconBtnText}"/>
-				</StackPanel>
-			</Button>
+				<Button Style="{StaticResource PopupIconButton}" Click="GetData_Click" Margin="0">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/get.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Get Data" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-			<Button Style="{StaticResource IconActionButton}" Background="#2D6CDF" Click="Update_Click">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="✎" FontSize="18"/>
-					<TextBlock Text="Update" Style="{StaticResource IconBtnText}"/>
-				</StackPanel>
-			</Button>
+			</StackPanel>
 
-			<Button Style="{StaticResource IconActionButton}" Background="#DC143C" Click="Delete_Click">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="🗑" FontSize="18"/>
-					<TextBlock Text="Delete" Style="{StaticResource IconBtnText}"/>
-				</StackPanel>
-			</Button>
-
-			<Button Style="{StaticResource IconActionButton}" Background="#17A398" Click="GetData_Click" Margin="0">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="🔍" FontSize="18"/>
-					<TextBlock Text="Get Data" Style="{StaticResource IconBtnText}"/>
-				</StackPanel>
-			</Button>
-
-			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,12,0,0" TextWrapping="Wrap"/>
 		</StackPanel>
-	</Border>
+	</Grid>
 </Window>

@@ -21,22 +21,29 @@ namespace Clidapos.Wpf.Views
         private async System.Threading.Tasks.Task LoadData()
         {
             _all = await _unitService.GetAllAsync();
-            UnitGrid.ItemsSource = _all;
+            ApplyToGrid(_all);
+        }
+
+        private void ApplyToGrid(List<string> names)
+        {
+            UnitGrid.ItemsSource = names
+                .Select((name, index) => new NumberedRow { Number = index + 1, Name = name })
+                .ToList();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var q = SearchBox.Text.Trim().ToLower();
-            UnitGrid.ItemsSource = string.IsNullOrEmpty(q)
+            ApplyToGrid(string.IsNullOrEmpty(q)
                 ? _all
-                : _all.Where(c => c.ToLower().Contains(q)).ToList();
+                : _all.Where(c => c.ToLower().Contains(q)).ToList());
         }
 
         private void UnitGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (UnitGrid.SelectedItem is string name)
+            if (UnitGrid.SelectedItem is NumberedRow row)
             {
-                var popup = new UnitCategoryPopup(name);
+                var popup = new UnitCategoryPopup(row.Name);
                 popup.Show();
                 Close();
             }

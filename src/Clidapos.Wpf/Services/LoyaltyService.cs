@@ -105,11 +105,8 @@ namespace Clidapos.Wpf.Services
         {
             using var db = new ClidaposDbContext();
 
-            var maxId = await db.Set<LoyaltyMemberLedgerBook>().Select(e => (int?)e.Id).MaxAsync() ?? 0;
-
             db.Set<LoyaltyMemberLedgerBook>().Add(new LoyaltyMemberLedgerBook
             {
-                Id = maxId + 1,
                 Date = DateTime.Now,
                 LedgerNo = "",
                 Label = label.Trim(),

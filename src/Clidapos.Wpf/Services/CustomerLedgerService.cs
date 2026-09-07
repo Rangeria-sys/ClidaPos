@@ -13,7 +13,10 @@ namespace Clidapos.Wpf.Services
         public int CustomerId { get; set; }
         public string CustomerCode { get; set; } = "";
         public string CustomerName { get; set; } = "";
+        public string ContactNo { get; set; } = "";
         public decimal Balance { get; set; } // positive = this customer owes us
+        public bool IsOwing => Balance > 0;
+        public bool IsCredit => Balance < 0;
     }
 
     public class CustomerLedgerService
@@ -37,6 +40,7 @@ namespace Clidapos.Wpf.Services
                     CustomerId = c.CC_ID,
                     CustomerCode = c.CreditCustomerID.Trim(),
                     CustomerName = c.Name?.Trim() ?? "",
+                    ContactNo = c.ContactNo?.Trim() ?? "",
                     Balance = (c.OpeningBalance ?? 0)
                               + customerEntries.Sum(e => e.Debit ?? 0)
                               - customerEntries.Sum(e => e.Credit ?? 0)

@@ -3,106 +3,120 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Record Bill Payment"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="460" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
 	<Window.Resources>
-		<Style x:Key="PopupInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="10"/>
-			<Setter Property="FontSize" Value="14"/>
-		</Style>
-
-		<Style x:Key="PopupCombo" TargetType="ComboBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="8"/>
-			<Setter Property="FontSize" Value="14"/>
-		</Style>
-
-		<Style x:Key="FieldLabel" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="#6B6B72"/>
-			<Setter Property="FontSize" Value="11"/>
-			<Setter Property="Margin" Value="0,0,0,3"/>
-		</Style>
-
-		<Style x:Key="ActionBtn" TargetType="Button">
-			<Setter Property="Height" Value="48"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" CornerRadius="8">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</Window.Resources>
 
-	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-		<Border.Effect>
-			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-		</Border.Effect>
-		<StackPanel Margin="24">
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-			<Grid Margin="0,0,0,16">
-				<TextBlock Text="RECORD BILL PAYMENT" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-				<Button Click="Close_Click" HorizontalAlignment="Right"
-                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                           Width="28" Height="28"/>
+			<Border Style="{StaticResource PopupCard}" Width="460">
+				<StackPanel>
+
+					<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+						<Grid>
+							<TextBlock Text="RECORD BILL PAYMENT" Style="{StaticResource PopupTitle}" FontSize="17"/>
+							<Button Click="Close_Click" HorizontalAlignment="Right"
+                                    Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+								<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                       Width="26" Height="26"/>
+							</Button>
+						</Grid>
+					</Border>
+
+					<ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+					<StackPanel Margin="20">
+
+						<Border Background="#F0F0F3" BorderBrush="#D8D8DE" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,16">
+							<StackPanel>
+								<TextBlock Text="BILL" Foreground="#8A8A92" FontSize="11" FontWeight="Bold"/>
+								<TextBlock x:Name="SelectedBillText" Foreground="#1C1C1F" FontSize="16" FontWeight="Bold" Margin="0,2,0,0"/>
+							</StackPanel>
+						</Border>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Paid To" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="PaidToInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+						<TextBlock Text="Leave blank to use the Bill name." Foreground="#8A8A92" FontSize="11" Margin="130,0,0,10"/>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Amount "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="AmountInput" Style="{StaticResource PopupInputRequired}"
+                                     PreviewTextInput="NumericOnly_PreviewTextInput"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Payment Mode "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<ComboBox Grid.Column="1" x:Name="PaymentModeInput" Style="{StaticResource PopupCombo}">
+								<ComboBoxItem Content="Cash"/>
+								<ComboBoxItem Content="M-Pesa"/>
+								<ComboBoxItem Content="Bank Transfer"/>
+								<ComboBoxItem Content="Cheque"/>
+							</ComboBox>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Notes" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="NotesInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+					</StackPanel>
+					</ScrollViewer>
+				</StackPanel>
+			</Border>
+
+			<StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+
+				<Button Style="{StaticResource PopupIconButton}" Click="Save_Click">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/save.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Pay" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
 				</Button>
-			</Grid>
 
-			<TextBlock Text="Bill" Style="{StaticResource FieldLabel}"/>
-			<ComboBox x:Name="BillInput" Style="{StaticResource PopupCombo}"
-                      DisplayMemberPath="ExpenseName" Margin="0,0,0,12"/>
+				<Button Style="{StaticResource PopupIconButton}" Click="GetData_Click" Margin="0">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/get.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock Text="Get Data" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-			<TextBlock Text="Paid To (e.g. supplier / provider name)" Style="{StaticResource FieldLabel}"/>
-			<TextBox x:Name="PaidToInput" Style="{StaticResource PopupInput}" Margin="0,0,0,12"/>
+			</StackPanel>
 
-			<Grid Margin="0,0,0,12">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="16"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				<StackPanel Grid.Column="0">
-					<TextBlock Text="Amount" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="AmountInput" Style="{StaticResource PopupInput}"/>
-				</StackPanel>
-				<StackPanel Grid.Column="2">
-					<TextBlock Text="Payment Mode" Style="{StaticResource FieldLabel}"/>
-					<ComboBox x:Name="PaymentModeInput" Style="{StaticResource PopupCombo}">
-						<ComboBoxItem Content="Cash"/>
-						<ComboBoxItem Content="M-Pesa"/>
-						<ComboBoxItem Content="Bank Transfer"/>
-						<ComboBoxItem Content="Cheque"/>
-					</ComboBox>
-				</StackPanel>
-			</Grid>
-
-			<TextBlock Text="Notes" Style="{StaticResource FieldLabel}"/>
-			<TextBox x:Name="NotesInput" Style="{StaticResource PopupInput}" Margin="0,0,0,16"/>
-
-			<Button Content="💾  Record Payment" Click="Save_Click"
-                    Style="{StaticResource ActionBtn}" Background="#F3A123"/>
-
-			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,12,0,0" TextWrapping="Wrap"/>
 		</StackPanel>
-	</Border>
+	</Grid>
 </Window>

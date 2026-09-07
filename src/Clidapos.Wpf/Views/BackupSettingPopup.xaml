@@ -3,163 +3,192 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Backup Setting"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="520" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
-    <Window.Resources>
-        <Style x:Key="PopupInput" TargetType="TextBox">
-            <Setter Property="Background" Value="#F5F5F7"/>
-            <Setter Property="Foreground" Value="#1C1C1F"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
 
-        <Style x:Key="IconActionButton" TargetType="Button">
-            <Setter Property="Height" Value="52"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="B" Property="Opacity" Value="0.85"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+			<!-- Local to this popup - the actions here (Backup Now, Save Schedule,
+                 Restore) aren't a New/Save/Update/Delete/Get Data set, so they get
+                 their own plain colored buttons instead of the floating icon column. -->
+			<Style x:Key="ActionBtn" TargetType="Button">
+				<Setter Property="Height" Value="42"/>
+				<Setter Property="Foreground" Value="White"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="FontSize" Value="13"/>
+				<Setter Property="BorderThickness" Value="0"/>
+				<Setter Property="Cursor" Value="Hand"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="Button">
+							<Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6">
+								<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</Border>
+							<ControlTemplate.Triggers>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter TargetName="Bd" Property="Opacity" Value="0.85"/>
+								</Trigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
 
-        <Style x:Key="IconBtnText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Margin" Value="10,0,0,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
+			<Style x:Key="HistoryGridHeader" TargetType="DataGridColumnHeader">
+				<Setter Property="Background" Value="#1E1E24"/>
+				<Setter Property="Foreground" Value="#F3A123"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="FontSize" Value="11.5"/>
+				<Setter Property="Padding" Value="8,8"/>
+				<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			</Style>
 
-        <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#F0F0F2"/>
-            <Setter Property="Foreground" Value="#4A4A50"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Padding" Value="8,6"/>
-            <Setter Property="BorderBrush" Value="#D8D8DE"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        </Style>
-    </Window.Resources>
+			<Style x:Key="HistoryCellText" TargetType="TextBlock">
+				<Setter Property="Padding" Value="8,0"/>
+				<Setter Property="VerticalAlignment" Value="Center"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="Foreground" Value="Black"/>
+				<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+			</Style>
 
-    <Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-        <Border.Effect>
-            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-        </Border.Effect>
-        <StackPanel Margin="24">
+			<Style x:Key="HistoryGridRow" TargetType="DataGridRow">
+				<Setter Property="Background" Value="White"/>
+				<Style.Triggers>
+					<Trigger Property="AlternationIndex" Value="1">
+						<Setter Property="Background" Value="#F7F7F9"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
+	</Window.Resources>
 
-            <Grid Margin="0,0,0,16">
-                <TextBlock Text="BACKUP SETTING" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-                <Button Click="Close_Click" HorizontalAlignment="Right"
-                        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-                    <Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                           Width="28" Height="28"/>
-                </Button>
-            </Grid>
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <TextBlock Text="Backup Folder" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,4"/>
-            <Grid Margin="0,0,0,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" x:Name="FolderInput" Style="{StaticResource PopupInput}"
-                         Text="C:\ClidaPos_Backups"/>
-                <Button Grid.Column="2" Content="Browse..." Click="Browse_Click"
-                        Padding="14,0" Background="#6B6B72" Foreground="White" FontWeight="Bold"
-                        FontSize="13" BorderThickness="0" Cursor="Hand">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
-            <TextBlock Text="The folder must be writable by the SQL Server service, not just your Windows account."
-                       Foreground="#8A8A92" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,14"/>
+			<Border Style="{StaticResource PopupCard}" Width="520">
+				<StackPanel>
 
-            <Button Style="{StaticResource IconActionButton}" Background="#F3A123" Click="BackupNow_Click" Margin="0,0,0,16">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="💾" FontSize="18"/>
-                    <TextBlock x:Name="BackupButtonText" Text="Backup Now" Style="{StaticResource IconBtnText}"/>
-                </StackPanel>
-            </Button>
+					<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+						<Grid>
+							<TextBlock Text="BACKUP SETTING" Style="{StaticResource PopupTitle}" FontSize="17"/>
+							<Button Click="Close_Click" HorizontalAlignment="Right"
+                                    Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+								<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                       Width="26" Height="26"/>
+							</Button>
+						</Grid>
+					</Border>
 
-            <Border Background="#FAFAFB" BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,16">
-                <StackPanel>
-                    <CheckBox x:Name="AutoEnabledCheck" Content="Enable Automatic Backup"
-                              FontSize="14" FontWeight="Bold" Foreground="#1C1C1F"
-                              Checked="ScheduleChanged" Unchecked="ScheduleChanged" Margin="0,0,0,10"/>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
+					<StackPanel Margin="20">
 
-                    <Grid Margin="0,0,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="120"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Repeat every (hours)" Foreground="#6B6B72"
-                                   FontSize="12" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="2" x:Name="IntervalInput" Style="{StaticResource PopupInput}"
-                                 Text="24" TextChanged="ScheduleChanged"/>
-                    </Grid>
+						<Grid Margin="0,0,0,4">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="90"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Backup Folder" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="FolderInput" Style="{StaticResource PopupInput}" Text="C:\ClidaPos_Backups" Margin="0,0,8,0"/>
+							<Button Grid.Column="2" Content="Browse..." Click="Browse_Click" Style="{StaticResource ActionBtn}" Background="#6B6B72" Height="38"/>
+						</Grid>
+						<TextBlock Text="Must be a folder the SQL Server service itself can write to, not just your Windows account."
+                                   Foreground="#8A8A92" FontSize="11" TextWrapping="Wrap" Margin="130,2,0,14"/>
 
-                    <TextBlock x:Name="LastAutoRunText" Foreground="#8A8A92" FontSize="12" Margin="0,4,0,0"/>
+						<Button Click="BackupNow_Click" Style="{StaticResource ActionBtn}" Background="#28A745" Margin="0,0,0,18">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="pack://application:,,,/Assets/backup.png" Width="20" Height="20" Margin="0,0,8,0"/>
+								<TextBlock x:Name="BackupButtonText" Text="Backup Now"/>
+							</StackPanel>
+						</Button>
 
-                    <Button Content="Save Schedule" Click="SaveSchedule_Click" Margin="0,10,0,0"
-                            Height="36" Background="#2D6CDF" Foreground="White" FontWeight="Bold"
-                            FontSize="13" BorderThickness="0" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Border>
+						<!-- SCHEDULE -->
+						<Border Background="#F7F7F9" BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+							<StackPanel>
+								<CheckBox x:Name="AutoEnabledCheck" Content="Enable Automatic Backup"
+                                          FontSize="14" FontWeight="Bold" Foreground="#1C1C1F"
+                                          Checked="ScheduleChanged" Unchecked="ScheduleChanged" Margin="0,0,0,12"/>
 
-            <TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,0,0,10" TextWrapping="Wrap"/>
+								<Grid Margin="0,0,0,4">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="12"/>
+										<ColumnDefinition Width="100"/>
+									</Grid.ColumnDefinitions>
+									<TextBlock Grid.Column="0" Text="Repeat every (minutes)" Foreground="#4A4A50"
+                                               FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="2" x:Name="IntervalInput" Style="{StaticResource PopupInput}"
+                                             Text="240" TextChanged="ScheduleChanged"/>
+								</Grid>
+								<TextBlock Text="Minimum 30 minutes - a full database backup takes real time and disk space, and running it too often can slow down checkout during busy hours."
+                                           Foreground="#8A8A92" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,10"/>
 
-            <TextBlock Text="RECENT BACKUPS" Foreground="#8A8A92" FontSize="11" FontWeight="Bold" Margin="0,0,0,8"/>
+								<TextBlock x:Name="LastAutoRunText" Foreground="#6B6B72" FontSize="12" Margin="0,0,0,10"/>
 
-            <Border Background="#FAFAFB" BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="8" Padding="10">
-                <DataGrid x:Name="HistoryGrid" AutoGenerateColumns="False" Height="200"
-                          Background="Transparent" BorderThickness="0"
-                          RowBackground="Transparent" AlternatingRowBackground="#F5F5F7"
-                          HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
-                          ColumnHeaderStyle="{StaticResource GridHeader}"
-                          IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
-                          FontSize="12" Foreground="#1C1C1F">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date" Binding="{Binding BackupDate, StringFormat='dd MMM yyyy, hh:mm tt'}" Width="150"/>
-                        <DataGridTextColumn Header="Size (MB)" Binding="{Binding SizeMb, StringFormat=N1}" Width="80"/>
-                        <DataGridTextColumn Header="Location" Binding="{Binding PhysicalPath}" Width="*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
+								<Button Content="Save Schedule" Click="SaveSchedule_Click" Style="{StaticResource ActionBtn}" Background="#2D6CDF"/>
+							</StackPanel>
+						</Border>
 
-        </StackPanel>
-    </Border>
+						<!-- RESTORE -->
+						<Border Background="#FFF3F0" BorderBrush="#E8B4A8" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+							<StackPanel>
+								<TextBlock Text="Restore From Backup" FontSize="14" FontWeight="Bold" Foreground="#8A2E1F" Margin="0,0,0,8"/>
+								<TextBlock TextWrapping="Wrap" Foreground="#8A2E1F" FontSize="12" Margin="0,0,0,12">
+									This <Run FontWeight="Bold">completely replaces</Run> all current data with whatever is in the selected backup file. Anything saved after that backup was made will be lost. This cannot be undone.
+								</TextBlock>
+
+								<Grid Margin="0,0,0,10">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="8"/>
+										<ColumnDefinition Width="90"/>
+									</Grid.ColumnDefinitions>
+									<TextBox Grid.Column="0" x:Name="RestoreFileInput" Style="{StaticResource PopupInput}" IsReadOnly="True"/>
+									<Button Grid.Column="2" Content="Choose..." Click="BrowseRestoreFile_Click" Style="{StaticResource ActionBtn}" Background="#6B6B72" Height="38"/>
+								</Grid>
+
+								<Button x:Name="RestoreBtn" Content="Restore Database" Click="Restore_Click"
+                                        Style="{StaticResource ActionBtn}" Background="#B23A2E" IsEnabled="False"/>
+							</StackPanel>
+						</Border>
+
+						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+
+						<TextBlock Text="Recent Backups" Style="{StaticResource PopupFieldLabel}" Margin="0,4,0,4"/>
+						<Border BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+							<DataGrid x:Name="HistoryGrid" AutoGenerateColumns="False"
+                                      Background="White" BorderThickness="0"
+                                      HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#EDEDF0"
+                                      RowHeaderWidth="0" MaxHeight="200"
+                                      RowStyle="{StaticResource HistoryGridRow}"
+                                      AlternationCount="2"
+                                      RowHeight="32" ColumnHeaderHeight="34"
+                                      CanUserAddRows="False" IsReadOnly="True"
+                                      SelectionMode="Single" FontSize="12.5">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="Date" Binding="{Binding BackupDate, StringFormat='dd MMM yyyy, hh:mm tt'}" Width="150"
+                                                         HeaderStyle="{StaticResource HistoryGridHeader}" ElementStyle="{StaticResource HistoryCellText}"/>
+									<DataGridTextColumn Header="Size (MB)" Binding="{Binding SizeMb, StringFormat=N1}" Width="80"
+                                                         HeaderStyle="{StaticResource HistoryGridHeader}" ElementStyle="{StaticResource HistoryCellText}"/>
+									<DataGridTextColumn Header="Location" Binding="{Binding PhysicalPath}" Width="*"
+                                                         HeaderStyle="{StaticResource HistoryGridHeader}" ElementStyle="{StaticResource HistoryCellText}"/>
+								</DataGrid.Columns>
+							</DataGrid>
+						</Border>
+
+					</StackPanel>
+					</ScrollViewer>
+				</StackPanel>
+			</Border>
+
+		</StackPanel>
+	</Grid>
 </Window>

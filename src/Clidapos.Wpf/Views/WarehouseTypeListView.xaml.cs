@@ -21,22 +21,29 @@ namespace Clidapos.Wpf.Views
         private async System.Threading.Tasks.Task LoadData()
         {
             _all = await _warehouseTypeService.GetAllAsync();
-            WarehouseTypeGrid.ItemsSource = _all;
+            ApplyToGrid(_all);
+        }
+
+        private void ApplyToGrid(List<string> names)
+        {
+            WarehouseTypeGrid.ItemsSource = names
+                .Select((name, index) => new NumberedRow { Number = index + 1, Name = name })
+                .ToList();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var q = SearchBox.Text.Trim().ToLower();
-            WarehouseTypeGrid.ItemsSource = string.IsNullOrEmpty(q)
+            ApplyToGrid(string.IsNullOrEmpty(q)
                 ? _all
-                : _all.Where(c => c.ToLower().Contains(q)).ToList();
+                : _all.Where(c => c.ToLower().Contains(q)).ToList());
         }
 
         private void WarehouseTypeGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (WarehouseTypeGrid.SelectedItem is string name)
+            if (WarehouseTypeGrid.SelectedItem is NumberedRow row)
             {
-                var popup = new WarehouseTypePopup(name);
+                var popup = new WarehouseTypePopup(row.Name);
                 popup.Show();
                 Close();
             }

@@ -41,12 +41,9 @@ namespace Clidapos.Wpf.Services
                 db.Set<JournalEntry>().Add(journal);
                 await db.SaveChangesAsync();
 
-                var maxLedgerId = await db.Set<LedgerBookEntry>().Select(l => (int?)l.Id).MaxAsync() ?? 0;
-
                 // Debit row - the contra account (Name) shows what it was matched against.
                 db.Set<LedgerBookEntry>().Add(new LedgerBookEntry
                 {
-                    Id = maxLedgerId + 1,
                     Date = date,
                     Name = creditAccount.Trim(),
                     LedgerNo = $"JE-{journal.ID}",
@@ -59,7 +56,6 @@ namespace Clidapos.Wpf.Services
                 // Credit row - same journal entry, other side.
                 db.Set<LedgerBookEntry>().Add(new LedgerBookEntry
                 {
-                    Id = maxLedgerId + 2,
                     Date = date,
                     Name = debitAccount.Trim(),
                     LedgerNo = $"JE-{journal.ID}",

@@ -9,8 +9,10 @@ namespace Clidapos.Wpf.Views
     public partial class LicenseSettingPopup : Window
     {
         private readonly TerminalLicenseService _settingsService = new();
+        private readonly HotelProfileService _hotelService = new();
         private readonly LogService _logService = new();
         private LicenseSetting? _setting;
+        private string _businessName = "";
 
         public LicenseSettingPopup()
         {
@@ -18,6 +20,8 @@ namespace Clidapos.Wpf.Views
             Loaded += async (s, e) =>
             {
                 _setting = await _settingsService.GetOrCreateLicenseAsync();
+                var hotel = await _hotelService.GetOrCreateAsync();
+                _businessName = hotel.HotelName?.Trim() ?? "";
                 LicenseKeyInput.Text = "";
                 NotesInput.Text = _setting.Notes?.Trim() ?? "";
                 RefreshStatus();
@@ -41,7 +45,7 @@ namespace Clidapos.Wpf.Views
 
             // Re-validate and re-derive expiry from the stored key + activation date every
             // time - nothing about validity is trusted from the IsActive flag alone.
-            if (!LicenseKeyService.TryValidate(storedKey, out var durationCode, out _))
+            if (!LicenseKeyService.TryValidate(storedKey, _businessName, out var durationCode, out _))
             {
                 StatusText.Text = "INVALID KEY ON RECORD";
                 StatusText.Foreground = new SolidColorBrush(Color.FromRgb(0xD9, 0x38, 0x38));
@@ -87,7 +91,13 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
-            if (!LicenseKeyService.TryValidate(LicenseKeyInput.Text.Trim(), out _, out var validationError))
+            if (string.IsNullOrWhiteSpace(_businessName))
+            {
+                ErrorText.Text = "Set your Business Name under Business Profile first - the license key is tied to it.";
+                return;
+            }
+
+            if (!LicenseKeyService.TryValidate(LicenseKeyInput.Text.Trim(), _businessName, out _, out var validationError))
             {
                 ErrorText.Text = validationError;
                 return;

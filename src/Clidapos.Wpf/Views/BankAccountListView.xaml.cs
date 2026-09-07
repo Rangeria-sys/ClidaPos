@@ -10,12 +10,14 @@ namespace Clidapos.Wpf.Views
 {
     public partial class BankAccountListView : Window
     {
+        private readonly Registration _currentUser;
         private readonly BankingService _bankingService = new();
         private List<BankAccountRegistration> _all = new();
 
-        public BankAccountListView()
+        public BankAccountListView(Registration currentUser)
         {
             InitializeComponent();
+            _currentUser = currentUser;
             Loaded += async (s, e) => await LoadData();
         }
 
@@ -34,11 +36,18 @@ namespace Clidapos.Wpf.Views
                                || a.AccountNo.Trim().ToLower().Contains(q)).ToList();
         }
 
+        private void AddAccount_Click(object sender, RoutedEventArgs e)
+        {
+            var popup = new BankAccountPopup(_currentUser);
+            popup.Show();
+            Close();
+        }
+
         private void AccountGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (AccountGrid.SelectedItem is BankAccountRegistration account)
             {
-                var popup = new BankAccountPopup(account);
+                var popup = new BankAccountPopup(_currentUser, account);
                 popup.Show();
                 Close();
             }
@@ -46,6 +55,8 @@ namespace Clidapos.Wpf.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
+            var ledgerView = new BankLedgerListView(_currentUser);
+            ledgerView.Show();
             Close();
         }
 

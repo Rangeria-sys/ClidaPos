@@ -1,5 +1,9 @@
 using System;
+using System.Media;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -11,6 +15,11 @@ namespace Clidapos.Wpf.Views
         private readonly LogService _logService = new();
         private EmailSetting? _editing;
 
+        // Tracks whether the user has actually typed into Password - it stays
+        // masked until touched, and Save must reuse the original stored value
+        // for it otherwise, rather than reading the mask text off the TextBox.
+        private bool _passwordTouched;
+
         public EmailSettingPopup(EmailSetting? editSetting = null)
         {
             InitializeComponent();
@@ -21,17 +30,24 @@ namespace Clidapos.Wpf.Views
                 ServerNameInput.Text = editSetting.ServerName?.Trim() ?? "";
                 SMTPAddressInput.Text = editSetting.SMTPAddress?.Trim() ?? "";
                 UsernameInput.Text = editSetting.Username?.Trim() ?? "";
-                PasswordInput.Text = editSetting.Password?.Trim() ?? "";
+                PasswordInput.Text = SecretEncryptionService.Mask(editSetting.Password);
                 PortInput.Text = editSetting.Port?.ToString() ?? "";
                 TlsInput.Text = editSetting.TLS_SSL_Required?.Trim() ?? "Y";
                 IsDefaultInput.Text = editSetting.IsDefault?.Trim() ?? "N";
                 IsActiveInput.Text = editSetting.IsActive?.Trim() ?? "Y";
+                _passwordTouched = string.IsNullOrEmpty(editSetting.Password);
+
+                // Attached only now, after the masked text above is already set -
+                // attaching earlier would fire on that initial assignment itself.
+                PasswordInput.TextChanged += (s, e) => _passwordTouched = true;
             }
             else
             {
                 TlsInput.Text = "Y";
                 IsDefaultInput.Text = "N";
                 IsActiveInput.Text = "Y";
+                _passwordTouched = true;
+                PasswordInput.TextChanged += (s, e) => _passwordTouched = true;
             }
         }
 
@@ -47,6 +63,7 @@ namespace Clidapos.Wpf.Views
             IsDefaultInput.Text = "N";
             IsActiveInput.Text = "Y";
             ErrorText.Text = "";
+            _passwordTouched = true;
             ServerNameInput.Focus();
         }
 
@@ -60,6 +77,25 @@ namespace Clidapos.Wpf.Views
                 ErrorText.Text = "Server Name is required.";
                 return false;
             }
+            var email = SMTPAddressInput.Text.Trim();
+            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                ErrorText.Text = "Enter a valid From Email address.";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(UsernameInput.Text))
+            {
+                ErrorText.Text = "Username is required.";
+                return false;
+            }
+            var willHavePassword = _passwordTouched
+                ? !string.IsNullOrWhiteSpace(PasswordInput.Text)
+                : !string.IsNullOrWhiteSpace(_editing?.Password);
+            if (!willHavePassword)
+            {
+                ErrorText.Text = "Password is required.";
+                return false;
+            }
             if (!int.TryParse(PortInput.Text, out var port))
             {
                 ErrorText.Text = "Port must be a valid number.";
@@ -69,7 +105,7 @@ namespace Clidapos.Wpf.Views
             setting.ServerName = ServerNameInput.Text.Trim();
             setting.SMTPAddress = SMTPAddressInput.Text.Trim();
             setting.Username = UsernameInput.Text.Trim();
-            setting.Password = PasswordInput.Text.Trim();
+            setting.Password = _passwordTouched ? PasswordInput.Text.Trim() : (_editing?.Password ?? "");
             setting.Port = port;
             setting.TLS_SSL_Required = TlsInput.Text.Trim();
             setting.IsDefault = IsDefaultInput.Text.Trim();
@@ -86,7 +122,7 @@ namespace Clidapos.Wpf.Views
                 await _settingsService.AddEmailAsync(setting);
                 await _logService.LogAsync(CurrentSession.UserId, $"Added Email Server '{setting.ServerName}'");
                 New_Click(sender, e);
-                ErrorText.Text = "Saved.";
+                MessageBox.Show("Saved.", "Clidapos");
             }
             catch (Exception ex)
             {
@@ -104,11 +140,15 @@ namespace Clidapos.Wpf.Views
             if (!TryBuildSetting(out var setting)) return;
             setting.Id = _editing.Id;
 
+            var confirm = MessageBox.Show($"Update email server '{setting.ServerName}'?",
+                "Confirm Update", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             try
             {
                 await _settingsService.UpdateEmailAsync(setting);
                 await _logService.LogAsync(CurrentSession.UserId, $"Updated Email Server '{setting.ServerName}'");
-                ErrorText.Text = "Updated.";
+                MessageBox.Show("Updated.", "Clidapos");
             }
             catch (Exception ex)
             {
@@ -131,9 +171,19 @@ namespace Clidapos.Wpf.Views
             await _settingsService.DeleteEmailAsync(_editing.Id);
             await _logService.LogAsync(CurrentSession.UserId, $"Deleted Email Server '{_editing.ServerName?.Trim()}'");
             New_Click(sender, e);
-            ErrorText.Text = "Removed.";
+            MessageBox.Show("Removed.", "Clidapos");
         }
 
+        private void GetData_Click(object sender, RoutedEventArgs e) => Close();
+
         private void Close_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void Backdrop_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == sender)
+            {
+                SystemSounds.Exclamation.Play();
+            }
+        }
     }
 }

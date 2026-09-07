@@ -3,191 +3,169 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Business Profile"
         WindowStyle="None"
+        WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner"
-        Width="680" SizeToContent="Height"
-        Background="Transparent"
+        Background="#96000000"
         AllowsTransparency="True"
         ShowInTaskbar="False">
 
 	<Window.Resources>
-		<Style x:Key="PopupInput" TargetType="TextBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="8"/>
-			<Setter Property="FontSize" Value="13"/>
-		</Style>
-
-		<Style x:Key="PopupCombo" TargetType="ComboBox">
-			<Setter Property="Background" Value="#F5F5F7"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="8"/>
-			<Setter Property="FontSize" Value="13"/>
-		</Style>
-
-		<Style x:Key="FieldLabel" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="#6B6B72"/>
-			<Setter Property="FontSize" Value="11"/>
-			<Setter Property="Margin" Value="0,0,0,3"/>
-		</Style>
-
-		<Style x:Key="IconActionButton" TargetType="Button">
-			<Setter Property="Height" Value="48"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="IconBtnText" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="Margin" Value="8,0,0,0"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-		</Style>
-
-		<Style x:Key="SmallBtn" TargetType="Button">
-			<Setter Property="Height" Value="34"/>
-			<Setter Property="Background" Value="#6B6B72"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" CornerRadius="6">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</Window.Resources>
 
-	<Border Background="White" CornerRadius="12" BorderBrush="#F3A123" BorderThickness="2">
-		<Border.Effect>
-			<DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.4"/>
-		</Border.Effect>
-		<StackPanel Margin="24">
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-			<Grid Margin="0,0,0,16">
-				<TextBlock Text="BUSINESS PROFILE" FontSize="18" FontWeight="Bold" Foreground="#1C1C1F"/>
-				<Button Click="Close_Click" HorizontalAlignment="Right"
-				        Width="36" Height="36" Background="Transparent" BorderThickness="0" Cursor="Hand">
-					<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-				           Width="28" Height="28"/>
-				</Button>
-			</Grid>
+			<Border Style="{StaticResource PopupCard}" Width="440">
+				<StackPanel>
 
-			<!-- LOGO -->
-			<Grid Margin="0,0,0,16">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="16"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
+					<!-- Sleek header - solid dark bar, title only, no watermark graphic. -->
+					<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+						<Grid>
+							<TextBlock Text="BUSINESS PROFILE" Style="{StaticResource PopupTitle}" FontSize="17"/>
+							<Button Click="Close_Click" HorizontalAlignment="Right"
+                                    Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+								<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                       Width="26" Height="26"/>
+							</Button>
+						</Grid>
+					</Border>
 
-				<Border Grid.Column="0" Width="90" Height="90" Background="#F5F5F7"
-                        BorderBrush="#D8D8DE" BorderThickness="1" CornerRadius="6">
-					<Image x:Name="LogoPreview" Stretch="Uniform" Margin="6"/>
-				</Border>
+					<StackPanel Margin="20">
 
-				<StackPanel Grid.Column="2" VerticalAlignment="Center">
-					<TextBlock Text="Business Logo" Style="{StaticResource FieldLabel}"/>
-					<TextBlock x:Name="LogoStatusText" Text="No logo set" Foreground="#8A8A92" FontSize="12" Margin="0,0,0,8"/>
-					<StackPanel Orientation="Horizontal">
-						<Button Content="Browse..." Click="BrowseLogo_Click" Style="{StaticResource SmallBtn}"
-                                Width="90" Margin="0,0,8,0"/>
-						<Button Content="Remove" Click="RemoveLogo_Click" Style="{StaticResource SmallBtn}"
-                                Width="90" Background="#B23A3A"/>
+						<!-- LOGO - shown/hidden based on the "Show Logo on Receipt" setting below. -->
+						<Grid x:Name="LogoPanel" Margin="0,0,0,14">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="12"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+
+							<Border Grid.Column="0" Width="60" Height="60" Background="#F0F0F3"
+                                    BorderBrush="#B0B0B8" BorderThickness="1.3" CornerRadius="6">
+								<Image x:Name="LogoPreview" Stretch="Uniform" Margin="4"/>
+							</Border>
+
+							<StackPanel Grid.Column="2" VerticalAlignment="Center">
+								<TextBlock x:Name="LogoStatusText" Text="No logo set" Foreground="#8A8A92" FontSize="11" Margin="0,0,0,6"/>
+								<StackPanel Orientation="Horizontal">
+									<Button Content="Browse..." Click="BrowseLogo_Click" Style="{StaticResource PopupSmallBtn}"
+                                            Width="80" Height="26" FontSize="10.5" Margin="0,0,6,0"/>
+									<Button Content="Remove" Click="RemoveLogo_Click" Style="{StaticResource PopupSmallBtn}"
+                                            Width="80" Height="26" FontSize="10.5" Background="#B23A3A"/>
+								</StackPanel>
+							</StackPanel>
+						</Grid>
+
+						<!-- Every field: label on the left, input on the right, same row. -->
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Business Name "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="NameInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Till / Paybill No" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="Address1Input" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Account Number" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="Address2Input" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Address" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="Address3Input" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Contact No "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="ContactInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center">
+								<Run Text="Email "/>
+								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
+							</TextBlock>
+							<TextBox Grid.Column="1" x:Name="EmailInput" Style="{StaticResource PopupInputRequired}"/>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="Show Logo on Receipt" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<ComboBox Grid.Column="1" x:Name="ShowLogoInput" Style="{StaticResource PopupCombo}"
+                                      SelectionChanged="ShowLogoInput_SelectionChanged">
+								<ComboBoxItem Content="Y"/>
+								<ComboBoxItem Content="N"/>
+							</ComboBox>
+						</Grid>
+
+						<Grid Margin="0,0,0,8">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="130"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="0" Text="KRA PIN" Style="{StaticResource PopupFieldLabel}" Margin="0" VerticalAlignment="Center"/>
+							<TextBox Grid.Column="1" x:Name="TinInput" Style="{StaticResource PopupInput}"/>
+						</Grid>
+
+						<TextBlock Text="Receipt Footer Message" Style="{StaticResource PopupFieldLabel}" Margin="0,4,0,4"/>
+						<TextBox x:Name="FooterInput" Style="{StaticResource PopupInputMultiline}"/>
+
+						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
 					</StackPanel>
 				</StackPanel>
-			</Grid>
+			</Border>
 
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="16"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
+			<StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
 
-				<StackPanel Grid.Column="0">
-					<TextBlock Text="Business Name" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="NameInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+				<Button x:Name="SaveButton" Style="{StaticResource PopupIconButton}" Click="Save_Click" IsEnabled="False">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="pack://application:,,,/Assets/save.png" Width="34" Height="34" Stretch="Uniform"/>
+						<TextBlock x:Name="SaveButtonLabel" Text="Save" Style="{StaticResource PopupIconLabel}"/>
+					</StackPanel>
+				</Button>
 
-					<TextBlock Text="Till Number / Paybill Number" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="Address1Input" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
+			</StackPanel>
 
-					<TextBlock Text="Account Number" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="Address2Input" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Address" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="Address3Input" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Contact No" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="ContactInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Email" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="EmailInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Show Logo on Receipt" Style="{StaticResource FieldLabel}"/>
-					<ComboBox x:Name="ShowLogoInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,10">
-						<ComboBoxItem Content="Y"/>
-						<ComboBoxItem Content="N"/>
-					</ComboBox>
-				</StackPanel>
-
-				<StackPanel Grid.Column="2">
-					<TextBlock Text="TIN" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="TinInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="ST No" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="StNoInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="CIN" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="CinInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Base Currency" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="BaseCurrencyInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Currency Code" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="CurrencyCodeInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Capital Account" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="CapitalAccountInput" Style="{StaticResource PopupInput}" Margin="0,0,0,10"/>
-
-					<TextBlock Text="Receipt Footer Message" Style="{StaticResource FieldLabel}"/>
-					<TextBox x:Name="FooterInput" Style="{StaticResource PopupInput}"
-                             TextWrapping="Wrap" AcceptsReturn="True" Height="60" Margin="0,0,0,10"/>
-				</StackPanel>
-			</Grid>
-
-			<Button x:Name="SaveButton" Style="{StaticResource IconActionButton}" Background="#F3A123" Click="Save_Click" Margin="0,10,0,0" IsEnabled="False">
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="💾" FontSize="16"/>
-					<TextBlock Text="Save Business Profile" Style="{StaticResource IconBtnText}"/>
-				</StackPanel>
-			</Button>
-
-			<TextBlock x:Name="ErrorText" Foreground="#D93838" FontSize="12"
-                       Margin="0,12,0,0" TextWrapping="Wrap"/>
 		</StackPanel>
-	</Border>
+	</Grid>
 </Window>
