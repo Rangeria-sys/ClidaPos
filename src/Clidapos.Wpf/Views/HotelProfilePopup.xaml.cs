@@ -64,8 +64,8 @@ namespace Clidapos.Wpf.Views
 
         private void ShowLogoInput_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var isYes = (ShowLogoInput.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                .Equals("Y", StringComparison.OrdinalIgnoreCase) ?? false;
+            var isYes = ((ShowLogoInput.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "")
+                .Equals("Y", StringComparison.OrdinalIgnoreCase);
             LogoPanel.Visibility = isYes ? Visibility.Visible : Visibility.Collapsed;
         }
 

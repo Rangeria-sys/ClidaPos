@@ -1,0 +1,78 @@
+<Window x:Class="Clidapos.Wpf.Views.LoyaltyAttachPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Attach Loyalty Member"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
+        ShowInTaskbar="False"
+        Width="440" Height="580">
+
+	<Border Background="White" CornerRadius="12" BorderBrush="#178E86" BorderThickness="2">
+		<Grid Margin="20">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Row="0" Margin="0,0,0,14">
+				<TextBlock Text="ATTACH LOYALTY MEMBER" FontSize="16" FontWeight="Bold" Foreground="#0E5E5A"/>
+				<Button Click="Close_Click" HorizontalAlignment="Right" Width="26" Height="26"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand">
+					<TextBlock Text="✕" FontSize="14" FontWeight="Bold" Foreground="#6B6B72"/>
+				</Button>
+			</Grid>
+
+			<Grid Grid.Row="1" Margin="0,0,0,12">
+				<TextBox x:Name="SearchBox" Background="White" Foreground="Black"
+                         BorderBrush="#178E86" BorderThickness="2" Padding="10" FontSize="14"
+                         TextChanged="SearchBox_TextChanged"/>
+				<TextBlock Text="Enter phone or card number..." Foreground="#9A9AA2" FontSize="13"
+                           Margin="14,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+					<TextBlock.Style>
+						<Style TargetType="TextBlock">
+							<Setter Property="Visibility" Value="Collapsed"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+									<Setter Property="Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+			</Grid>
+
+			<ListBox Grid.Row="2" x:Name="ResultsList" Background="#F5F8F8" BorderThickness="1"
+                     BorderBrush="#D3DEDE" SelectionChanged="ResultsList_SelectionChanged">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid Margin="8,6">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0">
+								<TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" Foreground="Black"/>
+								<TextBlock Text="{Binding ContactNo}" FontSize="11" Foreground="#6B6B72"/>
+							</StackPanel>
+							<TextBlock Grid.Column="1" Text="{Binding PointsBalance, StringFormat='{}{0:N2} pts'}"
+                                       FontSize="13" FontWeight="Bold" Foreground="#178E86" VerticalAlignment="Center"/>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+
+			<TextBlock Grid.Row="3" x:Name="ErrorText" Foreground="#C0392B" FontSize="12" FontWeight="Bold"
+                       Margin="0,10,0,0" TextWrapping="Wrap"/>
+
+			<Button Grid.Row="4" Content="Skip - No Loyalty Card" Click="Close_Click"
+                    Height="44" Background="#F5F8F8" Foreground="#6B6B72" FontWeight="Bold" FontSize="13"
+                    BorderBrush="#D3DEDE" BorderThickness="1" Cursor="Hand" Margin="0,14,0,0"/>
+		</Grid>
+	</Border>
+</Window>

@@ -324,7 +324,7 @@ namespace Clidapos.Wpf.Views
             }
 
             await _logService.LogAsync(CurrentSession.UserId,
-                $"Recorded Purchase {result.InvoiceNo} from '{supplier.Name.Trim()}' - {AppSettings.CurrencySymbol} {result.GrandTotal:N2}");
+                $"Recorded Purchase {result.InvoiceNo} from '{(supplier.Name ?? "").Trim()}' - {AppSettings.CurrencySymbol} {result.GrandTotal:N2}");
 
             MessageBox.Show(
                 $"Purchase {result.InvoiceNo} saved.\n\nTotal: {AppSettings.CurrencySymbol} {result.GrandTotal:N2}\n\nStock has been added to {warehouse.WarehouseName.Trim()}.",

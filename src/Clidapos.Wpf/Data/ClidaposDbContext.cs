@@ -47,6 +47,7 @@ namespace Clidapos.Wpf.Data
         public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
         public DbSet<LedgerBookEntry> LedgerBookEntries => Set<LedgerBookEntry>();
         public DbSet<MpesaSetting> MpesaSettings => Set<MpesaSetting>();
+        public DbSet<StoreFeatureSettings> StoreFeatureSettingsSet => Set<StoreFeatureSettings>();
         public DbSet<EmailSetting> EmailSettings => Set<EmailSetting>();
         public DbSet<SMSSetting> SMSSettings => Set<SMSSetting>();
         public DbSet<WalletType> WalletTypes => Set<WalletType>();
@@ -577,6 +578,16 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.ConsumerSecret).HasColumnName("C4").HasColumnType("nchar(150)");
                 b.Property(x => x.PassKey).HasColumnName("C5").HasColumnType("nvarchar(250)");
                 b.Property(x => x.Environment).HasColumnName("C6").HasColumnType("nchar(20)");
+            });
+
+            modelBuilder.Entity<StoreFeatureSettings>(b =>
+            {
+                b.ToTable("StoreFeatureSettings", "dbo");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.EnableMpesaSTKPush).HasColumnType("nchar(1)");
+                b.Property(x => x.EnableLoyaltyProgram).HasColumnType("nchar(1)");
+                b.Property(x => x.EnableBankPayment).HasColumnType("nchar(1)");
+                b.Property(x => x.EnableCreditPayment).HasColumnType("nchar(1)");
             });
 
             modelBuilder.Entity<EmailSetting>(b =>

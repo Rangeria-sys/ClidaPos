@@ -8,13 +8,13 @@ using Clidapos.Wpf.Services;
 
 namespace Clidapos.Wpf.Views
 {
-    public partial class LoyaltySettingListView : Window
+    public partial class BankBranchListView : Window
     {
         private readonly Registration _currentUser;
-        private readonly LoyaltyService _loyaltyService = new();
-        private List<LoyaltySetting> _all = new();
+        private readonly BankingService _bankingService = new();
+        private List<BankBranch> _all = new();
 
-        public LoyaltySettingListView(Registration currentUser)
+        public BankBranchListView(Registration currentUser)
         {
             InitializeComponent();
             _currentUser = currentUser;
@@ -23,30 +23,31 @@ namespace Clidapos.Wpf.Views
 
         private async System.Threading.Tasks.Task LoadData()
         {
-            _all = await _loyaltyService.GetAllSettingsAsync();
-            RuleGrid.ItemsSource = _all;
+            _all = await _bankingService.GetAllBranchesAsync();
+            BranchGrid.ItemsSource = _all;
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var q = SearchBox.Text.Trim().ToLower();
-            RuleGrid.ItemsSource = string.IsNullOrEmpty(q)
+            BranchGrid.ItemsSource = string.IsNullOrEmpty(q)
                 ? _all
-                : _all.Where(r => r.LoyaltyName.ToLower().Contains(q)).ToList();
+                : _all.Where(b => (b.BankName ?? "").ToLower().Contains(q)
+                               || (b.BranchName ?? "").ToLower().Contains(q)).ToList();
         }
 
-        private void AddRule_Click(object sender, RoutedEventArgs e)
+        private void AddBank_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new LoyaltySettingPopup(_currentUser);
+            var popup = new BankBranchPopup(_currentUser);
             popup.Show();
             Close();
         }
 
-        private void RuleGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void BranchGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (RuleGrid.SelectedItem is LoyaltySetting setting)
+            if (BranchGrid.SelectedItem is BankBranch branch)
             {
-                var popup = new LoyaltySettingPopup(_currentUser, setting);
+                var popup = new BankBranchPopup(_currentUser, branch);
                 popup.Show();
                 Close();
             }
@@ -54,8 +55,8 @@ namespace Clidapos.Wpf.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            var ledgerView = new LoyaltyLedgerListView(_currentUser);
-            ledgerView.Show();
+            var backOffice = new BackOfficeView(_currentUser);
+            backOffice.Show();
             Close();
         }
 

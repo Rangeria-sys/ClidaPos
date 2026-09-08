@@ -10,12 +10,14 @@ namespace Clidapos.Wpf.Views
 {
     public partial class LoyaltyMemberListView : Window
     {
+        private readonly Registration _currentUser;
         private readonly LoyaltyService _loyaltyService = new();
         private List<LoyaltyMember> _all = new();
 
-        public LoyaltyMemberListView()
+        public LoyaltyMemberListView(Registration currentUser)
         {
             InitializeComponent();
+            _currentUser = currentUser;
             Loaded += async (s, e) => await LoadData();
         }
 
@@ -39,7 +41,7 @@ namespace Clidapos.Wpf.Views
         {
             if (MemberGrid.SelectedItem is LoyaltyMember member)
             {
-                var popup = new LoyaltyMemberPopup(member);
+                var popup = new LoyaltyMemberPopup(_currentUser, member);
                 popup.Show();
                 Close();
             }
@@ -47,6 +49,8 @@ namespace Clidapos.Wpf.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
+            var ledgerView = new LoyaltyLedgerListView(_currentUser);
+            ledgerView.Show();
             Close();
         }
 

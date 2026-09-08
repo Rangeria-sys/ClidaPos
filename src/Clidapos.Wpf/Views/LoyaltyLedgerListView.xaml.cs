@@ -41,24 +41,24 @@ namespace Clidapos.Wpf.Views
         {
             if (MemberGrid.SelectedItem is LoyaltyMemberRow row)
             {
-                // Show() is non-blocking - reopen this screen (or re-search) after
-                // recording points activity to see the updated balance here.
                 var detail = new LoyaltyLedgerDetailPopup(row.MemberID, row.Name);
+                detail.BalanceChanged += async (s, args) => await LoadData();
                 detail.Show();
             }
         }
 
-        private async void RegisterMember_Click(object sender, RoutedEventArgs e)
+        private void RegisterMember_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new LoyaltyMemberPopup { Owner = this };
-            popup.ShowDialog();
-            await LoadData();
+            var popup = new LoyaltyMemberPopup(_currentUser);
+            popup.Show();
+            Close();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new LoyaltySettingListView { Owner = this };
-            popup.ShowDialog();
+            var popup = new LoyaltySettingListView(_currentUser);
+            popup.Show();
+            Close();
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

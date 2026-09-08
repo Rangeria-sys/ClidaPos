@@ -195,6 +195,14 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            if (tag == "RegisterBanks")
+            {
+                var bankBranchView = new BankBranchListView(_currentUser);
+                bankBranchView.Show();
+                Close();
+                return;
+            }
+
             if (tag == "Loyalty")
             {
                 var loyaltyView = new LoyaltyLedgerListView(_currentUser);

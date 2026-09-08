@@ -38,7 +38,7 @@ namespace Clidapos.Wpf.Services
 				{
 					SupplierId = s.ID,
 					SupplierCode = code,
-					SupplierName = s.Name.Trim(),
+					SupplierName = (s.Name ?? "").Trim(),
 					ContactNo = s.ContactNo?.Trim() ?? "",
 					Balance = supplierEntries.Sum(e => e.Credit) - supplierEntries.Sum(e => e.Debit)
 				};

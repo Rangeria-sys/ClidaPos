@@ -54,6 +54,19 @@ namespace Clidapos.Wpf.Services
             await db.SaveChangesAsync();
         }
 
+        /// <summary>Deleting a member never removes their points ledger history - those
+        /// entries stay as a permanent record even after the member record is removed.</summary>
+        public async Task DeleteMemberAsync(int memberId)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<LoyaltyMember>().FirstOrDefaultAsync(m => m.MemberID == memberId);
+            if (existing != null)
+            {
+                db.Set<LoyaltyMember>().Remove(existing);
+                await db.SaveChangesAsync();
+            }
+        }
+
         /// <summary>Every member with a real points balance computed entirely from ledger activity
         /// (LoyaltyMember itself has no points column of its own).</summary>
         public async Task<List<LoyaltyMemberRow>> GetMemberBalancesAsync()

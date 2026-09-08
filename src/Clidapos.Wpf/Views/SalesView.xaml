@@ -10,65 +10,21 @@
 	<Window.Resources>
 		<local:RowNumberConverter x:Key="RowNumberConverter"/>
 
-		<!-- Single clean light look, no dark/light toggle, no dark chrome anywhere.
-             Header and bottom payment bar are white; the working body (action
-             stack, search, cart) is clean grey with white cards. -->
-		<SolidColorBrush x:Key="ChromeBg" Color="#D5D5DA"/>
-		<SolidColorBrush x:Key="ChromeBorder" Color="#D8D8DE"/>
-
-		<RadialGradientBrush x:Key="BadgeBlue" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#9CC9FF" Offset="0"/>
-			<GradientStop Color="#2D6CDF" Offset="0.55"/>
-			<GradientStop Color="#16437F" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeAmber" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#FFD98F" Offset="0"/>
-			<GradientStop Color="#F3A123" Offset="0.55"/>
-			<GradientStop Color="#B5741A" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeRed" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#FF8C9B" Offset="0"/>
-			<GradientStop Color="#DC143C" Offset="0.55"/>
-			<GradientStop Color="#8F0C25" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeTeal" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#84E7D8" Offset="0"/>
-			<GradientStop Color="#17A398" Offset="0.55"/>
-			<GradientStop Color="#0A5A54" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgeGray" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#8A8A94" Offset="0"/>
-			<GradientStop Color="#4A4A54" Offset="0.55"/>
-			<GradientStop Color="#26262E" Offset="1"/>
-		</RadialGradientBrush>
-		<RadialGradientBrush x:Key="BadgePurple" GradientOrigin="0.3,0.3" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-			<GradientStop Color="#C9B3FF" Offset="0"/>
-			<GradientStop Color="#7C4DCE" Offset="0.55"/>
-			<GradientStop Color="#472A80" Offset="1"/>
-		</RadialGradientBrush>
-
-		<Style x:Key="IconBadge" TargetType="Ellipse">
-			<Setter Property="Effect">
-				<Setter.Value>
-					<DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="6" Opacity="0.4"/>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="RoundTopButton" TargetType="Button">
-			<Setter Property="Width" Value="40"/>
-			<Setter Property="Height" Value="40"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-		</Style>
+		<SolidColorBrush x:Key="ChromeBg" Color="#EDF1F1"/>
+		<SolidColorBrush x:Key="ChromeBorder" Color="#D3DEDE"/>
+		<SolidColorBrush x:Key="TealDark" Color="#0E5E5A"/>
+		<SolidColorBrush x:Key="TealMid" Color="#178E86"/>
+		<SolidColorBrush x:Key="TealLight" Color="#E4F4F2"/>
+		<SolidColorBrush x:Key="AccentOrange" Color="#F3A123"/>
 
 		<Style x:Key="SearchInput" TargetType="TextBox">
 			<Setter Property="Background" Value="White"/>
 			<Setter Property="Foreground" Value="Black"/>
-			<Setter Property="BorderBrush" Value="#F3A123"/>
-			<Setter Property="BorderThickness" Value="2"/>
-			<Setter Property="Padding" Value="10"/>
-			<Setter Property="FontSize" Value="15"/>
+			<Setter Property="BorderBrush" Value="{StaticResource ChromeBorder}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Padding" Value="14,10"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		</Style>
 
 		<Style x:Key="PanelInput" TargetType="TextBox">
@@ -80,13 +36,13 @@
 		</Style>
 
 		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#FCEACB"/>
-			<Setter Property="Foreground" Value="Black"/>
-			<Setter Property="FontWeight" Value="ExtraBold"/>
-			<Setter Property="FontSize" Value="19"/>
-			<Setter Property="Padding" Value="10,10"/>
-			<Setter Property="BorderBrush" Value="#F3A123"/>
-			<Setter Property="BorderThickness" Value="0,0,0,3"/>
+			<Setter Property="Background" Value="{StaticResource TealLight}"/>
+			<Setter Property="Foreground" Value="{StaticResource TealDark}"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Padding" Value="8,8"/>
+			<Setter Property="BorderBrush" Value="{StaticResource TealMid}"/>
+			<Setter Property="BorderThickness" Value="0,0,0,2"/>
 			<Setter Property="HorizontalContentAlignment" Value="Left"/>
 		</Style>
 
@@ -100,7 +56,7 @@
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="Button">
-						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="8">
+						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="6">
 							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 						<ControlTemplate.Triggers>
@@ -113,41 +69,16 @@
 			</Setter>
 		</Style>
 
-		<Style x:Key="ModeToggle" TargetType="RadioButton">
-			<Setter Property="Foreground" Value="Black"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="Margin" Value="0,0,8,0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="RadioButton">
-						<Border x:Name="B" Background="#F0F0F2" CornerRadius="8" Padding="18,12"
-                                BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsChecked" Value="True">
-								<Setter TargetName="B" Property="Background" Value="#F3A123"/>
-								<Setter TargetName="B" Property="BorderBrush" Value="#F3A123"/>
-								<Setter Property="Foreground" Value="Black"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
 		<Style x:Key="RemoveRowBtn" TargetType="Button">
-			<Setter Property="Width" Value="30"/>
-			<Setter Property="Height" Value="30"/>
+			<Setter Property="Width" Value="28"/>
+			<Setter Property="Height" Value="28"/>
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="Button">
-						<Border Background="#3A2226" CornerRadius="6">
-							<TextBlock Text="✕" Foreground="#FF6B6B" FontSize="13" FontWeight="Bold"
+						<Border Background="#FBE4E4" CornerRadius="5">
+							<TextBlock Text="✕" Foreground="#C0392B" FontSize="12" FontWeight="Bold"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 					</ControlTemplate>
@@ -155,31 +86,102 @@
 			</Setter>
 		</Style>
 
-		<Style x:Key="StackIconBtn" TargetType="Button">
-			<Setter Property="Height" Value="66"/>
-			<Setter Property="Margin" Value="0,0,0,6"/>
+		<!-- Left/right column 2-wide compact buttons, toggle-capable for payment mode -->
+		<Style x:Key="ColumnToggleBtn" TargetType="RadioButton">
+			<Setter Property="Height" Value="96"/>
+			<Setter Property="Margin" Value="0,0,0,10"/>
 			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="{StaticResource TealDark}"/>
+			<Setter Property="FontSize" Value="19"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="RadioButton">
+						<Border x:Name="B" Background="{StaticResource TealLight}" CornerRadius="6"
+                                BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter TargetName="B" Property="Background" Value="{StaticResource AccentOrange}"/>
+								<Setter TargetName="B" Property="BorderBrush" Value="#D6890A"/>
+								<Setter Property="Foreground" Value="White"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 
-		<Style x:Key="StackIconLabel" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="Black"/>
-			<Setter Property="FontSize" Value="10.5"/>
+		<!-- Softer, refined action button - white with a subtle border, left-aligned
+             text, matching Design 2. Background/Foreground overridden per-instance
+             for the colored variants (Loyalty's light green, Remove/Void's light red). -->
+		<Style x:Key="SoftActionBtn" TargetType="Button">
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Margin" Value="0,0,0,7"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="Foreground" Value="#2C2C2A"/>
+			<Setter Property="BorderBrush" Value="{StaticResource ChromeBorder}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="FontSize" Value="13.5"/>
 			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="TextAlignment" Value="Center"/>
-			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="Margin" Value="0,3,0,0"/>
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="Padding" Value="14,0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="B" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="KeypadBtn" TargetType="Button">
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="Foreground" Value="{StaticResource TealDark}"/>
+			<Setter Property="FontSize" Value="26"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="{StaticResource ChromeBorder}"/>
+			<Setter Property="Margin" Value="3"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border x:Name="B" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="B" Property="Background" Value="{StaticResource TealLight}"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 	</Window.Resources>
-	<Grid Background="#EFEFF2">
+
+	<Grid Background="{StaticResource ChromeBg}">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="60"/>
+			<RowDefinition Height="72"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<Border Grid.Row="0" Background="#FF6A00">
+		<!-- TOP BAR - search is top-middle, matching the reference exactly -->
+		<Border Grid.Row="0" Background="{StaticResource TealDark}">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
@@ -191,181 +193,196 @@
                         Background="Transparent" BorderThickness="0" Cursor="Hand"
                         Margin="15,0,0,0" ToolTip="Back to Front Office">
 					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
-                           Width="42" Height="42"/>
+                           Width="36" Height="36"/>
 				</Button>
 
-				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<TextBlock Text="COUNTER SALE" Foreground="White" FontSize="16" FontWeight="Bold"
-                               VerticalAlignment="Center"/>
-					<TextBlock x:Name="CashierText" Foreground="#FFE9D6" FontSize="13" FontWeight="Bold"
-                               VerticalAlignment="Center" Margin="20,0,0,0"/>
-				</StackPanel>
+				<Grid Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="560">
+					<TextBox x:Name="SearchBox" Style="{StaticResource SearchInput}"
+                             KeyDown="SearchBox_KeyDown" TextChanged="SearchBox_TextChanged"/>
+					<TextBlock Text="🔍  Search or scan an item..." Foreground="#9A9AA2" FontSize="13"
+                               Margin="14,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+						<TextBlock.Style>
+							<Style TargetType="TextBlock">
+								<Setter Property="Visibility" Value="Collapsed"/>
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+										<Setter Property="Visibility" Value="Visible"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
 
-				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
-					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
+					<Popup x:Name="ResultsPopup" PlacementTarget="{Binding ElementName=SearchBox}"
+                           Placement="Bottom" Width="560" StaysOpen="True">
+						<Border Background="White" BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1"
+                                CornerRadius="0,0,8,8" MaxHeight="280">
+							<ListBox x:Name="ResultsList" Background="White" Foreground="Black"
+                                     BorderThickness="0" SelectionChanged="ResultsList_SelectionChanged">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<Grid Margin="10,8">
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="*"/>
+												<ColumnDefinition Width="Auto"/>
+											</Grid.ColumnDefinitions>
+											<TextBlock Grid.Column="0" Text="{Binding ProductName}" Foreground="Black" FontSize="14" FontWeight="Bold"
+                                                       TextWrapping="Wrap"/>
+											<TextBlock Grid.Column="1" Text="{Binding Price, StringFormat=N2}" Foreground="{StaticResource TealMid}"
+                                                       FontSize="13" FontWeight="Bold" Margin="16,0,0,0"/>
+										</Grid>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+						</Border>
+					</Popup>
+				</Grid>
+
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,15,0">
+					<TextBlock x:Name="CashierText" Foreground="#B9E4E0" FontSize="12" FontWeight="Bold"
+                               VerticalAlignment="Center" Margin="0,0,14,0"/>
+				<Border x:Name="LoyaltyBadge" Background="{StaticResource AccentOrange}" CornerRadius="12" Padding="12,5" Margin="0,0,14,0"
+                            Visibility="Collapsed">
+						<TextBlock x:Name="LoyaltyBadgeText" Foreground="White" FontSize="11" FontWeight="Bold"/>
+					</Border>
+					<Button Click="Exit_Click" Width="46" Height="46" Background="Transparent"
                             BorderThickness="0" Cursor="Hand" ToolTip="Exit">
 						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                               Width="42" Height="42"/>
+                               Width="32" Height="32"/>
 					</Button>
 				</StackPanel>
 			</Grid>
 		</Border>
 
-		<Grid Grid.Row="1" Margin="16">
+		<Grid Grid.Row="1" Margin="14">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="86"/>
+				<ColumnDefinition Width="280"/>
 				<ColumnDefinition Width="12"/>
-				<ColumnDefinition Width="230"/>
-				<ColumnDefinition Width="16"/>
 				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="12"/>
+				<ColumnDefinition Width="150"/>
 			</Grid.ColumnDefinitions>
 
-			<!-- ACTION STACK -->
-			<Border Grid.Column="0" Background="#D5D5DA" CornerRadius="10" Padding="6"
-                    BorderBrush="#B8B8BE" BorderThickness="1.5">
+			<!-- LEFT COLUMN - payment method / account shortcuts, matching the reference -->
+			<Border Grid.Column="0" Background="White" CornerRadius="8" Padding="8"
+                    BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1.5">
 				<StackPanel VerticalAlignment="Top">
+					<TextBlock Text="PAYMENT" Foreground="{StaticResource TealDark}" FontSize="13" FontWeight="Bold" Margin="2,2,0,8"/>
 
-					<Button Style="{StaticResource StackIconBtn}" Click="RemoveSelectedLine_Click">
-						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Grid Width="34" Height="34">
-								<Ellipse Fill="{StaticResource BadgeRed}" Style="{StaticResource IconBadge}"/>
-								<TextBlock Text="✕" FontSize="14" FontWeight="Bold" Foreground="White"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-							<TextBlock Text="Remove" Style="{StaticResource StackIconLabel}"/>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="4"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<RadioButton Grid.Row="0" Grid.Column="0" Style="{StaticResource ColumnToggleBtn}"
+                                 x:Name="CashMode" IsChecked="True" Checked="PaymentMode_Changed">
+						<StackPanel>
+							<Image Source="pack://application:,,,/Assets/cash.png" Width="40" Height="40" Margin="0,0,0,6" HorizontalAlignment="Center"/>
+							<TextBlock Text="CASH" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</RadioButton>
+					<RadioButton Grid.Row="0" Grid.Column="2" Style="{StaticResource ColumnToggleBtn}"
+                                 x:Name="MpesaMode" Checked="PaymentMode_Changed">
+						<StackPanel>
+							<Image Source="pack://application:,,,/Assets/mpesaa.png" Width="40" Height="40" Margin="0,0,0,6" HorizontalAlignment="Center"/>
+							<TextBlock Text="M-PESA" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</RadioButton>
+					<RadioButton Grid.Row="1" Grid.Column="0" Style="{StaticResource ColumnToggleBtn}"
+                                 x:Name="BankMode" Checked="PaymentMode_Changed">
+						<StackPanel>
+							<Image Source="pack://application:,,,/Assets/bank.png" Width="40" Height="40" Margin="0,0,0,6" HorizontalAlignment="Center"/>
+							<TextBlock Text="BANK" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</RadioButton>
+					<RadioButton Grid.Row="1" Grid.Column="2" Style="{StaticResource ColumnToggleBtn}"
+                                 x:Name="CreditMode" Checked="PaymentMode_Changed">
+						<StackPanel>
+							<Image Source="pack://application:,,,/Assets/credit.png" Width="40" Height="40" Margin="0,0,0,6" HorizontalAlignment="Center"/>
+							<TextBlock Text="CREDIT" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</RadioButton>
+					</Grid>
+
+					<Button x:Name="LoyaltyCardBtn" Style="{StaticResource SoftActionBtn}" Click="LoyaltyCard_Click"
+                            Background="#E1F5EE" Foreground="#085041" BorderThickness="0">
+						<StackPanel Orientation="Horizontal">
+							<Image Source="pack://application:,,,/Assets/loyalty.png" Width="24" Height="24" Margin="0,0,8,0"/>
+							<TextBlock Text="Loyalty Card" VerticalAlignment="Center"/>
 						</StackPanel>
 					</Button>
-
-					<Button Style="{StaticResource StackIconBtn}" Click="ChangeQty_Click">
-						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Grid Width="34" Height="34">
-								<Ellipse Fill="{StaticResource BadgeBlue}" Style="{StaticResource IconBadge}"/>
-								<TextBlock Text="✎" FontSize="13" FontWeight="Bold" Foreground="White"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-							<TextBlock Text="Change Qty" Style="{StaticResource StackIconLabel}"/>
-						</StackPanel>
-					</Button>
-
-					<Button Style="{StaticResource StackIconBtn}" Click="HoldSale_Click">
-						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Grid Width="34" Height="34">
-								<Ellipse Fill="{StaticResource BadgeTeal}" Style="{StaticResource IconBadge}"/>
-								<TextBlock Text="⏸" FontSize="13" FontWeight="Bold" Foreground="White"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-							<TextBlock Text="Hold Sale" Style="{StaticResource StackIconLabel}"/>
-						</StackPanel>
-					</Button>
-
-					<Button Style="{StaticResource StackIconBtn}" Click="ClearCart_Click">
-						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Grid Width="34" Height="34">
-								<Ellipse Fill="{StaticResource BadgeGray}" Style="{StaticResource IconBadge}"/>
-								<TextBlock Text="⊘" FontSize="14" FontWeight="Bold" Foreground="White"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-							<TextBlock Text="Void Sale" Style="{StaticResource StackIconLabel}"/>
-						</StackPanel>
-					</Button>
-
-					<Button Style="{StaticResource StackIconBtn}" Click="NewSale_Click">
-						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Grid Width="34" Height="34">
-								<Ellipse Fill="{StaticResource BadgeAmber}" Style="{StaticResource IconBadge}"/>
-								<TextBlock Text="+" FontSize="17" FontWeight="Bold" Foreground="Black"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-							<TextBlock Text="New Sale" Style="{StaticResource StackIconLabel}"/>
-						</StackPanel>
-					</Button>
-
-					<Button Style="{StaticResource StackIconBtn}" Click="GetData_Click">
-						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Grid Width="34" Height="34">
-								<Ellipse Fill="{StaticResource BadgePurple}" Style="{StaticResource IconBadge}"/>
-								<TextBlock Text="🧾" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-							<TextBlock Text="Get Data" Style="{StaticResource StackIconLabel}"/>
-						</StackPanel>
-					</Button>
-
 				</StackPanel>
 			</Border>
-			<!-- SEARCH -->
-			<Border Grid.Column="2" Background="#D5D5DA" CornerRadius="10" Padding="14"
-                    BorderBrush="#B8B8BE" BorderThickness="1.5">
-				<DockPanel>
-					<TextBlock DockPanel.Dock="Top" Text="SEARCH OR SCAN" Foreground="#F3A123" FontSize="13"
-                               FontWeight="Bold" Margin="0,0,0,8"/>
-					<TextBox DockPanel.Dock="Top" x:Name="SearchBox" Style="{StaticResource SearchInput}"
-                             KeyDown="SearchBox_KeyDown" TextChanged="SearchBox_TextChanged"/>
-					<TextBlock DockPanel.Dock="Top" Text="Type a name or scan a code. Click a result to add it."
-                               Foreground="#6B6B72" FontSize="11" Margin="0,6,0,8" TextWrapping="Wrap"/>
 
-					<ListBox x:Name="ResultsList" Background="White" Foreground="Black"
-                             BorderThickness="0" SelectionChanged="ResultsList_SelectionChanged">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<Grid Margin="6,6">
-									<TextBlock Text="{Binding ProductName}" Foreground="Black" FontSize="14" FontWeight="Bold"
-                                               TextWrapping="Wrap"/>
-									<TextBlock Text="{Binding Price, StringFormat=N2}" Foreground="#F3A123"
-                                               FontSize="13" FontWeight="Bold" HorizontalAlignment="Right"/>
-								</Grid>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
-				</DockPanel>
-			</Border>
-
-			<!-- CART - item list gets 3/4 of the vertical space, totals get the remaining 1/4 -->
-			<Border Grid.Column="4" Background="#D5D5DA" CornerRadius="10" Padding="16"
-                    BorderBrush="#B8B8BE" BorderThickness="1.5">
+			<!-- CENTER - Lines table, payment details, keypad + summary -->
+			<Border Grid.Column="2" Background="White" CornerRadius="8" Padding="14"
+                    BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1.5">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="3*"/>
-						<RowDefinition Height="1.4*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-					<Border Grid.Row="0" Background="#DCAA3C" CornerRadius="8" Padding="14,10" Margin="0,0,0,12">
-						<Grid>
-							<TextBlock Text="CART" Foreground="#2D6CDF" FontSize="20" FontWeight="Bold"/>
-							<TextBlock x:Name="ItemCountText" Foreground="#6B6B72" FontSize="13" FontWeight="Bold"
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						</Grid>
+					<Border Grid.Row="0" Background="{StaticResource TealLight}" CornerRadius="6" Padding="12,9" Margin="0,0,0,10">
+						<TextBlock Text="LINES" Foreground="{StaticResource TealDark}" FontSize="16" FontWeight="Bold"/>
 					</Border>
 
-					<DataGrid Grid.Row="1" x:Name="CartGrid" AutoGenerateColumns="False" FontSize="18"
-                              Background="White" Foreground="#2D6CDF" BorderThickness="0"
-                              RowBackground="White" AlternatingRowBackground="#F5F5F7"
-                              HeadersVisibility="Column" GridLinesVisibility="Horizontal" RowHeaderWidth="40"
-                              HorizontalGridLinesBrush="#E0A94A"
+					<DataGrid Grid.Row="1" x:Name="CartGrid" AutoGenerateColumns="False" FontSize="17"
+                              Background="White" Foreground="#1C1C1F" BorderThickness="0"
+                              RowBackground="White" AlternatingRowBackground="#F5F8F8"
+                              HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="32"
+                              HorizontalGridLinesBrush="#E4EEEE"
                               ColumnHeaderStyle="{StaticResource GridHeader}"
                               CanUserAddRows="False" SelectionMode="Single"
                               AlternationCount="9999"
+                              SelectionChanged="CartGrid_SelectionChanged"
                               CellEditEnding="CartGrid_CellEditEnding">
-						<DataGrid.RowStyle>
-							<Style TargetType="DataGridRow">
-								<Setter Property="MinHeight" Value="54"/>
-								<Setter Property="FontWeight" Value="ExtraBold"/>
-							</Style>
-						</DataGrid.RowStyle>
+						<DataGrid.Resources>
+							<!-- DataGridCell paints its own selected-state background using these
+                                 system color keys internally - setting Background on the row alone
+                                 via a trigger gets painted over by the cells unless these are also
+                                 overridden here. -->
+								<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#F3A123"/>
+								<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+								<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#F3A123"/>
+							</DataGrid.Resources>
+							<DataGrid.RowStyle>
+								<Style TargetType="DataGridRow">
+									<Setter Property="MinHeight" Value="48"/>
+									<Setter Property="FontWeight" Value="SemiBold"/>
+									<Style.Triggers>
+										<!-- Orange the entire time a line is selected (ready to be
+                                         edited via Remove/Change Qty/the keypad), plain again
+                                         the moment it's deselected - one clear state instead
+                                         of two, avoiding the earlier yellow-vs-orange confusion. -->
+										<Trigger Property="IsSelected" Value="True">
+											<Setter Property="Background" Value="{StaticResource AccentOrange}"/>
+											<Setter Property="Foreground" Value="White"/>
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</DataGrid.RowStyle>
 						<DataGrid.RowHeaderTemplate>
 							<DataTemplate>
 								<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource RowNumberConverter}}"
-                                           Foreground="#6B6B72" FontSize="14" FontWeight="Bold"
+                                           Foreground="#8A8A94" FontSize="11" FontWeight="Bold"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
 							</DataTemplate>
 						</DataGrid.RowHeaderTemplate>
 						<DataGrid.Columns>
+							<DataGridTextColumn Header="Item ID" Binding="{Binding ProductCode}" Width="90" IsReadOnly="True"/>
 							<DataGridTextColumn Header="Item" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
-							<DataGridTextColumn Header="Price" Binding="{Binding Rate, StringFormat=N2}" Width="120" IsReadOnly="True"/>
-							<DataGridTextColumn Header="Qty" Binding="{Binding Quantity, StringFormat=N2}" Width="90"/>
-							<DataGridTextColumn Header="Total" Binding="{Binding Amount, StringFormat=N2}" Width="130" IsReadOnly="True"/>
-							<DataGridTemplateColumn Header="" Width="55" CanUserResize="False">
+							<DataGridTextColumn Header="Price" Binding="{Binding Rate, StringFormat=N2}" Width="90" IsReadOnly="True"/>
+							<DataGridTextColumn Header="Qty" Binding="{Binding Quantity, StringFormat=N2}" Width="70"/>
+							<DataGridTextColumn Header="Total" Binding="{Binding Amount, StringFormat=N2}" Width="100" IsReadOnly="True"/>
+							<DataGridTemplateColumn Header="" Width="44" CanUserResize="False">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
 										<Button Style="{StaticResource RemoveRowBtn}" Click="RemoveLineButton_Click" Tag="{Binding}"/>
@@ -375,105 +392,186 @@
 						</DataGrid.Columns>
 					</DataGrid>
 
-					<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-						<Border Background="White" CornerRadius="8" Padding="18">
-							<Grid VerticalAlignment="Center">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="*"/>
-								</Grid.ColumnDefinitions>
+					<!-- KEYPAD (left) + SUMMARY (right) -->
+					<Grid Grid.Row="2" Margin="0,10,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="330"/>
+							<ColumnDefinition Width="12"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
 
-								<!-- LEFT: subtotal + discount -->
-								<StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,24,0">
-									<TextBlock Text="SUBTOTAL" Foreground="#6B6B72" FontSize="11" FontWeight="Bold"/>
-									<TextBlock x:Name="SubtotalText" Text="0.00" Foreground="Black" FontSize="18" FontWeight="Bold"
-                                               Margin="0,2,0,10"/>
+						<Border Grid.Column="0" Background="{StaticResource ChromeBg}" CornerRadius="8" Padding="10">
+							<StackPanel>
+								<TextBlock Text="QUANTITY" Foreground="{StaticResource TealDark}" FontSize="13" FontWeight="Bold" Margin="2,0,0,4"/>
+								<TextBox x:Name="QtyKeypadInput" Style="{StaticResource PanelInput}"
+                                         TextAlignment="Right" FontSize="20" Height="46" Padding="10,8" Margin="0,0,0,8"
+                                         GotFocus="KeypadTarget_GotFocus" KeyDown="QtyKeypadInput_KeyDown"/>
 
-									<TextBlock Text="DISCOUNT %" Foreground="#6B6B72" FontSize="11" FontWeight="Bold"/>
-									<StackPanel Orientation="Horizontal" Margin="0,2,0,4">
-										<TextBox x:Name="DiscountInput" Width="60" Background="#D5D5DA" Foreground="Black"
-                                                 BorderBrush="#B8B8BE" Padding="8" FontSize="14"
-                                                 HorizontalContentAlignment="Center"
-                                                 TextChanged="DiscountInput_TextChanged"/>
-										<TextBlock Text="%" Foreground="Black" FontSize="15" FontWeight="Bold"
-                                                   Margin="6,0,0,0" VerticalAlignment="Center"/>
-									</StackPanel>
-									<TextBlock x:Name="DiscountAmountText" Text="0.00" Foreground="#F3A123" FontSize="12" FontWeight="Bold"/>
-								</StackPanel>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="56"/>
+										<RowDefinition Height="56"/>
+										<RowDefinition Height="56"/>
+										<RowDefinition Height="56"/>
+									</Grid.RowDefinitions>
 
-								<!-- RIGHT: total due, on its own -->
-								<StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-									<TextBlock Text="TOTAL DUE" Foreground="#6B6B72" FontSize="13" FontWeight="Bold"
-                                               HorizontalAlignment="Right"/>
-									<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#34C759"
-                                               FontSize="52" FontWeight="Bold" HorizontalAlignment="Right"/>
-									<TextBlock x:Name="VatBreakdownText" Foreground="#6B6B72" FontSize="11" FontWeight="Bold"
-                                               HorizontalAlignment="Right"/>
-								</StackPanel>
-							</Grid>
+									<Button Grid.Row="0" Grid.Column="0" Style="{StaticResource KeypadBtn}" Content="7" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="0" Grid.Column="1" Style="{StaticResource KeypadBtn}" Content="8" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="0" Grid.Column="2" Style="{StaticResource KeypadBtn}" Content="9" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="0" Grid.Column="3" Style="{StaticResource KeypadBtn}" Content="DEL" Click="KeypadBackspace_Click" FontSize="15"/>
+
+									<Button Grid.Row="1" Grid.Column="0" Style="{StaticResource KeypadBtn}" Content="4" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="1" Grid.Column="1" Style="{StaticResource KeypadBtn}" Content="5" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="1" Grid.Column="2" Style="{StaticResource KeypadBtn}" Content="6" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="1" Grid.Column="3" Style="{StaticResource KeypadBtn}" Content="00" Click="KeypadDigit_Click" FontSize="20"/>
+
+									<Button Grid.Row="2" Grid.Column="0" Style="{StaticResource KeypadBtn}" Content="1" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="2" Grid.Column="1" Style="{StaticResource KeypadBtn}" Content="2" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="2" Grid.Column="2" Style="{StaticResource KeypadBtn}" Content="3" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="2" Grid.Column="3" Style="{StaticResource KeypadBtn}" Content="C" Click="KeypadClear_Click" Foreground="#C0392B"/>
+
+									<Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource KeypadBtn}" Content="0" Click="KeypadDigit_Click"/>
+									<Button Grid.Row="3" Grid.Column="3" Style="{StaticResource KeypadBtn}" Content="OK" Click="ApplyQty_Click"
+                                            Background="{StaticResource AccentOrange}" Foreground="White"/>
+								</Grid>
+							</StackPanel>
 						</Border>
-					</ScrollViewer>
+
+						<Grid Grid.Column="2">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="10"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+
+							<Border Grid.Row="0" Background="{StaticResource ChromeBg}" CornerRadius="8" Padding="18,12">
+								<StackPanel VerticalAlignment="Center">
+									<Grid Margin="0,0,0,7">
+										<TextBlock Text="Lines" Foreground="#5A6B72" FontSize="15" FontWeight="Bold"/>
+										<TextBlock x:Name="LinesCountText" Text="0" Foreground="Black" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+									</Grid>
+									<Grid Margin="0,0,0,7">
+										<TextBlock Text="Total Items" Foreground="#5A6B72" FontSize="15" FontWeight="Bold"/>
+										<TextBlock x:Name="ItemCountText" Text="0" Foreground="Black" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+									</Grid>
+									<Grid Margin="0,0,0,7">
+										<TextBlock Text="Discount %" Foreground="#5A6B72" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+										<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+											<TextBox x:Name="DiscountInput" Width="50" Background="White" Foreground="Black"
+                                                     BorderBrush="{StaticResource ChromeBorder}" Padding="4" FontSize="15"
+                                                     HorizontalContentAlignment="Center"
+                                                     GotFocus="KeypadTarget_GotFocus"
+                                                     TextChanged="DiscountInput_TextChanged"/>
+											<TextBlock Text="%" Foreground="Black" FontSize="15" FontWeight="Bold" Margin="4,0,0,0" VerticalAlignment="Center"/>
+										</StackPanel>
+									</Grid>
+									<Grid Margin="0,0,0,7">
+										<TextBlock Text="Discount Amount" Foreground="#5A6B72" FontSize="15" FontWeight="Bold"/>
+										<TextBlock x:Name="DiscountAmountText" Text="0.00" Foreground="{StaticResource AccentOrange}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+									</Grid>
+									<Grid Margin="0,0,0,7">
+										<TextBlock Text="Subtotal" Foreground="#5A6B72" FontSize="15" FontWeight="Bold"/>
+										<TextBlock x:Name="SubtotalText" Text="0.00" Foreground="Black" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+									</Grid>
+									<Grid>
+										<TextBlock Text="Tax (VAT)" Foreground="#5A6B72" FontSize="15" FontWeight="Bold"/>
+										<TextBlock x:Name="VatBreakdownText" Text="0.00" Foreground="Black" FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
+									</Grid>
+								</StackPanel>
+							</Border>
+
+							<!-- The prominent total, in its own dark card - this is the "so big"
+                                 total. GrandTotalText is also what the bottom bar's amount-due
+                                 display reads from via a binding, so both update together. -->
+							<Border Grid.Row="2" Background="{StaticResource TealDark}" CornerRadius="8" Padding="18,14">
+								<StackPanel HorizontalAlignment="Center">
+									<TextBlock Text="TOTAL DUE" Foreground="#9FE1CB" FontSize="12" FontWeight="Bold"
+                                               HorizontalAlignment="Center"/>
+									<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="White"
+                                               FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+								</StackPanel>
+							</Border>
+						</Grid>
+					</Grid>
 				</Grid>
+			</Border>
+
+			<!-- RIGHT COLUMN - cart/transaction actions, matching the reference -->
+			<Border Grid.Column="4" Background="White" CornerRadius="8" Padding="8"
+                    BorderBrush="{StaticResource ChromeBorder}" BorderThickness="1.5">
+				<StackPanel VerticalAlignment="Top">
+					<TextBlock Text="ACTIONS" Foreground="{StaticResource TealDark}" FontSize="13" FontWeight="Bold" Margin="2,2,0,8"/>
+
+					<Button Style="{StaticResource SoftActionBtn}" Content="Remove" Background="#FCEBEB" Foreground="#C0392B" BorderThickness="0" Click="RemoveSelectedLine_Click"/>
+					<Button Style="{StaticResource SoftActionBtn}" Content="Change Qty" Click="ChangeQty_Click"/>
+					<Button Style="{StaticResource SoftActionBtn}" Content="Hold Sale" Click="HoldSale_Click"/>
+					<Button Style="{StaticResource SoftActionBtn}" Content="Void Sale" Background="#FCEBEB" Foreground="#C0392B" BorderThickness="0" Click="ClearCart_Click"/>
+					<Button Style="{StaticResource SoftActionBtn}" Content="New Sale" Click="NewSale_Click"/>
+					<Button Style="{StaticResource SoftActionBtn}" Content="Sales History" Click="GetData_Click"/>
+				</StackPanel>
 			</Border>
 		</Grid>
 
-		<!-- FULL-WIDTH ROW BELOW ALL 3 COLUMNS: payment mode, received/change, pay -->
-		<Border Grid.Row="2" Background="{StaticResource ChromeBg}" Padding="24,14">
-			<StackPanel>
-				<TextBlock x:Name="ErrorText" Foreground="#DC143C" FontSize="13" FontWeight="Bold" Margin="0,0,0,8" TextWrapping="Wrap"/>
-				<Grid>
+		<!-- BOTTOM BAR - payment details, a very big total, and pay -->
+		<Border Grid.Row="2" Background="{StaticResource TealDark}" Padding="24,14">
+			<Grid>
+				<TextBlock x:Name="ErrorText" Foreground="#FFB4B4" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"
+                           VerticalAlignment="Top" HorizontalAlignment="Left"/>
+
+				<Grid HorizontalAlignment="Right" VerticalAlignment="Center">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="24"/>
-						<ColumnDefinition Width="220"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="30"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="30"/>
+						<ColumnDefinition Width="240"/>
 					</Grid.ColumnDefinitions>
 
-					<StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-						<RadioButton x:Name="CashMode" Content="CASH" Style="{StaticResource ModeToggle}"
-                                     IsChecked="True" Checked="PaymentMode_Changed"/>
-						<RadioButton x:Name="MpesaMode" Content="M-PESA" Style="{StaticResource ModeToggle}"
-                                     Checked="PaymentMode_Changed"/>
-						<RadioButton x:Name="BankMode" Content="BANK" Style="{StaticResource ModeToggle}"
-                                     Checked="PaymentMode_Changed"/>
-						<RadioButton x:Name="CreditMode" Content="CREDIT" Style="{StaticResource ModeToggle}"
-                                     Checked="PaymentMode_Changed"/>
-
-						<StackPanel x:Name="CashDetailsPanel" Orientation="Horizontal" Margin="30,0,0,0">
-							<StackPanel Margin="0,0,20,0">
-								<TextBlock Text="RECEIVED" Foreground="#6B6B72" FontSize="11" FontWeight="Bold"/>
-								<TextBox x:Name="AmountReceivedInput" Style="{StaticResource PanelInput}"
-                                         Width="130" FontSize="18" TextChanged="AmountReceived_TextChanged"
-                                         KeyDown="AmountReceivedInput_KeyDown"/>
-							</StackPanel>
-							<StackPanel>
-								<TextBlock Text="CHANGE" Foreground="#6B6B72" FontSize="11" FontWeight="Bold"/>
-								<TextBlock x:Name="ChangeText" Text="0.00" Foreground="#F3A123"
-                                           FontSize="22" FontWeight="Bold"/>
-							</StackPanel>
+					<StackPanel x:Name="CashDetailsPanel" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+						<StackPanel Margin="0,0,18,0">
+							<TextBlock Text="RECEIVED" Foreground="#B9E4E0" FontSize="11" FontWeight="Bold"/>
+							<TextBox x:Name="AmountReceivedInput" Style="{StaticResource PanelInput}"
+                                     Width="140" FontSize="18" TextChanged="AmountReceived_TextChanged"
+                                     KeyDown="AmountReceivedInput_KeyDown" GotFocus="KeypadTarget_GotFocus"/>
 						</StackPanel>
-
-						<StackPanel x:Name="CreditDetailsPanel" Orientation="Horizontal" Margin="30,0,0,0" Visibility="Collapsed">
-							<StackPanel Width="240">
-								<TextBlock Text="CUSTOMER (buying on credit)" Foreground="#6B6B72" FontSize="11" FontWeight="Bold"/>
-								<ComboBox x:Name="CreditCustomerCombo"
-                                          Background="White" Foreground="Black"
-                                          BorderBrush="#D8D8DE" Padding="8"
-                                          DisplayMemberPath="Name" IsEditable="True" FontSize="14">
-									<ComboBox.ItemContainerStyle>
-										<Style TargetType="ComboBoxItem">
-											<Setter Property="Background" Value="White"/>
-											<Setter Property="Foreground" Value="Black"/>
-										</Style>
-									</ComboBox.ItemContainerStyle>
-								</ComboBox>
-							</StackPanel>
+						<StackPanel>
+							<TextBlock Text="CHANGE" Foreground="#B9E4E0" FontSize="11" FontWeight="Bold"/>
+							<TextBlock x:Name="ChangeText" Text="0.00" Foreground="{StaticResource AccentOrange}"
+                                       FontSize="22" FontWeight="Bold"/>
 						</StackPanel>
 					</StackPanel>
 
-					<Button Grid.Column="2" x:Name="PayButton" Content="PAY" Background="#34C759"
-                            Style="{StaticResource ActionBtn}" Height="64" FontSize="20" Click="CompleteSale_Click"/>
+					<StackPanel x:Name="CreditDetailsPanel" Grid.Column="0" VerticalAlignment="Center" Visibility="Collapsed">
+						<TextBlock Text="CUSTOMER (buying on credit)" Foreground="#B9E4E0" FontSize="11" FontWeight="Bold"/>
+						<ComboBox x:Name="CreditCustomerCombo"
+                                  Background="White" Foreground="Black"
+                                  BorderBrush="{StaticResource ChromeBorder}" Padding="8"
+                                  DisplayMemberPath="Name" IsEditable="True" FontSize="14" Width="260" HorizontalAlignment="Left">
+							<ComboBox.ItemContainerStyle>
+								<Style TargetType="ComboBoxItem">
+									<Setter Property="Background" Value="White"/>
+									<Setter Property="Foreground" Value="Black"/>
+								</Style>
+							</ComboBox.ItemContainerStyle>
+						</ComboBox>
+					</StackPanel>
+
+					<StackPanel Grid.Column="2" VerticalAlignment="Center">
+						<TextBlock Text="AMOUNT DUE" Foreground="#B9E4E0" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right"/>
+						<TextBlock Text="{Binding Text, ElementName=GrandTotalText}" Foreground="{StaticResource AccentOrange}"
+                                   FontSize="48" FontWeight="Bold" HorizontalAlignment="Right"/>
+					</StackPanel>
+
+					<Button Grid.Column="4" x:Name="PayButton" Content="PAY" Background="#34C759"
+                            Style="{StaticResource ActionBtn}" Height="64" FontSize="22" Click="CompleteSale_Click"/>
 				</Grid>
-			</StackPanel>
+			</Grid>
 		</Border>
 	</Grid>
 </Window>

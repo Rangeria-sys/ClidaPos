@@ -33,6 +33,13 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
+            if (tag == "SalesScreenSettings")
+            {
+                var featurePopup = new FeatureSettingsPopup { Owner = this };
+                featurePopup.Show();
+                return;
+            }
+
             if (tag == "Email")
             {
                 var emailListView = new EmailSettingListView { Owner = this };

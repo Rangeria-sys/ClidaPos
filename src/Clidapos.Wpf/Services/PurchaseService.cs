@@ -247,7 +247,7 @@ namespace Clidapos.Wpf.Services
             {
                 var supplier = await db.Suppliers.FirstOrDefaultAsync(s => s.ID == supplierId);
                 supplierCode = supplier?.SupplierID.Trim();
-                supplierName = supplier?.Name.Trim();
+                supplierName = supplier?.Name?.Trim();
 
                 var subtotal = Math.Round(lines.Sum(l => l.Amount), 2);
                 var discountAmount = Math.Round(subtotal * discountPercent / 100m, 2);

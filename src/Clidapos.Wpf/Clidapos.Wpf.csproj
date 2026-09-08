@@ -27,6 +27,10 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\store.jpg" />
+		<Resource Include="Assets\bank.png" />
+		<Resource Include="Assets\credit.png" />
+		<Resource Include="Assets\mpesaa.png" />
+		<Resource Include="Assets\cash.png" />
 		<Resource Include="Assets\logon.jpg" />
 		<Resource Include="Assets\login.jpg" />
 		<Resource Include="Assets\sop.png" />

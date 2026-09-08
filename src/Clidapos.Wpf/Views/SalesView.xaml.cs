@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -35,7 +35,18 @@ namespace Clidapos.Wpf.Views
         private readonly CustomerLedgerService _customerLedgerService = new();
         private readonly HeldSaleService _heldSaleService = new();
         private readonly ReceiptService _receiptService = new();
+        private readonly LoyaltyService _loyaltyService = new();
         private readonly ObservableCollection<CartLine> _cart = new();
+
+        // Which numeric field the on-screen keypad currently types into -
+        // whichever of QtyKeypadInput/DiscountInput/AmountReceivedInput last
+        // received focus. Defaults to the quantity field since that's the most
+        // frequent touchscreen interaction at checkout.
+        private TextBox? _activeKeypadTarget;
+
+        // The loyalty member attached to the sale in progress, if any. Cleared
+        // on ResetSale() along with everything else.
+        private LoyaltyMemberRow? _attachedLoyaltyMember;
 
         public SalesView(Registration currentUser)
         {
@@ -45,12 +56,21 @@ namespace Clidapos.Wpf.Views
             CashierText.Text = $"Cashier: {currentUser.Name.Trim()}";
 
             CartGrid.ItemsSource = _cart;
+            _activeKeypadTarget = QtyKeypadInput;
             RecomputeTotals();
 
             Loaded += async (s, e) =>
             {
                 SearchBox.Focus();
                 await LoadCreditCustomers();
+
+                var features = await new StoreFeatureSettingsService().GetOrCreateAsync();
+                if (features.EnableLoyaltyProgram?.Trim().ToUpper() == "N")
+                    LoyaltyCardBtn.Visibility = Visibility.Collapsed;
+                if (features.EnableBankPayment?.Trim().ToUpper() == "N")
+                    BankMode.Visibility = Visibility.Collapsed;
+                if (features.EnableCreditPayment?.Trim().ToUpper() == "N")
+                    CreditMode.Visibility = Visibility.Collapsed;
             };
         }
 
@@ -66,11 +86,11 @@ namespace Clidapos.Wpf.Views
             var term = SearchBox.Text.Trim();
             if (term.Length < 1)
             {
-                ResultsList.ItemsSource = null;
+                SetSearchResults(null);
                 return;
             }
 
-            ResultsList.ItemsSource = await _saleService.SearchAsync(term);
+            SetSearchResults(await _saleService.SearchAsync(term));
         }
 
         // Enter key = scan/lookup path. Exact code match, or a single fuzzy match, adds immediately.
@@ -97,7 +117,7 @@ namespace Clidapos.Wpf.Views
             }
             else
             {
-                ResultsList.ItemsSource = results;
+                SetSearchResults(results);
                 ErrorText.Text = results.Count == 0 ? $"Nothing found for \"{term}\"." : "";
             }
         }
@@ -115,8 +135,17 @@ namespace Clidapos.Wpf.Views
         private void ClearSearchUI()
         {
             SearchBox.Clear();
-            ResultsList.ItemsSource = null;
+            SetSearchResults(null);
             SearchBox.Focus();
+        }
+
+        // ListBox has no built-in "has items" property to bind the results popup's
+        // IsOpen to, so every place that sets ResultsList's items goes through here
+        // instead, to keep the popup's visibility correctly in sync.
+        private void SetSearchResults(System.Collections.Generic.List<Product>? items)
+        {
+            ResultsList.ItemsSource = items;
+            ResultsPopup.IsOpen = items != null && items.Count > 0;
         }
 
         // ---------------- CART ----------------
@@ -142,7 +171,17 @@ namespace Clidapos.Wpf.Views
             RecomputeTotals();
         }
 
-        // ---------------- LEFT ACTION STACK ----------------
+        // Keeps the keypad's quantity field showing whatever the currently
+        // selected cart line's quantity is, ready to overtype.
+        private void CartGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Starts empty rather than pre-filled with the current quantity -
+            // typing a digit into a pre-filled box would append to it (e.g.
+            // typing "5" over a pre-filled "1" would give "15", not "5").
+            QtyKeypadInput.Text = "";
+        }
+
+        // ---------------- ACTIONS ----------------
         private void RemoveSelectedLine_Click(object sender, RoutedEventArgs e)
         {
             if (CartGrid.SelectedItem is CartLine line)
@@ -265,6 +304,91 @@ namespace Clidapos.Wpf.Views
             RecomputeTotals();
         }
 
+        // ---------------- NUMERIC KEYPAD ----------------
+        // A single on-screen keypad feeds whichever numeric field last had
+        // focus - quantity, discount %, or amount received - rather than
+        // needing a separate keypad per field.
+        private void KeypadTarget_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb) _activeKeypadTarget = tb;
+        }
+
+        private void KeypadDigit_Click(object sender, RoutedEventArgs e)
+        {
+            if (_activeKeypadTarget == null || sender is not Button btn) return;
+            var digit = btn.Content?.ToString() ?? "";
+
+            // Every keypad button left is a plain digit (0-9) - Clear and DEL have
+            // their own dedicated handlers, and there's no decimal point button,
+            // since quantities are whole numbers.
+            _activeKeypadTarget.Text += digit;
+            _activeKeypadTarget.CaretIndex = _activeKeypadTarget.Text.Length;
+        }
+
+        private void KeypadClear_Click(object sender, RoutedEventArgs e)
+        {
+            if (_activeKeypadTarget == null) return;
+            _activeKeypadTarget.Text = "";
+        }
+
+        private void KeypadBackspace_Click(object sender, RoutedEventArgs e)
+        {
+            if (_activeKeypadTarget == null || _activeKeypadTarget.Text.Length == 0) return;
+            _activeKeypadTarget.Text = _activeKeypadTarget.Text[..^1];
+            _activeKeypadTarget.CaretIndex = _activeKeypadTarget.Text.Length;
+        }
+
+        private void QtyKeypadInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) ApplyQty_Click(sender, e);
+        }
+
+        private void ApplyQty_Click(object sender, RoutedEventArgs e)
+        {
+            if (CartGrid.SelectedItem is not CartLine line)
+            {
+                ErrorText.Text = "Select a cart line first, then type its quantity.";
+                return;
+            }
+            if (!decimal.TryParse(QtyKeypadInput.Text, out var qty) || qty <= 0)
+            {
+                ErrorText.Text = "Enter a valid quantity greater than zero.";
+                return;
+            }
+
+            line.Quantity = qty;
+            QtyKeypadInput.Text = "";
+            CartGrid.SelectedItem = null;
+            CartGrid.Items.Refresh();
+            RecomputeTotals();
+            ErrorText.Text = "";
+        }
+
+        // ---------------- LOYALTY ----------------
+        private void LoyaltyCard_Click(object sender, RoutedEventArgs e)
+        {
+            var popup = new LoyaltyAttachPopup { Owner = this };
+            if (popup.ShowDialog() == true && popup.Selected != null)
+            {
+                _attachedLoyaltyMember = popup.Selected;
+                LoyaltyBadgeText.Text = $"🎁 {_attachedLoyaltyMember.Name?.Trim()} · {_attachedLoyaltyMember.PointsBalance:N0} pts";
+                LoyaltyBadge.Visibility = Visibility.Visible;
+            }
+        }
+
+
+        /// <summary>Uses the first configured earning rule as the current ratio -
+        /// there's no "active rule" concept yet, so with more than one rule
+        /// defined this picks whichever sorts first by name.</summary>
+        private async System.Threading.Tasks.Task<decimal> ComputePointsEarnedAsync(decimal saleTotal)
+        {
+            var rules = await _loyaltyService.GetAllSettingsAsync();
+            var rule = rules.FirstOrDefault();
+            if (rule == null || rule.Amount is not > 0 || rule.Points is not > 0) return 0;
+
+            return Math.Round(saleTotal / rule.Amount.Value * rule.Points.Value, 2);
+        }
+
         // ---------------- TOTALS (subtotal -> discount -> grand total -> VAT) ----------------
         private decimal Subtotal => Math.Round(_cart.Sum(l => l.Amount), 2);
 
@@ -294,13 +418,12 @@ namespace Clidapos.Wpf.Views
             var taxable = vatPercent > 0 ? Math.Round(total / (1 + (vatPercent / 100m)), 2) : total;
             var vat = Math.Round(total - taxable, 2);
 
+            LinesCountText.Text = _cart.Count.ToString();
+            ItemCountText.Text = _cart.Sum(l => l.Quantity).ToString("N2");
             SubtotalText.Text = subtotal.ToString("N2");
-            DiscountAmountText.Text = discountAmt > 0
-                ? $"- {AppSettings.CurrencySymbol} {discountAmt:N2} off"
-                : "No discount applied";
+            DiscountAmountText.Text = discountAmt.ToString("N2");
             GrandTotalText.Text = total.ToString("N2");
-            VatBreakdownText.Text = $"{AppSettings.CurrencySymbol} — incl. VAT {vat:N2} (net {taxable:N2})";
-            ItemCountText.Text = $"{_cart.Count} line(s) · {_cart.Sum(l => l.Quantity):N2} item(s)";
+            VatBreakdownText.Text = vat.ToString("N2");
 
             ComputeChange();
         }
@@ -359,13 +482,30 @@ namespace Clidapos.Wpf.Views
 
             if (mode == "M-Pesa")
             {
-                var mpesaPopup = new MpesaPaymentPopup(GrandTotal, "Counter Sale", "Sale payment") { Owner = this };
-                var completed = mpesaPopup.ShowDialog() == true;
+                var features = await new StoreFeatureSettingsService().GetOrCreateAsync();
+                var stkEnabled = features.EnableMpesaSTKPush?.Trim().ToUpper() != "N";
 
-                if (!completed || mpesaPopup.PaymentResult == null)
+                if (stkEnabled)
                 {
-                    ErrorText.Text = "M-Pesa payment was not completed. Sale not saved.";
-                    return;
+                    var mpesaPopup = new MpesaPaymentPopup(GrandTotal, "Counter Sale", "Sale payment") { Owner = this };
+                    var completed = mpesaPopup.ShowDialog() == true;
+
+                    if (!completed || mpesaPopup.PaymentResult == null)
+                    {
+                        ErrorText.Text = "M-Pesa payment was not completed. Sale not saved.";
+                        return;
+                    }
+                }
+                else
+                {
+                    var manualPopup = new MpesaManualPaymentPopup(GrandTotal) { Owner = this };
+                    var completed = manualPopup.ShowDialog() == true;
+
+                    if (!completed || manualPopup.PaymentResult == null)
+                    {
+                        ErrorText.Text = "M-Pesa payment was not confirmed. Sale not saved.";
+                        return;
+                    }
                 }
 
                 received = GrandTotal;
@@ -418,8 +558,45 @@ namespace Clidapos.Wpf.Views
                 {
                     var detail = ledgerEx.InnerException?.Message ?? ledgerEx.Message;
                     MessageBox.Show(
-                        $"Sale {result.BillNo} was saved, but recording it to {creditCustomer.Name.Trim()}'s ledger failed:\n\n{detail}\n\n" +
+                        $"Sale {result.BillNo} was saved, but recording it to {(creditCustomer.Name ?? "").Trim()}'s ledger failed:\n\n{detail}\n\n" +
                         "Please add it manually from Customer Ledger.",
+                        "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+
+            // If nobody attached a loyalty card manually before Pay, and the
+            // shop has Loyalty turned on, ask now - once, right after the sale
+            // completes, rather than never asking at all.
+            var featuresForLoyalty = await new StoreFeatureSettingsService().GetOrCreateAsync();
+            if (_attachedLoyaltyMember == null && featuresForLoyalty.EnableLoyaltyProgram?.Trim().ToUpper() != "N")
+            {
+                var loyaltyPromptPopup = new LoyaltyAttachPopup { Owner = this };
+                if (loyaltyPromptPopup.ShowDialog() == true && loyaltyPromptPopup.Selected != null)
+                {
+                    _attachedLoyaltyMember = loyaltyPromptPopup.Selected;
+                }
+            }
+
+            // Best-effort, same discipline as the credit ledger above: a failure
+            // recording points should never undo an already-completed sale.
+            var pointsEarnedNote = "";
+            if (_attachedLoyaltyMember != null)
+            {
+                try
+                {
+                    var points = await ComputePointsEarnedAsync(result.GrandTotal);
+                    if (points > 0)
+                    {
+                        await _loyaltyService.AddPointsEarnedAsync(
+                            _attachedLoyaltyMember.MemberID, $"Purchase - Sale {result.BillNo}", points);
+                        pointsEarnedNote = $"\n{_attachedLoyaltyMember.Name?.Trim()} earned {points:N2} points.";
+                    }
+                }
+                catch (Exception loyaltyEx)
+                {
+                    var detail = loyaltyEx.InnerException?.Message ?? loyaltyEx.Message;
+                    MessageBox.Show(
+                        $"Sale {result.BillNo} was saved, but recording loyalty points failed:\n\n{detail}",
                         "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
@@ -428,8 +605,9 @@ namespace Clidapos.Wpf.Views
                 $"Sale {result.BillNo} completed.\n\n" +
                 $"Total: {AppSettings.CurrencySymbol} {result.GrandTotal:N2}\n" +
                 (mode == "Credit"
-                    ? $"Charged to: {creditCustomer?.Name.Trim()} (added to their credit balance)"
-                    : $"Change: {AppSettings.CurrencySymbol} {result.Change:N2}"),
+                    ? $"Charged to: {(creditCustomer?.Name ?? "").Trim()} (added to their credit balance)"
+                    : $"Change: {AppSettings.CurrencySymbol} {result.Change:N2}") +
+                pointsEarnedNote,
                 "Clidapos");
 
             var printNow = MessageBox.Show("Print a receipt for this sale?", "Clidapos",
@@ -447,11 +625,14 @@ namespace Clidapos.Wpf.Views
             _cart.Clear();
             SearchBox.Clear();
             AmountReceivedInput.Clear();
-            ResultsList.ItemsSource = null;
+            QtyKeypadInput.Clear();
+            SetSearchResults(null);
             ErrorText.Text = "";
             DiscountInput.Text = "0";
             CashMode.IsChecked = true;
             CreditCustomerCombo.SelectedItem = null;
+            _attachedLoyaltyMember = null;
+            LoyaltyBadge.Visibility = Visibility.Collapsed;
             RecomputeTotals();
             SearchBox.Focus();
         }

@@ -155,6 +155,7 @@
 							</StackPanel>
 						</Button>
 
+
 						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="Profile" Background="#1A1A1F">
 							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 								<Image Source="pack://application:,,,/Assets/profile.png" Width="52" Height="52"/>
@@ -360,6 +361,15 @@
 								<Image Source="pack://application:,,,/Assets/finance.png" Width="52" Height="52"/>
 								<Border Style="{StaticResource TileLabelBar}">
 									<TextBlock Text="Finance &amp; Banking" Style="{StaticResource TileLabel}"/>
+								</Border>
+							</StackPanel>
+						</Button>
+
+						<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="RegisterBanks" Background="#1A1A1F">
+							<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Image Source="pack://application:,,,/Assets/finance.png" Width="52" Height="52"/>
+								<Border Style="{StaticResource TileLabelBar}">
+									<TextBlock Text="Register Banks" Style="{StaticResource TileLabel}"/>
 								</Border>
 							</StackPanel>
 						</Button>

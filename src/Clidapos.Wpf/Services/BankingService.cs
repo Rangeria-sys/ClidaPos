@@ -41,6 +41,37 @@ namespace Clidapos.Wpf.Services
             return await db.Set<Bank>().Select(b => b.BankName.Trim()).OrderBy(n => n).ToListAsync();
         }
 
+        public async Task<List<BankBranch>> GetAllBranchesAsync()
+        {
+            using var db = new ClidaposDbContext();
+            return await db.Set<BankBranch>().OrderBy(b => b.BankName).ThenBy(b => b.BranchName).ToListAsync();
+        }
+
+        public async Task UpdateBranchAsync(BankBranch branch)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<BankBranch>().FirstOrDefaultAsync(b => b.Id == branch.Id);
+            if (existing == null) return;
+
+            existing.BankName = branch.BankName;
+            existing.BranchName = branch.BranchName;
+            existing.Address = branch.Address;
+            existing.ContactNo = branch.ContactNo;
+            existing.SwiftCode = branch.SwiftCode;
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteBranchAsync(int id)
+        {
+            using var db = new ClidaposDbContext();
+            var existing = await db.Set<BankBranch>().FirstOrDefaultAsync(b => b.Id == id);
+            if (existing != null)
+            {
+                db.Set<BankBranch>().Remove(existing);
+                await db.SaveChangesAsync();
+            }
+        }
+
         /// <summary>Creates the branch if it doesn't already exist for this bank, returns its Id either way.</summary>
         public async Task<int> EnsureBranchAsync(string bankName, string branchName, string? address, string? contactNo, string? swiftCode, string? ifscCode)
         {

@@ -342,7 +342,7 @@ namespace Clidapos.Wpf.Services
             var supplierLookup = suppliers.ToDictionary(s => s.ID);
 
             string SupplierNameFor(int supplierId) =>
-                supplierLookup.ContainsKey(supplierId) ? supplierLookup[supplierId].Name.Trim() : "(unknown supplier)";
+                supplierLookup.ContainsKey(supplierId) ? (supplierLookup[supplierId].Name ?? "").Trim() : "(unknown supplier)";
 
             var purchaseIds = purchases.Select(p => p.ST_ID).ToList();
             var lines = await db.PurchaseJoins

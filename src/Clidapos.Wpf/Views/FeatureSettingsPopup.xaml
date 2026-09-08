@@ -1,0 +1,121 @@
+<Window x:Class="Clidapos.Wpf.Views.FeatureSettingsPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sales Screen Settings"
+        WindowStyle="None"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        Background="#96000000"
+        AllowsTransparency="True"
+        ShowInTaskbar="False">
+
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/Styles/PopupStyles.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+
+	<Grid Background="Transparent" MouseDown="Backdrop_MouseDown">
+		<Border Style="{StaticResource PopupCard}" Width="460" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel>
+
+				<Border Style="{StaticResource PopupHeaderBar}" Background="#1A1A1F" Padding="18,14">
+					<Grid>
+						<TextBlock Text="SALES SCREEN SETTINGS" Style="{StaticResource PopupTitle}" FontSize="17"/>
+						<Button Click="Close_Click" HorizontalAlignment="Right"
+                                Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand">
+							<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
+                                   Width="26" Height="26"/>
+						</Button>
+					</Grid>
+				</Border>
+
+				<StackPanel Margin="20">
+
+					<TextBlock Text="These take effect immediately for every terminal sharing this database - no restart needed."
+                               Foreground="#8A8A92" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,18"/>
+
+					<Border Background="#F7F7F9" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0" Margin="0,0,14,0">
+								<TextBlock Text="M-Pesa STK Push" FontWeight="Bold" FontSize="14" Foreground="#1C1C1F"/>
+								<TextBlock Text="When on, customers get an automatic payment prompt on their phone. When off, the cashier reads out the Till/Paybill number and confirms payment manually."
+                                           Foreground="#6B6B72" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
+							</StackPanel>
+							<ComboBox Grid.Column="1" x:Name="StkPushInput" Style="{StaticResource PopupCombo}" Width="90" VerticalAlignment="Top">
+								<ComboBoxItem Content="On"/>
+								<ComboBoxItem Content="Off"/>
+							</ComboBox>
+						</Grid>
+					</Border>
+
+					<Border Background="#F7F7F9" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0" Margin="0,0,14,0">
+								<TextBlock Text="Loyalty Program" FontWeight="Bold" FontSize="14" Foreground="#1C1C1F"/>
+								<TextBlock Text="When off, the Loyalty Card option is hidden from the Sales screen entirely, for shops that don't run a loyalty program."
+                                           Foreground="#6B6B72" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
+							</StackPanel>
+							<ComboBox Grid.Column="1" x:Name="LoyaltyInput" Style="{StaticResource PopupCombo}" Width="90" VerticalAlignment="Top">
+								<ComboBoxItem Content="On"/>
+								<ComboBoxItem Content="Off"/>
+							</ComboBox>
+						</Grid>
+					</Border>
+
+					<Border Background="#F7F7F9" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0" Margin="0,0,14,0">
+								<TextBlock Text="Bank Payment" FontWeight="Bold" FontSize="14" Foreground="#1C1C1F"/>
+								<TextBlock Text="When off, the Bank tile is hidden from the Sales screen's payment options."
+                                           Foreground="#6B6B72" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
+							</StackPanel>
+							<ComboBox Grid.Column="1" x:Name="BankInput" Style="{StaticResource PopupCombo}" Width="90" VerticalAlignment="Top">
+								<ComboBoxItem Content="On"/>
+								<ComboBoxItem Content="Off"/>
+							</ComboBox>
+						</Grid>
+					</Border>
+
+					<Border Background="#F7F7F9" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0" Margin="0,0,14,0">
+								<TextBlock Text="Credit Payment" FontWeight="Bold" FontSize="14" Foreground="#1C1C1F"/>
+								<TextBlock Text="When off, the Credit tile is hidden from the Sales screen's payment options - for shops that don't sell on account."
+                                           Foreground="#6B6B72" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
+							</StackPanel>
+							<ComboBox Grid.Column="1" x:Name="CreditInput" Style="{StaticResource PopupCombo}" Width="90" VerticalAlignment="Top">
+								<ComboBoxItem Content="On"/>
+								<ComboBoxItem Content="Off"/>
+							</ComboBox>
+						</Grid>
+					</Border>
+
+					<Button Content="Save Settings" Click="Save_Click" Height="48"
+                            Background="#178E86" Foreground="White" FontWeight="Bold" FontSize="14"
+                            BorderThickness="0" Cursor="Hand"/>
+
+					<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Grid>
+</Window>

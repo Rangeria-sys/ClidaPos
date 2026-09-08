@@ -171,6 +171,13 @@
 						</StackPanel>
 					</Button>
 
+					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="SalesScreenSettings">
+						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+							<Image Source="pack://application:,,,/Assets/mastersetting.png" Width="72" Height="72"/>
+							<TextBlock Text="Sales Screen Settings" Style="{StaticResource TileLabel}"/>
+						</StackPanel>
+					</Button>
+
 					<Button Style="{StaticResource TileButton}" Click="Nav_Click" Tag="ExecuteQuery">
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 							<Image Source="pack://application:,,,/Assets/executequery.png" Width="72" Height="72"/>

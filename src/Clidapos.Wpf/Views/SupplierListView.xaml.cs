@@ -30,7 +30,7 @@ namespace Clidapos.Wpf.Views
             var q = SearchBox.Text.Trim().ToLower();
             SupplierGrid.ItemsSource = string.IsNullOrEmpty(q)
                 ? _all
-                : _all.Where(s => s.Name.Trim().ToLower().Contains(q)
+                : _all.Where(s => (s.Name ?? "").Trim().ToLower().Contains(q)
                                || s.SupplierID.Trim().ToLower().Contains(q)).ToList();
         }
 
