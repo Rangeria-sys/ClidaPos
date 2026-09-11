@@ -92,8 +92,17 @@
                     <TextBlock x:Name="DetailText" Foreground="#888888" FontSize="13"
                                HorizontalAlignment="Center" TextAlignment="Center"/>
 
-                    <Button x:Name="StartButton" Content="START PERIOD" Background="#34C759"
-                            Style="{StaticResource ActionBtn}" Margin="0,24,0,0" Click="StartPeriod_Click"
+                    <StackPanel x:Name="OpeningCashPanel" Margin="0,24,0,0" Visibility="Collapsed">
+						<TextBlock Text="OPENING CASH COUNT — REQUIRED" Foreground="#888888" FontSize="12" FontWeight="Bold"/>
+						<TextBox x:Name="OpeningCashInput" Background="#2A2A32" Foreground="White"
+                                 BorderBrush="#3A3A42" BorderThickness="1" Padding="12" FontSize="18"
+                                 Margin="0,8,0,0"/>
+						<TextBlock Text="Count the float in the drawer before the first sale." Foreground="#666666"
+                                   FontSize="11" Margin="0,4,0,0"/>
+					</StackPanel>
+
+					<Button x:Name="StartButton" Content="START PERIOD" Background="#34C759"
+                            Style="{StaticResource ActionBtn}" Margin="0,16,0,0" Click="StartPeriod_Click"
                             Visibility="Collapsed"/>
 
                     <Button x:Name="SummaryButton" Content="VIEW SUMMARY / END PERIOD" Background="#DC143C"

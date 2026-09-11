@@ -7,30 +7,6 @@ using Clidapos.Wpf.Data;
 
 namespace Clidapos.Wpf.Services
 {
-    public class PurchaseReportRow
-    {
-        public string InvoiceNo { get; set; } = "";
-        public DateTime Date { get; set; }
-        public string SupplierName { get; set; } = "";
-        public decimal GrandTotal { get; set; }
-    }
-
-    public class SupplierBreakdownRow
-    {
-        public string SupplierName { get; set; } = "";
-        public int PurchaseCount { get; set; }
-        public decimal TotalValue { get; set; }
-    }
-
-    public class PurchaseReportSummary
-    {
-        public int PurchaseCount { get; set; }
-        public decimal GrandTotal { get; set; }
-        public decimal TotalItems { get; set; }
-        public List<SupplierBreakdownRow> BySupplier { get; set; } = new();
-        public List<PurchaseReportRow> Purchases { get; set; } = new();
-    }
-
     public enum SalesBreakdownGranularity { Daily, Weekly, Monthly }
 
     public class SalesBreakdownRow
@@ -98,8 +74,41 @@ namespace Clidapos.Wpf.Services
                 BillCount = bills.Count,
                 GrandTotal = bills.Sum(b => b.GrandTotal ?? 0),
                 TaxableTotal = bills.Sum(b => b.TotalTaxableAmount ?? 0),
-                VatTotal = bills.Sum(b => b.TotalTaxAmount ?? 0)
+                VatTotal = bills.Sum(b => b.TotalTaxAmount ?? 0),
+                DiscountsTotal = bills.Sum(b => b.TADiscountAmt ?? 0),
+                OpeningCash = start.OpeningCash,
+                ClosingCash = end?.ClosingCash,
+                CashierName = start.CashierName
             };
+
+            var voided = await GetVoidedSalesAsync(from, to);
+            summary.VoidedSalesCount = voided.Count;
+            summary.VoidedSalesTotal = voided.TotalVoided;
+
+            // Cashier breakdown - Operator on each sale identifies who rang it
+            // up, regardless of the period itself being shared/store-wide.
+            var operators = await db.Registrations.ToListAsync();
+            var voidsByOperator = voided.Rows
+                .GroupBy(v => (v.Operator ?? "").Trim())
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            summary.CashierBreakdown = bills
+                .GroupBy(b => (b.Operator ?? "").Trim())
+                .Select(g =>
+                {
+                    var op = operators.FirstOrDefault(o => o.UserID.Trim() == g.Key);
+                    var name = op != null ? op.Name.Trim() : (string.IsNullOrEmpty(g.Key) ? "Unknown" : g.Key);
+                    voidsByOperator.TryGetValue(g.Key, out var voidCount);
+                    return new CashierBreakdownRow
+                    {
+                        CashierName = name,
+                        BillCount = g.Count(),
+                        Takings = g.Sum(b => b.GrandTotal ?? 0),
+                        VoidCount = voidCount
+                    };
+                })
+                .OrderByDescending(c => c.Takings)
+                .ToList();
 
             foreach (var b in bills)
             {
@@ -314,66 +323,6 @@ namespace Clidapos.Wpf.Services
                 TotalVoided = rows.Sum(r => r.GrandTotal),
                 Rows = rows
             };
-        }
-
-        /// <summary>
-        /// Totals every purchase whose Date falls within [from, to] inclusive -
-        /// for the Purchase Report screen. Breaks totals down by supplier and
-        /// lists each individual purchase.
-        /// </summary>
-        public async Task<PurchaseReportSummary> GetPurchaseReportAsync(DateTime from, DateTime to)
-        {
-            using var db = new ClidaposDbContext();
-
-            var purchases = await db.Purchases
-                .Where(p => p.Date >= from && p.Date <= to)
-                .ToListAsync();
-
-            var summary = new PurchaseReportSummary
-            {
-                PurchaseCount = purchases.Count,
-                GrandTotal = purchases.Sum(p => p.GrandTotal)
-            };
-
-            if (purchases.Count == 0)
-                return summary;
-
-            var suppliers = await db.Suppliers.ToListAsync();
-            var supplierLookup = suppliers.ToDictionary(s => s.ID);
-
-            string SupplierNameFor(int supplierId) =>
-                supplierLookup.ContainsKey(supplierId) ? (supplierLookup[supplierId].Name ?? "").Trim() : "(unknown supplier)";
-
-            var purchaseIds = purchases.Select(p => p.ST_ID).ToList();
-            var lines = await db.PurchaseJoins
-                .Where(j => purchaseIds.Contains(j.PurchaseID))
-                .ToListAsync();
-
-            summary.TotalItems = lines.Sum(l => l.Qty);
-
-            summary.Purchases = purchases
-                .Select(p => new PurchaseReportRow
-                {
-                    InvoiceNo = p.InvoiceNo.Trim(),
-                    Date = p.Date,
-                    SupplierName = SupplierNameFor(p.Supplier_ID),
-                    GrandTotal = p.GrandTotal
-                })
-                .OrderByDescending(p => p.Date)
-                .ToList();
-
-            summary.BySupplier = purchases
-                .GroupBy(p => SupplierNameFor(p.Supplier_ID))
-                .Select(g => new SupplierBreakdownRow
-                {
-                    SupplierName = g.Key,
-                    PurchaseCount = g.Count(),
-                    TotalValue = g.Sum(p => p.GrandTotal)
-                })
-                .OrderByDescending(s => s.TotalValue)
-                .ToList();
-
-            return summary;
         }
     }
 }

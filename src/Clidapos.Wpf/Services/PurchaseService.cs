@@ -45,11 +45,137 @@ namespace Clidapos.Wpf.Services
         public decimal Amount { get; set; }
     }
 
+    public class PurchaseReportSummary
+    {
+        public decimal TotalSpent { get; set; }
+        public int OrderCount { get; set; }
+        public decimal ItemsReceived { get; set; }
+        public decimal OutstandingPayables { get; set; }
+        public int UnpaidInvoiceCount { get; set; }
+        public string UnpaidSupplierSummary { get; set; } = "";
+
+        public List<SupplierBreakdownRow> BySupplier { get; set; } = new();
+        public List<TopPurchasedItemRow> TopItems { get; set; } = new();
+        public List<PurchaseRow> Purchases { get; set; } = new();
+    }
+
+    public class SupplierBreakdownRow
+    {
+        public string SupplierName { get; set; } = "";
+        public int OrderCount { get; set; }
+        public decimal AvgOrder { get; set; }
+        public DateTime LastOrder { get; set; }
+        public decimal Total { get; set; }
+    }
+
+    public class TopPurchasedItemRow
+    {
+        public string ProductName { get; set; } = "";
+        public decimal Qty { get; set; }
+        public decimal Value { get; set; }
+    }
+
+    public class PurchaseRow
+    {
+        public DateTime Date { get; set; }
+        public string InvoiceNo { get; set; } = "";
+        public string SupplierName { get; set; } = "";
+        public bool IsPaid { get; set; }
+        public decimal Total { get; set; }
+    }
+
     public class PurchaseService
     {
         private const string DefaultSupplierCode = "SUPP-DEFAULT";
         private readonly WarehouseService _warehouseService = new();
         private readonly SupplierLedgerService _supplierLedgerService = new();
+
+        /// <summary>Everything needed for the Purchase Report screen - date
+        /// range is inclusive on both ends. Only "Restock" type purchases
+        /// count (same filter GetHistoryAsync uses) - "Initial" entries are
+        /// buying-price-setting, not real purchases. Outstanding payables is
+        /// scoped to this same date range, matching what the Purchases table
+        /// below it shows.</summary>
+        public async Task<PurchaseReportSummary> GetPurchaseReportAsync(DateTime from, DateTime to)
+        {
+            using var db = new ClidaposDbContext();
+
+            var rangeStart = from.Date;
+            var rangeEnd = to.Date.AddDays(1).AddTicks(-1);
+
+            var purchases = await db.Purchases
+                .Where(p => p.PurchaseType == "Restock" && p.Date >= rangeStart && p.Date <= rangeEnd)
+                .ToListAsync();
+
+            var suppliers = await db.Suppliers.ToListAsync();
+            var supplierLookup = suppliers.ToDictionary(s => s.ID);
+
+            var purchaseIds = purchases.Select(p => p.ST_ID).ToList();
+            var lines = await db.PurchaseJoins.Where(j => purchaseIds.Contains(j.PurchaseID)).ToListAsync();
+            var products = await db.Products.ToListAsync();
+            var productLookup = products.ToDictionary(p => p.PID);
+
+            string SupplierName(int id) => supplierLookup.TryGetValue(id, out var s) ? (s.Name?.Trim() ?? "") : "";
+
+            var summary = new PurchaseReportSummary
+            {
+                TotalSpent = purchases.Sum(p => p.GrandTotal),
+                OrderCount = purchases.Count,
+                ItemsReceived = lines.Sum(l => l.Qty),
+                OutstandingPayables = purchases.Sum(p => Math.Max(0, p.PaymentDue))
+            };
+
+            var unpaid = purchases.Where(p => p.PaymentDue > 0).ToList();
+            summary.UnpaidInvoiceCount = unpaid.Count;
+            if (unpaid.Count == 1)
+            {
+                summary.UnpaidSupplierSummary = $"1 unpaid invoice · owed to {SupplierName(unpaid[0].Supplier_ID)}";
+            }
+            else if (unpaid.Count > 1)
+            {
+                var supplierCount = unpaid.Select(p => p.Supplier_ID).Distinct().Count();
+                summary.UnpaidSupplierSummary = $"{unpaid.Count} unpaid invoices · across {supplierCount} supplier{(supplierCount == 1 ? "" : "s")}";
+            }
+
+            summary.BySupplier = purchases
+                .GroupBy(p => p.Supplier_ID)
+                .Select(g => new SupplierBreakdownRow
+                {
+                    SupplierName = SupplierName(g.Key),
+                    OrderCount = g.Count(),
+                    AvgOrder = g.Average(p => p.GrandTotal),
+                    LastOrder = g.Max(p => p.Date),
+                    Total = g.Sum(p => p.GrandTotal)
+                })
+                .OrderByDescending(s => s.Total)
+                .ToList();
+
+            summary.TopItems = lines
+                .GroupBy(l => l.ProductID)
+                .Select(g => new TopPurchasedItemRow
+                {
+                    ProductName = productLookup.TryGetValue(g.Key, out var p) ? p.ProductName.Trim() : "(unknown product)",
+                    Qty = g.Sum(l => l.Qty),
+                    Value = g.Sum(l => l.TotalAmount)
+                })
+                .OrderByDescending(t => t.Value)
+                .Take(10)
+                .ToList();
+
+            summary.Purchases = purchases
+                .Select(p => new PurchaseRow
+                {
+                    Date = p.Date,
+                    InvoiceNo = p.InvoiceNo.Trim(),
+                    SupplierName = SupplierName(p.Supplier_ID),
+                    IsPaid = p.PaymentDue <= 0,
+                    Total = p.GrandTotal
+                })
+                .OrderByDescending(p => p.Date)
+                .ToList();
+
+            return summary;
+        }
 
         public async Task<int> EnsureDefaultSupplierAsync()
         {

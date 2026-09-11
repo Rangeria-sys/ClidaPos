@@ -19,7 +19,8 @@ namespace Clidapos.Wpf.Services
     {
         private readonly IntegrationSettingsService _settingsService = new();
 
-        public async Task<EmailSendResult> SendAsync(string toAddress, string subject, string body)
+        public async Task<EmailSendResult> SendAsync(string toAddress, string subject, string body,
+            byte[]? attachmentBytes = null, string? attachmentFileName = null)
         {
             var config = await _settingsService.GetActiveEmailConfigAsync();
 
@@ -40,8 +41,22 @@ namespace Clidapos.Wpf.Services
 
                 using var message = new MailMessage(fromAddress, toAddress.Trim(), subject, body);
 
-                await client.SendMailAsync(message);
-                return new EmailSendResult { Success = true, Message = "Email sent." };
+                System.IO.MemoryStream? attachmentStream = null;
+                if (attachmentBytes != null && !string.IsNullOrWhiteSpace(attachmentFileName))
+                {
+                    attachmentStream = new System.IO.MemoryStream(attachmentBytes);
+                    message.Attachments.Add(new Attachment(attachmentStream, attachmentFileName, "application/pdf"));
+                }
+
+                try
+                {
+                    await client.SendMailAsync(message);
+                    return new EmailSendResult { Success = true, Message = "Email sent." };
+                }
+                finally
+                {
+                    attachmentStream?.Dispose();
+                }
             }
             catch (Exception ex)
             {

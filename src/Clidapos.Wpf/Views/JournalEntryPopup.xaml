@@ -69,10 +69,40 @@
 			</Grid>
 
 			<TextBlock Text="Debit Account (increases here)" Style="{StaticResource FieldLabel}"/>
-			<ComboBox x:Name="DebitAccountInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,12"/>
+			<Grid Margin="0,0,0,12">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="10"/>
+					<ColumnDefinition Width="130"/>
+				</Grid.ColumnDefinitions>
+				<ComboBox Grid.Column="0" x:Name="DebitAccountInput" Style="{StaticResource PopupCombo}"
+                          SelectionChanged="DebitAccountInput_SelectionChanged" LostFocus="DebitAccountInput_LostFocus"/>
+				<ComboBox Grid.Column="2" x:Name="DebitTypeInput" Style="{StaticResource PopupCombo}" IsEditable="False">
+					<ComboBoxItem Content="Asset"/>
+					<ComboBoxItem Content="Liability"/>
+					<ComboBoxItem Content="Equity"/>
+					<ComboBoxItem Content="Income"/>
+					<ComboBoxItem Content="Expense"/>
+				</ComboBox>
+			</Grid>
 
 			<TextBlock Text="Credit Account (decreases / source)" Style="{StaticResource FieldLabel}"/>
-			<ComboBox x:Name="CreditAccountInput" Style="{StaticResource PopupCombo}" Margin="0,0,0,12"/>
+			<Grid Margin="0,0,0,12">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="10"/>
+					<ColumnDefinition Width="130"/>
+				</Grid.ColumnDefinitions>
+				<ComboBox Grid.Column="0" x:Name="CreditAccountInput" Style="{StaticResource PopupCombo}"
+                          SelectionChanged="CreditAccountInput_SelectionChanged" LostFocus="CreditAccountInput_LostFocus"/>
+				<ComboBox Grid.Column="2" x:Name="CreditTypeInput" Style="{StaticResource PopupCombo}" IsEditable="False">
+					<ComboBoxItem Content="Asset"/>
+					<ComboBoxItem Content="Liability"/>
+					<ComboBoxItem Content="Equity"/>
+					<ComboBoxItem Content="Income"/>
+					<ComboBoxItem Content="Expense"/>
+				</ComboBox>
+			</Grid>
 
 			<Grid Margin="0,0,0,12">
 				<Grid.ColumnDefinitions>

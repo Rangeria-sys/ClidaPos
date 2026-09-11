@@ -103,10 +103,25 @@ namespace Clidapos.Wpf.Views
             NoVoidedText.Visibility = _voided.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void RunReport_Click(object sender, RoutedEventArgs e) => await RunReport();
+        private async void RunReport_Click(object sender, RoutedEventArgs e)
+        {
+            SetQuickRangeActive(null);
+            await RunReport();
+        }
+
+        /// <summary>Exactly one (or none) of the 3 quick-range toggles is
+        /// ever checked at a time - clicking one clears the others, and a
+        /// manually-run custom range clears all 3.</summary>
+        private void SetQuickRangeActive(ToggleButton? active)
+        {
+            TodayBtn.IsChecked = active == TodayBtn;
+            ThisWeekBtn.IsChecked = active == ThisWeekBtn;
+            ThisMonthBtn.IsChecked = active == ThisMonthBtn;
+        }
 
         private async void Today_Click(object sender, RoutedEventArgs e)
         {
+            SetQuickRangeActive(TodayBtn);
             var today = DateTime.Today;
             FromDate.SelectedDate = today;
             ToDate.SelectedDate = today;
@@ -115,6 +130,7 @@ namespace Clidapos.Wpf.Views
 
         private async void ThisWeek_Click(object sender, RoutedEventArgs e)
         {
+            SetQuickRangeActive(ThisWeekBtn);
             var today = DateTime.Today;
             var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
             FromDate.SelectedDate = today.AddDays(-daysSinceMonday);
@@ -124,6 +140,7 @@ namespace Clidapos.Wpf.Views
 
         private async void ThisMonth_Click(object sender, RoutedEventArgs e)
         {
+            SetQuickRangeActive(ThisMonthBtn);
             var today = DateTime.Today;
             FromDate.SelectedDate = new DateTime(today.Year, today.Month, 1);
             ToDate.SelectedDate = today;

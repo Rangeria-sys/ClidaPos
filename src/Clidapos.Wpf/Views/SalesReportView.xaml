@@ -20,27 +20,29 @@
 			<Setter Property="Padding" Value="8"/>
 		</Style>
 
-		<Style x:Key="QuickRangeBtn" TargetType="Button">
+		<Style x:Key="QuickRangeToggle" TargetType="ToggleButton">
 			<Setter Property="Height" Value="38"/>
 			<Setter Property="Foreground" Value="#1C1C1F"/>
 			<Setter Property="FontWeight" Value="SemiBold"/>
 			<Setter Property="FontSize" Value="13"/>
 			<Setter Property="Background" Value="#F0F0F2"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
+			<Setter Property="BorderThickness" Value="0"/>
 			<Setter Property="Padding" Value="14,0"/>
 			<Setter Property="Margin" Value="0,0,8,0"/>
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="Template">
 				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+					<ControlTemplate TargetType="ToggleButton">
+						<Border x:Name="B" Background="{TemplateBinding Background}" CornerRadius="6">
 							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
 						</Border>
 						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter TargetName="B" Property="Background" Value="#0E5E5A"/>
+								<Setter Property="Foreground" Value="White"/>
+							</Trigger>
 							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Background" Value="#E4E4E8"/>
+								<Setter TargetName="B" Property="Opacity" Value="0.85"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -151,7 +153,7 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsChecked" Value="True">
-								<Setter Property="Background" Value="#F3A123"/>
+								<Setter Property="Background" Value="#0E5E5A"/>
 								<Setter Property="Foreground" Value="White"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
@@ -293,7 +295,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<Border Grid.Row="0" Background="#1E1E24">
+		<Border Grid.Row="0" Background="#0E5E5A">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
@@ -308,7 +310,7 @@
 						   Width="42" Height="42"/>
 				</Button>
 
-				<TextBlock Grid.Column="1" Text="SALES REPORT" Foreground="#F3A123" FontSize="16"
+				<TextBlock Grid.Column="1" Text="Sales Report" Foreground="White" FontSize="20"
 						   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
@@ -353,14 +355,19 @@
 						</Grid>
 
 						<StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-							<Button Content="Today" Style="{StaticResource QuickRangeBtn}" Click="Today_Click"/>
-							<Button Content="This Week" Style="{StaticResource QuickRangeBtn}" Click="ThisWeek_Click"/>
-							<Button Content="This Month" Style="{StaticResource QuickRangeBtn}" Click="ThisMonth_Click"/>
-							<Button Content="Run Report" Style="{StaticResource RunBtn}" Click="RunReport_Click"/>
-							<Button x:Name="PrintButton" Content="🖨 Print" Style="{StaticResource QuickRangeBtn}"
-                                    Margin="8,0,0,0" Click="Print_Click"/>
-							<Button Content="⭳ Excel" Style="{StaticResource ExportBtn}" Click="ExportExcel_Click"/>
-							<Button Content="⭳ PDF" Style="{StaticResource ExportBtn}" Click="ExportPdf_Click"/>
+							<ToggleButton x:Name="TodayBtn" Content="Today" Style="{StaticResource QuickRangeToggle}" IsChecked="True" Click="Today_Click"/>
+							<ToggleButton x:Name="ThisWeekBtn" Content="This Week" Style="{StaticResource QuickRangeToggle}" Click="ThisWeek_Click"/>
+							<ToggleButton x:Name="ThisMonthBtn" Content="This Month" Style="{StaticResource QuickRangeToggle}" Click="ThisMonth_Click"/>
+							<Button Content="Run Report" Style="{StaticResource RunBtn}" Margin="8,0,0,0" Click="RunReport_Click"/>
+						</StackPanel>
+
+						<Border Height="1" Background="#E4E4E8" Margin="0,16,0,14"/>
+
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+							<Button x:Name="PrintButton" Content="Print" Style="{StaticResource ExportBtn}"
+                                    Margin="0,0,0,0" Click="Print_Click"/>
+							<Button Content="Excel" Style="{StaticResource ExportBtn}" Click="ExportExcel_Click"/>
+							<Button Content="PDF" Style="{StaticResource ExportBtn}" Click="ExportPdf_Click"/>
 						</StackPanel>
 					</StackPanel>
 				</Border>
@@ -375,40 +382,45 @@
 					<!-- TAB STRIP -->
 					<Border BorderBrush="#E4E4E8" BorderThickness="0,0,0,1" Margin="0,0,0,16">
 						<StackPanel Orientation="Horizontal">
-							<ToggleButton x:Name="TabTotalsBtn" Content="TOTALS" Style="{StaticResource TabBtn}"
+							<ToggleButton x:Name="TabTotalsBtn" Content="Totals" Style="{StaticResource TabBtn}"
 										  IsChecked="True" Click="TabTotals_Click"/>
-							<ToggleButton x:Name="TabPaymentBtn" Content="PAYMENT MODE" Style="{StaticResource TabBtn}"
+							<ToggleButton x:Name="TabPaymentBtn" Content="Payment Mode" Style="{StaticResource TabBtn}"
 										  Click="TabPayment_Click"/>
-							<ToggleButton x:Name="TabTopItemsBtn" Content="TOP SELLING ITEMS" Style="{StaticResource TabBtn}"
+							<ToggleButton x:Name="TabTopItemsBtn" Content="Top Selling Items" Style="{StaticResource TabBtn}"
 										  Click="TabTopItems_Click"/>
-							<ToggleButton x:Name="TabCashierBtn" Content="BY CASHIER" Style="{StaticResource TabBtn}"
+							<ToggleButton x:Name="TabCashierBtn" Content="By Cashier" Style="{StaticResource TabBtn}"
 										  Click="TabCashier_Click"/>
-							<ToggleButton x:Name="TabVoidedBtn" Content="VOIDED SALES" Style="{StaticResource TabBtn}"
+							<ToggleButton x:Name="TabVoidedBtn" Content="Voided Sales" Style="{StaticResource TabBtn}"
 										  Click="TabVoided_Click"/>
 						</StackPanel>
 					</Border>
 
 					<!-- TAB 1: DAILY/WEEKLY/MONTHLY TOTALS -->
 					<StackPanel x:Name="TotalsTab">
-						<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+						<Border Background="#0E5E5A" CornerRadius="10" Padding="24" Margin="0,0,0,16">
 							<StackPanel>
-								<TextBlock Text="TOTAL TAKINGS (SELECTED RANGE)" Style="{StaticResource CardTitle}"/>
-								<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="#1B8A3D"
-                                           FontSize="42" FontWeight="Bold"/>
+								<TextBlock Text="TOTAL TAKINGS" Foreground="#9FE1CB" FontSize="12" FontWeight="Bold" Margin="0,0,0,4"/>
+								<TextBlock x:Name="GrandTotalText" Text="0.00" Foreground="White"
+                                           FontSize="38" FontWeight="Bold" Margin="0,0,0,14"/>
 
-								<Border Height="1" Background="#E4E4E8" Margin="0,16,0,14"/>
-
-								<Grid Margin="0,0,0,8">
-									<TextBlock Text="Sales (bills)" Style="{StaticResource RowLabel}"/>
-									<TextBlock x:Name="BillCountText" Style="{StaticResource RowValue}"/>
-								</Grid>
-								<Grid Margin="0,0,0,8">
-									<TextBlock Text="Items sold" Style="{StaticResource RowLabel}"/>
-									<TextBlock x:Name="ItemCountText" Style="{StaticResource RowValue}"/>
-								</Grid>
 								<Grid>
-									<TextBlock Text="Average sale" Style="{StaticResource RowLabel}"/>
-									<TextBlock x:Name="AverageText" Style="{StaticResource RowValue}"/>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+									<StackPanel Grid.Column="0">
+										<TextBlock Text="SALES (BILLS)" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+										<TextBlock x:Name="BillCountText" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,2,0,0"/>
+									</StackPanel>
+									<StackPanel Grid.Column="1">
+										<TextBlock Text="ITEMS SOLD" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+										<TextBlock x:Name="ItemCountText" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,2,0,0"/>
+									</StackPanel>
+									<StackPanel Grid.Column="2">
+										<TextBlock Text="AVERAGE SALE" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+										<TextBlock x:Name="AverageText" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,2,0,0"/>
+									</StackPanel>
 								</Grid>
 							</StackPanel>
 						</Border>

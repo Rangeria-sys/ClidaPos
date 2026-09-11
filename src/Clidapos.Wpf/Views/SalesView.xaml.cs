@@ -323,12 +323,14 @@ namespace Clidapos.Wpf.Views
             // since quantities are whole numbers.
             _activeKeypadTarget.Text += digit;
             _activeKeypadTarget.CaretIndex = _activeKeypadTarget.Text.Length;
+            LivePreviewQuantity();
         }
 
         private void KeypadClear_Click(object sender, RoutedEventArgs e)
         {
             if (_activeKeypadTarget == null) return;
             _activeKeypadTarget.Text = "";
+            LivePreviewQuantity();
         }
 
         private void KeypadBackspace_Click(object sender, RoutedEventArgs e)
@@ -336,11 +338,39 @@ namespace Clidapos.Wpf.Views
             if (_activeKeypadTarget == null || _activeKeypadTarget.Text.Length == 0) return;
             _activeKeypadTarget.Text = _activeKeypadTarget.Text[..^1];
             _activeKeypadTarget.CaretIndex = _activeKeypadTarget.Text.Length;
+            LivePreviewQuantity();
+        }
+
+        /// <summary>While typing a quantity on the keypad, the selected line's
+        /// quantity (and the cart's totals) update live, before OK is pressed -
+        /// only actually applies once the typed value parses as a valid,
+        /// positive number, so an empty or partial value mid-type is simply
+        /// ignored rather than zeroing out the line.</summary>
+        private void LivePreviewQuantity()
+        {
+            if (_activeKeypadTarget != QtyKeypadInput) return;
+            if (CartGrid.SelectedItem is not CartLine line) return;
+            if (!decimal.TryParse(QtyKeypadInput.Text, out var qty) || qty <= 0) return;
+
+            line.Quantity = qty;
+            CartGrid.Items.Refresh();
+            RecomputeTotals();
         }
 
         private void QtyKeypadInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter) ApplyQty_Click(sender, e);
+        }
+
+        /// <summary>Enter works like pressing OK no matter which keypad element
+        /// currently has focus - clicking a digit button moves focus to that
+        /// button, and without this, Enter would just re-click whichever button
+        /// last had focus instead of applying the quantity.</summary>
+        private void KeypadArea_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+            ApplyQty_Click(sender, e);
+            e.Handled = true;
         }
 
         private void ApplyQty_Click(object sender, RoutedEventArgs e)

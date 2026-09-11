@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
 
@@ -8,148 +10,238 @@ namespace Clidapos.Wpf.Views
     public partial class DayEndView : Window
     {
         private readonly Registration _currentUser;
+        private readonly int _periodId;
         private readonly ReportService _reportService = new();
         private readonly ShiftService _shiftService = new();
         private readonly LogService _logService = new();
-        private readonly HotelProfileService _hotelService = new();
-        private readonly EmailService _emailService = new();
-        private readonly int _periodId;
+
+        private ShiftSummary? _summary;
 
         public DayEndView(Registration currentUser, int periodId)
         {
             InitializeComponent();
             _currentUser = currentUser;
             _periodId = periodId;
-
-            StoreText.Text = AppSettings.StoreName.ToUpper();
-            VatLabel.Text = $"VAT at {AppSettings.VatPercent:0.##}% (included)";
-
             Loaded += async (s, e) => await LoadSummary();
         }
 
         private async System.Threading.Tasks.Task LoadSummary()
         {
-            var s = await _reportService.GetPeriodSummaryAsync(_periodId);
-            if (s == null)
+            _summary = await _reportService.GetPeriodSummaryAsync(_periodId);
+            if (_summary == null)
             {
-                MessageBox.Show("That work period could not be found.", "Clidapos");
+                MessageBox.Show("This period could not be found.", "Clidapos");
+                Close();
                 return;
             }
 
             var cur = AppSettings.CurrencySymbol;
 
-            PeriodText.Text = s.EndedAt == null
-                ? $"Period {s.PeriodId} — opened {s.StartedAt:dd MMM yyyy, hh:mm tt}"
-                : $"Period {s.PeriodId} — {s.StartedAt:dd MMM hh:mm tt} to {s.EndedAt:dd MMM hh:mm tt}";
+            TitleText.Text = $"{AppSettings.StoreName} — Period {_periodId}";
+            TakingsText.Text = $"{cur} {_summary.GrandTotal:N2}";
+            BillCountText.Text = _summary.BillCount.ToString();
+            ItemCountText.Text = _summary.ItemCount.ToString("N0");
+            AverageText.Text = $"{cur} {_summary.AverageSale:N2}";
 
-            StatusText.Text = s.IsOpen ? "Period is still OPEN" : "Period is CLOSED";
+            OpeningCashText.Text = _summary.OpeningCash == null ? "Not recorded" : $"{cur} {_summary.OpeningCash:N2}";
+            CashSalesText.Text = $"{cur} {_summary.CashTotal:N2}";
+            ExpectedCashText.Text = _summary.ExpectedCash == null ? "—" : $"{cur} {_summary.ExpectedCash:N2}";
 
-            GrandTotalText.Text = $"{cur} {s.GrandTotal:N2}";
-            BillCountText.Text = s.BillCount.ToString("N0");
-            ItemCountText.Text = s.ItemCount.ToString("N2");
-            AverageText.Text = $"{cur} {s.AverageSale:N2}";
+            UpdateVariancePreview();
 
-            CashText.Text = $"{cur} {s.CashTotal:N2}";
-            MpesaText.Text = $"{cur} {s.MpesaTotal:N2}";
-            CardText.Text = $"{cur} {s.CardTotal:N2}";
-
-            if (s.OtherTotal > 0)
-            {
-                OtherRow.Visibility = Visibility.Visible;
-                OtherText.Text = $"{cur} {s.OtherTotal:N2}";
-            }
-
-            TaxableText.Text = $"{cur} {s.TaxableTotal:N2}";
-            VatText.Text = $"{cur} {s.VatTotal:N2}";
-
-            if (s.TopItems.Count > 0)
-            {
-                TopItemsCard.Visibility = Visibility.Visible;
-                TopItemsList.ItemsSource = s.TopItems;
-            }
-
-            ClosePeriodButton.Visibility = s.IsOpen ? Visibility.Visible : Visibility.Collapsed;
+            _ = Dispatcher.BeginInvoke(new Action(() => CountedCashText.Focus()),
+                System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
-        private async void ClosePeriod_Click(object sender, RoutedEventArgs e)
+        // ---------------- COUNTED CASH INPUT ----------------
+        // CountedCashText.Text is the single source of truth. Every path that
+        // can change it - the on-screen keypad, or the physical keyboard via
+        // PreviewTextInput - calls UpdateVariancePreview() directly and
+        // explicitly right afterward. Deliberately not relying on the
+        // TextChanged event to drive anything, since that indirection was
+        // the actual source of the "nothing responds" bug reported earlier -
+        // this way there is exactly one, traceable path from a keystroke to
+        // the screen updating, with no hidden event-wiring in between.
+
+        private void Digit_Click(object sender, RoutedEventArgs e)
         {
-            var confirm = MessageBox.Show(
-                "Close this period? Count the drawer against the cash figure above before confirming.",
-                "Confirm Close", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (sender is not Button btn) return;
+            var digit = btn.Content?.ToString() ?? "";
 
-            if (confirm != MessageBoxResult.Yes) return;
+            if (digit == "." && CountedCashText.Text.Contains('.')) return;
 
-            var closed = await _shiftService.EndPeriodAsync();
+            CountedCashText.Text += digit;
+            CountedCashText.CaretIndex = CountedCashText.Text.Length;
+            UpdateVariancePreview();
+        }
 
-            if (closed)
+        private void Backspace_Click(object sender, RoutedEventArgs e)
+        {
+            if (CountedCashText.Text.Length == 0) return;
+            CountedCashText.Text = CountedCashText.Text[..^1];
+            CountedCashText.CaretIndex = CountedCashText.Text.Length;
+            UpdateVariancePreview();
+        }
+
+        // Physical keyboard input - restricted to digits and a single
+        // decimal point, matching the on-screen keypad. Always handles the
+        // keystroke itself (e.Handled = true) rather than letting WPF's own
+        // insertion run - modifying .Text mid-handler and then letting the
+        // default insertion continue afterward was breaking things before.
+        private void CountedCashText_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = true;
+
+            if (e.Text == ".")
             {
-                await _logService.LogAsync(CurrentSession.UserId, "Ended Work Period");
-                var emailNote = await SendClosingReportEmailAsync();
-                MessageBox.Show($"Period closed.{emailNote}", "Clidapos");
-                await LoadSummary();
+                if (CountedCashText.Text.Contains('.')) return;
+            }
+            else if (e.Text.Length != 1 || !char.IsDigit(e.Text[0]))
+            {
+                return;
+            }
+
+            CountedCashText.Text += e.Text;
+            CountedCashText.CaretIndex = CountedCashText.Text.Length;
+            UpdateVariancePreview();
+        }
+
+        // Enter must never submit or add a value here.
+        // Enter triggers Confirm & Close, same as clicking the button -
+        // Backspace is deliberately not handled anywhere in this method, so
+        // it keeps working exactly as a normal TextBox always has.
+        private void CountedCashText_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter || e.Key == System.Windows.Input.Key.Return)
+            {
+                e.Handled = true;
+                ConfirmClose_Click(sender, e);
+            }
+        }
+
+        /// <summary>An empty field means 0.00 - not "invalid, can't proceed".
+        /// The Confirm button is always clickable; this is only used to
+        /// interpret whatever is currently in the field.</summary>
+        private decimal GetCountedCash()
+        {
+            if (string.IsNullOrWhiteSpace(CountedCashText.Text)) return 0m;
+            return decimal.TryParse(CountedCashText.Text, out var counted) && counted >= 0 ? counted : 0m;
+        }
+
+        /// <summary>Updates live as digits are typed, before Confirm is
+        /// pressed.</summary>
+        private void UpdateVariancePreview()
+        {
+            if (_summary?.ExpectedCash == null)
+            {
+                VarianceText.Text = "No opening float recorded";
+                VarianceText.Foreground = new SolidColorBrush(Color.FromRgb(0xB8, 0x86, 0x0B));
+                return;
+            }
+
+            var counted = GetCountedCash();
+            var cur = AppSettings.CurrencySymbol;
+            var variance = counted - _summary.ExpectedCash.Value;
+
+            if (variance == 0)
+            {
+                VarianceText.Text = $"Exact match ({cur} 0.00)";
+                VarianceText.Foreground = new SolidColorBrush(Color.FromRgb(0x1B, 0x8A, 0x3D));
+            }
+            else if (variance > 0)
+            {
+                VarianceText.Text = $"Over by {cur} {variance:N2}";
+                VarianceText.Foreground = new SolidColorBrush(Color.FromRgb(0x1B, 0x8A, 0x3D));
             }
             else
             {
-                MessageBox.Show("There was no open period to close.", "Clidapos");
+                VarianceText.Text = $"SHORT by {cur} {Math.Abs(variance):N2}";
+                VarianceText.Foreground = new SolidColorBrush(Color.FromRgb(0xC0, 0x39, 0x2B));
             }
         }
 
-        /// <summary>
-        /// Emails the just-closed period's summary to the address set under
-        /// Business Profile. Returns a short note to append to the close
-        /// confirmation - a failure here never blocks the close itself, since
-        /// the period is already closed by the time this runs.
-        /// </summary>
-        private async System.Threading.Tasks.Task<string> SendClosingReportEmailAsync()
+        // ---------------- CONFIRM & CLOSE ----------------
+        private async void ConfirmClose_Click(object sender, RoutedEventArgs e)
         {
-            var hotel = await _hotelService.GetOrCreateAsync();
-            var toAddress = hotel.EmailID?.Trim();
-
-            if (string.IsNullOrWhiteSpace(toAddress))
-                return "\n\n(No email set in Business Profile - closing report was not sent.)";
-
-            var s = await _reportService.GetPeriodSummaryAsync(_periodId);
-            if (s == null) return "";
-
+            var counted = GetCountedCash();
             var cur = AppSettings.CurrencySymbol;
-            var body = new System.Text.StringBuilder();
-            body.AppendLine($"{AppSettings.StoreName.ToUpper()} - WORK PERIOD CLOSING REPORT");
-            body.AppendLine($"Period {s.PeriodId}: {s.StartedAt:dd MMM yyyy, hh:mm tt} to {s.EndedAt:dd MMM yyyy, hh:mm tt}");
-            body.AppendLine();
-            body.AppendLine($"Grand Total: {cur} {s.GrandTotal:N2}");
-            body.AppendLine($"Bills: {s.BillCount:N0}");
-            body.AppendLine($"Items Sold: {s.ItemCount:N2}");
-            body.AppendLine($"Average Sale: {cur} {s.AverageSale:N2}");
-            body.AppendLine();
-            body.AppendLine("Payment Breakdown");
-            body.AppendLine($"  Cash:   {cur} {s.CashTotal:N2}");
-            body.AppendLine($"  M-Pesa: {cur} {s.MpesaTotal:N2}");
-            body.AppendLine($"  Card:   {cur} {s.CardTotal:N2}");
-            if (s.OtherTotal > 0)
-                body.AppendLine($"  Other:  {cur} {s.OtherTotal:N2}");
-            body.AppendLine();
-            body.AppendLine($"Net of VAT: {cur} {s.TaxableTotal:N2}");
-            body.AppendLine($"VAT at {AppSettings.VatPercent:0.##}%: {cur} {s.VatTotal:N2}");
+            var message = "Close this period?";
 
-            if (s.TopItems.Count > 0)
+            if (_summary?.ExpectedCash != null)
             {
-                body.AppendLine();
-                body.AppendLine("Top Selling Items");
-                foreach (var item in s.TopItems)
-                    body.AppendLine($"  {item.Qty:N0} x {item.Name} - {cur} {item.Value:N2}");
+                var variance = counted - _summary.ExpectedCash.Value;
+                message = variance == 0
+                    ? $"Close this period? Drawer matches exactly ({cur} {_summary.ExpectedCash:N2})."
+                    : variance > 0
+                        ? $"Close this period? Drawer is over by {cur} {variance:N2}."
+                        : $"Close this period? Drawer is SHORT by {cur} {Math.Abs(variance):N2}. Continue anyway?";
             }
 
-            var subject = $"{AppSettings.StoreName} - Period {s.PeriodId} Closing Report ({s.EndedAt:dd MMM yyyy})";
-            var result = await _emailService.SendAsync(toAddress, subject, body.ToString());
+            var confirm = MessageBox.Show(message, "Confirm Close", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
 
-            return result.Success
-                ? $"\n\nClosing report emailed to {toAddress}."
-                : $"\n\n(Closing report email failed: {result.Message})";
+            var closed = await _shiftService.EndPeriodAsync(counted);
+            if (!closed)
+            {
+                MessageBox.Show("This period could not be closed - it may already be closed.", "Clidapos");
+                return;
+            }
+
+            await _logService.LogAsync(CurrentSession.UserId, $"Ended Work Period - Counted Cash {counted:N2}");
+
+            var emailNote = await SendClosingReportEmailAsync();
+            MessageBox.Show($"Period closed.{emailNote}", "Clidapos");
+            new FrontOfficeHubView(_currentUser).Show();
+            Close();
+        }
+
+        /// <summary>Re-fetches the final summary (now including the closing
+        /// cash count just entered), generates the PDF, and emails it to the
+        /// owner. Best-effort - a failure here never undoes the already-
+        /// successful close.</summary>
+        private async System.Threading.Tasks.Task<string> SendClosingReportEmailAsync()
+        {
+            try
+            {
+                var hotel = await new HotelProfileService().GetOrCreateAsync();
+                if (string.IsNullOrWhiteSpace(hotel.EmailID))
+                    return "\n\nNo email could be sent - the owner's email isn't set in Business Profile.";
+
+                var final = await _reportService.GetPeriodSummaryAsync(_periodId);
+                if (final == null)
+                    return "\n\nNo email could be sent - the closed period's summary could not be re-loaded.";
+
+                var cur = AppSettings.CurrencySymbol;
+                var closedAtDisplay = DateTime.Now.ToString("dd MMM yyyy, hh:mm tt");
+
+                var pdfBytes = new ExportService().GenerateDayEndPdfBytes(
+                    AppSettings.StoreName,
+                    $"Period {_periodId}",
+                    final.StartedAt.ToString("dd MMM yyyy, hh:mm tt"),
+                    (final.EndedAt ?? DateTime.Now).ToString("dd MMM yyyy, hh:mm tt"),
+                    cur,
+                    final,
+                    _currentUser.Name.Trim(),
+                    closedAtDisplay);
+
+                var body = $"Day End Summary for {AppSettings.StoreName} - Period {_periodId}.\n\n" +
+                           $"See the attached PDF for the full report.";
+
+                var result = await new EmailService().SendAsync(
+                    hotel.EmailID.Trim(), $"Day End Summary - Period {_periodId}", body,
+                    pdfBytes, $"DayEnd_Period{_periodId}.pdf");
+
+                return result.Success ? "\n\nSummary emailed to the owner." : $"\n\nCould not email the summary: {result.Message}";
+            }
+            catch (Exception ex)
+            {
+                return $"\n\nCould not email the summary: {ex.Message}";
+            }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            new FrontOfficeHubView(_currentUser).Show();
+            new WorkPeriodView(_currentUser).Show();
             Close();
         }
 
@@ -158,13 +250,10 @@ namespace Clidapos.Wpf.Views
             WindowState = WindowState.Minimized;
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
-            var confirm = MessageBox.Show("Close Clidapos?", "Confirm Exit",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (confirm == MessageBoxResult.Yes)
-                Application.Current.Shutdown();
+            new WorkPeriodView(_currentUser).Show();
+            Close();
         }
     }
 }

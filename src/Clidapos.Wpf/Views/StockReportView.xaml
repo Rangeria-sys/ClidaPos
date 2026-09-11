@@ -1,204 +1,185 @@
 <Window x:Class="Clidapos.Wpf.Views.StockReportView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Clidapos - Stock Report"
-        WindowStyle="None"
+        Title="Stock Report"
         WindowState="Maximized"
+        WindowStyle="None"
         ResizeMode="NoResize"
-        Background="White">
+        Background="#F5F5F7">
 
-	<Window.Resources>
-		<Style x:Key="RoundTopButton" TargetType="Button">
-			<Setter Property="Width" Value="40"/>
-			<Setter Property="Height" Value="40"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-		</Style>
+    <Window.Resources>
+        <Style x:Key="HeaderIconBtn" TargetType="Button">
+            <Setter Property="Width" Value="52"/>
+            <Setter Property="Height" Value="52"/>
+            <Setter Property="Background" Value="#178E86"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="26">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CardTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+    </Window.Resources>
 
-		<Style x:Key="QuickRangeBtn" TargetType="Button">
-			<Setter Property="Height" Value="38"/>
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="FontSize" Value="13"/>
-			<Setter Property="Background" Value="#F0F0F2"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="Padding" Value="14,0"/>
-			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
-							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Background" Value="#E4E4E8"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-		<Style x:Key="CardBorder" TargetType="Border">
-			<Setter Property="Background" Value="#FAFAFB"/>
-			<Setter Property="BorderBrush" Value="#E4E4E8"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="CornerRadius" Value="10"/>
-			<Setter Property="Padding" Value="20"/>
-		</Style>
+        <!-- HEADER -->
+        <Border Grid.Row="0" Background="#0E5E5A" Padding="24,18">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-		<Style x:Key="CardTitle" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="#8A8A92"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Margin" Value="0,0,0,4"/>
-		</Style>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Style="{StaticResource HeaderIconBtn}" Click="Back_Click" ToolTip="Back" Margin="0,0,16,0">
+                        <Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform" Width="28" Height="28"/>
+                    </Button>
+                    <TextBlock Text="Stock Report" Foreground="White" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
 
-		<Style x:Key="RowLabel" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="#4A4A50"/>
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-		</Style>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource HeaderIconBtn}" Click="Minimize_Click" Margin="0,0,10,0" ToolTip="Minimize">
+                        <Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform" Width="28" Height="28"/>
+                    </Button>
+                    <Button x:Name="PrintButton" Style="{StaticResource HeaderIconBtn}" Click="Print_Click"
+                            Margin="0,0,10,0" ToolTip="Print">
+                        <TextBlock Text="🖨" FontSize="22" Foreground="White"/>
+                    </Button>
+                    <Button Style="{StaticResource HeaderIconBtn}" Click="Exit_Click" ToolTip="Exit">
+                        <TextBlock Text="✕" Foreground="White" FontSize="22" FontWeight="Bold"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-		<Style x:Key="RowValue" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="#1C1C1F"/>
-			<Setter Property="FontSize" Value="15"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-		</Style>
+        <!-- BODY -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="ReportContent" HorizontalAlignment="Center" Margin="0,24,0,30" Width="1000">
 
-		<Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#F0F0F2"/>
-			<Setter Property="Foreground" Value="#4A4A50"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="12"/>
-			<Setter Property="Padding" Value="10,8"/>
-			<Setter Property="BorderBrush" Value="#D8D8DE"/>
-			<Setter Property="BorderThickness" Value="0,0,0,2"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		</Style>
-	</Window.Resources>
+                <!-- SUMMARY BAR -->
+                <Border Background="#0E5E5A" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="VALUE AT RETAIL" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock x:Name="ValueAtRetailText" Foreground="White" FontSize="26" FontWeight="Bold" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="VALUE AT COST" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock x:Name="ValueAtCostText" Foreground="White" FontSize="26" FontWeight="Bold" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="MARGIN LOCKED IN" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="MarginText" Foreground="White" FontSize="26" FontWeight="Bold" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Text="PRODUCTS" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock x:Name="ProductCountText" Foreground="White" FontSize="26" FontWeight="Bold" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="UNITS ON HAND" Foreground="#9FE1CB" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock x:Name="UnitsOnHandText" Foreground="White" FontSize="26" FontWeight="Bold" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="60"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+                <!-- REORDER SOON + VALUE AT RISK -->
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-		<Border Grid.Row="0" Background="#1E1E24">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
+                    <Border x:Name="ReorderCard" Grid.Column="0" Background="#FCF3E3" CornerRadius="12"
+                            BorderBrush="#F0D9A6" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="REORDER SOON — RANKED BY DAYS LEFT" Foreground="#B8860B"
+                                       FontSize="13" FontWeight="Bold" TextWrapping="Wrap" Padding="20,16,20,12"/>
+                            <Grid Margin="20,0,20,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="1.3*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Product" Foreground="#8A7550" FontSize="12"/>
+                                <TextBlock Grid.Column="1" Text="Qty" Foreground="#8A7550" FontSize="12"/>
+                                <TextBlock Grid.Column="2" Text="Daily sales" Foreground="#8A7550" FontSize="12"/>
+                                <TextBlock Grid.Column="3" Text="Days left" Foreground="#8A7550" FontSize="12" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <StackPanel x:Name="ReorderList" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="ReorderEmptyText" Text="No products are close to running out."
+                                       Foreground="#8A7550" FontSize="13" Padding="20,4,20,16" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Border>
 
-				<Button Grid.Column="0" Click="Back_Click" Width="56" Height="56"
-                        Background="Transparent" BorderThickness="0" Cursor="Hand"
-                        Margin="15,0,0,0" ToolTip="Back">
-					<Image Source="pack://application:,,,/Assets/back-arrow.png" Stretch="Uniform"
-                           Width="42" Height="42"/>
-				</Button>
+                    <Border x:Name="RiskCard" Grid.Column="2" Background="#FCEAEA" CornerRadius="12"
+                            BorderBrush="#F0BCBC" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="VALUE AT RISK — HIGH VALUE, LOW STOCK" Foreground="#B8302B"
+                                       FontSize="13" FontWeight="Bold" TextWrapping="Wrap" Padding="20,16,20,12"/>
+                            <Grid Margin="20,0,20,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Product" Foreground="#9A5A57" FontSize="12"/>
+                                <TextBlock Grid.Column="1" Text="Qty left" Foreground="#9A5A57" FontSize="12"/>
+                                <TextBlock Grid.Column="2" Text="Value at risk" Foreground="#9A5A57" FontSize="12" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <StackPanel x:Name="RiskList" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="RiskMoreText" Foreground="#9A5A57" FontSize="12" FontStyle="Italic"
+                                       HorizontalAlignment="Center" Padding="20,4,20,10" Visibility="Collapsed"/>
+                            <TextBlock x:Name="RiskEmptyText" Text="No high-value products are currently low on stock."
+                                       Foreground="#9A5A57" FontSize="13" Padding="20,4,20,16" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
 
-				<TextBlock Grid.Column="1" Text="STOCK REPORT" Foreground="#F3A123" FontSize="16"
-                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <!-- VALUE BY CATEGORY -->
+                <Border Background="White" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="VALUE BY CATEGORY" Foreground="#888888" Style="{StaticResource CardTitle}"/>
+                        <StackPanel x:Name="CategoryList"/>
+                        <TextBlock x:Name="CategoryHintText" Foreground="#8A8A94" FontSize="12" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
 
-				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
-                            Margin="0,0,15,0">
+                <!-- DEAD STOCK -->
+                <Border Background="White" CornerRadius="12" Padding="24">
+                    <StackPanel>
+                        <TextBlock Text="DEAD STOCK — NO SALES IN 30+ DAYS" Foreground="#888888" Style="{StaticResource CardTitle}"/>
+                        <Border Height="1" Background="#E4E4E8" Margin="0,0,0,14"/>
+                        <StackPanel x:Name="DeadStockList"/>
+                        <TextBlock x:Name="DeadStockEmptyText" Text="No dead stock detected — every product has sold within the last 30 days."
+                                   Foreground="#8A8A94" FontSize="14" HorizontalAlignment="Center" Margin="0,10,0,10" Visibility="Collapsed"/>
+                    </StackPanel>
+                </Border>
 
-					<Button Click="Minimize_Click" Width="56" Height="56" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand" Margin="0,0,10,0" ToolTip="Minimize">
-						<Image Source="pack://application:,,,/Assets/minimize.png" Stretch="Uniform"
-                               Width="42" Height="42"/>
-					</Button>
-
-					<Button Click="Exit_Click" Width="56" Height="56" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand" ToolTip="Exit">
-						<Image Source="pack://application:,,,/Assets/exit_button.png" Stretch="Uniform"
-                               Width="42" Height="42"/>
-					</Button>
-				</StackPanel>
-			</Grid>
-		</Border>
-
-		<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-			<StackPanel x:Name="ReportContent" HorizontalAlignment="Center" Margin="0,24,0,30" Width="700">
-
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,12">
-					<Button x:Name="PrintButton" Content="🖨 Print" Style="{StaticResource QuickRangeBtn}" Click="Print_Click"/>
-				</StackPanel>
-
-				<!-- SUMMARY -->
-				<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-					<StackPanel>
-						<TextBlock Text="INVENTORY VALUE (AT RETAIL PRICE)" Style="{StaticResource CardTitle}"/>
-						<TextBlock x:Name="TotalValueText" Text="0.00" Foreground="#1B8A3D"
-                                   FontSize="42" FontWeight="Bold"/>
-
-						<Border Height="1" Background="#E4E4E8" Margin="0,16,0,14"/>
-
-						<Grid Margin="0,0,0,8">
-							<TextBlock Text="Distinct products" Style="{StaticResource RowLabel}"/>
-							<TextBlock x:Name="ProductCountText" Style="{StaticResource RowValue}"/>
-						</Grid>
-						<Grid Margin="0,0,0,8">
-							<TextBlock Text="Total units on hand" Style="{StaticResource RowLabel}"/>
-							<TextBlock x:Name="TotalUnitsText" Style="{StaticResource RowValue}"/>
-						</Grid>
-						<Grid>
-							<TextBlock Text="Low stock (10 units or fewer)" Foreground="#B23A3A" FontSize="14" VerticalAlignment="Center"/>
-							<TextBlock x:Name="LowStockCountText" Style="{StaticResource RowValue}" Foreground="#B23A3A"/>
-						</Grid>
-					</StackPanel>
-				</Border>
-
-				<!-- BY CATEGORY -->
-				<Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
-					<StackPanel>
-						<TextBlock Text="BY CATEGORY" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
-						<DataGrid x:Name="CategoryGrid" AutoGenerateColumns="False"
-                                  Background="Transparent" BorderThickness="0"
-                                  RowBackground="Transparent" AlternatingRowBackground="#F5F5F7"
-                                  HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
-                                  ColumnHeaderStyle="{StaticResource GridHeader}"
-                                  IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
-                                  FontSize="13" Foreground="#1C1C1F">
-							<DataGrid.Columns>
-								<DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/>
-								<DataGridTextColumn Header="Products" Binding="{Binding ProductCount, StringFormat=N0}" Width="100"/>
-								<DataGridTextColumn Header="Units" Binding="{Binding TotalQty, StringFormat=N2}" Width="100"/>
-								<DataGridTextColumn Header="Value" Binding="{Binding TotalValue, StringFormat=N2}" Width="140"/>
-							</DataGrid.Columns>
-						</DataGrid>
-					</StackPanel>
-				</Border>
-
-				<!-- LOW STOCK -->
-				<Border x:Name="LowStockCard" Style="{StaticResource CardBorder}" Visibility="Collapsed">
-					<StackPanel>
-						<TextBlock Text="LOW STOCK (10 UNITS OR FEWER)" Style="{StaticResource CardTitle}" Margin="0,0,0,10"/>
-						<DataGrid x:Name="LowStockGrid" AutoGenerateColumns="False"
-                                  Background="Transparent" BorderThickness="0"
-                                  RowBackground="Transparent" AlternatingRowBackground="#F5F5F7"
-                                  HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0"
-                                  ColumnHeaderStyle="{StaticResource GridHeader}"
-                                  IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single"
-                                  FontSize="13" Foreground="#1C1C1F">
-							<DataGrid.Columns>
-								<DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
-								<DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="160"/>
-								<DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="140"/>
-								<DataGridTextColumn Header="Qty" Binding="{Binding Qty, StringFormat=N2}" Width="90"/>
-							</DataGrid.Columns>
-						</DataGrid>
-					</StackPanel>
-				</Border>
-
-			</StackPanel>
-		</ScrollViewer>
-	</Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Window>

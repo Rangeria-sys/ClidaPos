@@ -80,7 +80,7 @@ namespace Clidapos.Wpf.Views
                 return;
             }
 
-            new DayEndView(_currentUser, latest.ID).Show();
+            new DailyReportView(_currentUser, latest.ID).Show();
             Close();
         }
 

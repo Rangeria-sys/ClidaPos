@@ -26,6 +26,7 @@ namespace Clidapos.Wpf.Views
                 StatusText.Text = "No period is open";
                 DetailText.Text = "Start one to unlock the POS.";
                 StartButton.Visibility = Visibility.Visible;
+                OpeningCashPanel.Visibility = Visibility.Visible;
                 SummaryButton.Visibility = Visibility.Collapsed;
             }
             else
@@ -33,16 +34,33 @@ namespace Clidapos.Wpf.Views
                 StatusText.Text = "Period is OPEN";
                 DetailText.Text = $"Started {open.WPStart:dd MMM yyyy, hh:mm tt}";
                 StartButton.Visibility = Visibility.Collapsed;
+                OpeningCashPanel.Visibility = Visibility.Collapsed;
                 SummaryButton.Visibility = Visibility.Visible;
             }
         }
 
         private async void StartPeriod_Click(object sender, RoutedEventArgs e)
         {
-            await _shiftService.StartPeriodAsync();
-            await _logService.LogAsync(CurrentSession.UserId, "Started Work Period");
-            await RefreshStatus();
+            if (!decimal.TryParse(OpeningCashInput.Text, out var openingCash) || openingCash < 0)
+            {
+                MessageBox.Show("Count the cash in the drawer and enter it - even if it's 0.", "Clidapos");
+                return;
+            }
+
+            var started = await _shiftService.StartPeriodAsync(
+                _currentUser.UserID.Trim(), _currentUser.Name.Trim(), openingCash);
+
+            if (!started)
+            {
+                MessageBox.Show("A period is already open on this terminal.", "Clidapos");
+                await RefreshStatus();
+                return;
+            }
+
+            await _logService.LogAsync(CurrentSession.UserId, $"Started Work Period - Opening Cash {openingCash:N2}");
             MessageBox.Show("Period started. POS is now unlocked.", "Clidapos");
+            new FrontOfficeHubView(_currentUser).Show();
+            Close();
         }
 
         private async void GoToSummary_Click(object sender, RoutedEventArgs e)

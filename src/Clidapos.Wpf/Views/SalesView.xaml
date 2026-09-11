@@ -353,6 +353,22 @@
 								<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
 								<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#F3A123"/>
 							</DataGrid.Resources>
+					<DataGrid.CellStyle>
+						<Style TargetType="DataGridCell">
+							<Setter Property="BorderThickness" Value="0"/>
+							<Style.Triggers>
+								<!-- Direct trigger on IsSelected, not SystemColors - IsSelected
+                                     stays True even when the grid loses focus (clicking into the
+                                     keypad, for example), unlike IsSelectionActive, which is what
+                                     the default cell template's theming actually keys off and
+                                     what was causing the row to grey out instead of staying orange. -->
+								<Trigger Property="IsSelected" Value="True">
+									<Setter Property="Background" Value="{StaticResource AccentOrange}"/>
+									<Setter Property="Foreground" Value="White"/>
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</DataGrid.CellStyle>
 							<DataGrid.RowStyle>
 								<Style TargetType="DataGridRow">
 									<Setter Property="MinHeight" Value="48"/>
@@ -400,7 +416,8 @@
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
 
-						<Border Grid.Column="0" Background="{StaticResource ChromeBg}" CornerRadius="8" Padding="10">
+						<Border Grid.Column="0" Background="{StaticResource ChromeBg}" CornerRadius="8" Padding="10"
+                            PreviewKeyDown="KeypadArea_PreviewKeyDown">
 							<StackPanel>
 								<TextBlock Text="QUANTITY" Foreground="{StaticResource TealDark}" FontSize="13" FontWeight="Bold" Margin="2,0,0,4"/>
 								<TextBox x:Name="QtyKeypadInput" Style="{StaticResource PanelInput}"

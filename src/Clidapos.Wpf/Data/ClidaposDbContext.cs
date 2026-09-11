@@ -46,6 +46,7 @@ namespace Clidapos.Wpf.Data
         public DbSet<Promotion> Promotions => Set<Promotion>();
         public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
         public DbSet<LedgerBookEntry> LedgerBookEntries => Set<LedgerBookEntry>();
+        public DbSet<ChartOfAccount> ChartOfAccounts => Set<ChartOfAccount>();
         public DbSet<MpesaSetting> MpesaSettings => Set<MpesaSetting>();
         public DbSet<StoreFeatureSettings> StoreFeatureSettingsSet => Set<StoreFeatureSettings>();
         public DbSet<EmailSetting> EmailSettings => Set<EmailSetting>();
@@ -105,6 +106,10 @@ namespace Clidapos.Wpf.Data
                 b.HasKey(x => x.ID);
                 b.Property(x => x.WPStart).HasColumnType("datetime");
                 b.Property(x => x.Status).HasColumnType("nchar(20)");
+                b.Property(x => x.OpeningCash).HasColumnType("decimal(18,2)");
+                b.Property(x => x.CashierUserID).HasColumnType("nvarchar(50)");
+                b.Property(x => x.CashierName).HasColumnType("nvarchar(150)");
+                b.Property(x => x.TerminalID).HasColumnType("nvarchar(100)");
             });
 
             modelBuilder.Entity<WorkPeriodEnd>(b =>
@@ -113,6 +118,7 @@ namespace Clidapos.Wpf.Data
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Id).ValueGeneratedNever();
                 b.Property(x => x.WPEnd).HasColumnType("datetime");
+                b.Property(x => x.ClosingCash).HasColumnType("decimal(18,2)");
             });
 
             modelBuilder.Entity<Product>(b =>
@@ -560,6 +566,14 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Debit).HasColumnType("decimal(18,2)");
                 b.Property(x => x.Credit).HasColumnType("decimal(18,2)");
                 b.Property(x => x.PartyID).HasColumnType("nchar(50)");
+            });
+
+            modelBuilder.Entity<ChartOfAccount>(b =>
+            {
+                b.ToTable("ChartOfAccounts", "dbo");
+                b.HasKey(x => x.AccountName);
+                b.Property(x => x.AccountName).HasColumnType("nvarchar(150)");
+                b.Property(x => x.AccountType).HasColumnType("nvarchar(20)");
             });
 
             // ---------- MASTER SETTINGS: integration configs (each a singleton) ----------

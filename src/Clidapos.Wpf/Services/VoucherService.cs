@@ -31,9 +31,10 @@ namespace Clidapos.Wpf.Services
     {
         public decimal TotalSpent { get; set; }
         public int VoucherCount { get; set; }
+        public decimal AvgVoucher => VoucherCount == 0 ? 0 : Math.Round(TotalSpent / VoucherCount, 2);
         public List<ExpensePaymentModeRow> ByPaymentMode { get; set; } = new();
         public List<ExpenseParticularRow> TopParticulars { get; set; } = new();
-        public List<Voucher> Vouchers { get; set; } = new();
+        public List<VoucherSummaryRow> Vouchers { get; set; } = new();
     }
 
     public class VoucherSummaryRow
@@ -169,7 +170,24 @@ namespace Clidapos.Wpf.Services
             {
                 TotalSpent = vouchers.Sum(v => v.GrandTotal),
                 VoucherCount = vouchers.Count,
-                Vouchers = vouchers,
+                Vouchers = vouchers.Select(v =>
+                {
+                    var linesForThis = lines.Where(l => l.VoucherID == v.ID).ToList();
+                    var particulars = linesForThis.Count == 1
+                        ? linesForThis[0].Particulars.Trim()
+                        : linesForThis.Count > 1 ? $"{linesForThis.Count} items" : "";
+
+                    return new VoucherSummaryRow
+                    {
+                        ID = v.ID,
+                        VoucherNo = v.VoucherNo.Trim(),
+                        Name = v.Name?.Trim() ?? "",
+                        PaymentMode = v.PaymentMode.Trim(),
+                        Date = v.Date,
+                        GrandTotal = v.GrandTotal,
+                        Particulars = particulars
+                    };
+                }).ToList(),
                 ByPaymentMode = vouchers
                     .GroupBy(v => v.PaymentMode.Trim())
                     .Select(g => new ExpensePaymentModeRow { Mode = g.Key, Total = g.Sum(v => v.GrandTotal) })

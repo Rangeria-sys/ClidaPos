@@ -28,4 +28,14 @@ namespace Clidapos.Wpf.Entities
         public decimal? Credit { get; set; }
         public string? PartyID { get; set; }
     }
+
+    /// <summary>Maps each account name to a type - Asset, Liability, Equity,
+    /// Income, or Expense - the foundation for Trial Balance grouping, Income
+    /// Statement, and Balance Sheet. AccountName is the primary key, matching
+    /// the free-text account names already used in JournalEntry.</summary>
+    public class ChartOfAccount
+    {
+        public string AccountName { get; set; } = "";
+        public string AccountType { get; set; } = "";
+    }
 }

@@ -6,5 +6,6 @@ namespace Clidapos.Wpf.Entities
     {
         public int Id { get; set; }
         public DateTime WPEnd { get; set; }
+        public decimal? ClosingCash { get; set; }
     }
 }
