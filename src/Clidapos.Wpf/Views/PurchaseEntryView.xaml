@@ -433,6 +433,8 @@
                                                       Background="#F0F0F3" Foreground="Black" BorderBrush="#B0B0B8"
                                                       PreviewTextInput="NumericOnly_PreviewTextInput"
                                                       TextChanged="Totals_TextChanged"
+                                                      GotFocus="SelectAllOnFocus"
+                                                      PreviewMouseLeftButtonDown="SelectAllOnFocus_PreviewMouseDown"
                                                       LostFocus="QtyTextBox_LostFocus"/>
 											<Button Content="+" Style="{StaticResource QtyStepBtn}" Foreground="White" FontWeight="Bold"
                                                     Click="QtyPlus_Click" Tag="{Binding}"/>
@@ -456,6 +458,8 @@
 										<TextBox Text="{Binding Price, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}"
                                                  PreviewTextInput="NumericOnly_PreviewTextInput"
                                                  TextChanged="Totals_TextChanged"
+                                                 GotFocus="SelectAllOnFocus"
+                                                 PreviewMouseLeftButtonDown="SelectAllOnFocus_PreviewMouseDown"
                                                  TextAlignment="Center" BorderThickness="1.3">
 											<TextBox.Style>
 												<Style TargetType="TextBox">

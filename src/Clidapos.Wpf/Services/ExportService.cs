@@ -87,6 +87,108 @@ namespace Clidapos.Wpf.Services
             return path;
         }
 
+        /// <summary>Builds the full end-of-day report as PDF bytes - the
+        /// combined store-wide summary, plus a table showing every terminal's
+        /// individual cash reconciliation, so each cashier's shortage or
+        /// overage is visible on its own line, not buried in the totals.</summary>
+        public byte[] GenerateEndOfDayPdfBytes(string storeName, string currency, DateTime date, EndOfDayReport report)
+        {
+            var s = report.CombinedSummary;
+
+            return QuestPDF.Fluent.Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(30);
+                    page.Size(PageSizes.A4);
+                    page.DefaultTextStyle(x => x.FontSize(10));
+
+                    page.Header().Column(col =>
+                    {
+                        col.Item().Text(storeName).FontSize(20).Bold().FontColor("#0E5E5A");
+                        col.Item().Text($"End of Day — All Terminals — {date:dd MMM yyyy}").FontSize(11).FontColor("#6A6A70");
+                        col.Item().PaddingTop(6).LineHorizontal(1).LineColor("#E4E4E8");
+                    });
+
+                    page.Content().PaddingTop(14).Column(col =>
+                    {
+                        col.Item().PaddingBottom(4).Text("TOTAL TAKINGS").FontSize(9).Bold().FontColor("#8A8A92");
+                        col.Item().PaddingBottom(10).Text($"{currency} {s.GrandTotal:N2}").FontSize(22).Bold().FontColor("#0E5E5A");
+
+                        col.Item().PaddingBottom(3).Row(r => { r.RelativeItem().Text("Sales (bills)"); r.RelativeItem().AlignRight().Text(s.BillCount.ToString()); });
+                        col.Item().PaddingBottom(3).Row(r => { r.RelativeItem().Text("Items sold"); r.RelativeItem().AlignRight().Text(s.ItemCount.ToString("N0")); });
+                        col.Item().PaddingBottom(10).Row(r => { r.RelativeItem().Text("Average sale"); r.RelativeItem().AlignRight().Text($"{currency} {s.AverageSale:N2}"); });
+
+                        col.Item().PaddingBottom(6).Text("BY PAYMENT METHOD").FontSize(11).Bold().FontColor("#0E5E5A");
+                        col.Item().PaddingBottom(3).Row(r => { r.RelativeItem().Text("Cash"); r.RelativeItem().AlignRight().Text($"{currency} {s.CashTotal:N2}"); });
+                        col.Item().PaddingBottom(3).Row(r => { r.RelativeItem().Text("M-Pesa"); r.RelativeItem().AlignRight().Text($"{currency} {s.MpesaTotal:N2}"); });
+                        col.Item().PaddingBottom(10).Row(r => { r.RelativeItem().Text("Card"); r.RelativeItem().AlignRight().Text($"{currency} {s.CardTotal:N2}"); });
+
+                        col.Item().PaddingBottom(6).Text("PER-TERMINAL CASH RECONCILIATION").FontSize(11).Bold().FontColor("#0E5E5A");
+                        if (report.TerminalReconciliations.Count == 0)
+                        {
+                            col.Item().Text("No terminals closed a period today.").FontSize(9).FontColor("#8A8A92");
+                        }
+                        else
+                        {
+                            col.Item().Table(table =>
+                            {
+                                table.ColumnsDefinition(cd =>
+                                {
+                                    cd.RelativeColumn(1.3f);
+                                    cd.RelativeColumn();
+                                    cd.RelativeColumn();
+                                    cd.RelativeColumn();
+                                    cd.RelativeColumn();
+                                    cd.RelativeColumn();
+                                });
+                                table.Header(h =>
+                                {
+                                    h.Cell().Text("Terminal").FontSize(9).Bold();
+                                    h.Cell().Text("Cashier").FontSize(9).Bold();
+                                    h.Cell().AlignRight().Text("Opening").FontSize(9).Bold();
+                                    h.Cell().AlignRight().Text("Expected").FontSize(9).Bold();
+                                    h.Cell().AlignRight().Text("Counted").FontSize(9).Bold();
+                                    h.Cell().AlignRight().Text("Variance").FontSize(9).Bold();
+                                });
+                                foreach (var t in report.TerminalReconciliations)
+                                {
+                                    var varianceColor = t.Variance == null ? "#8A8A92" : t.Variance == 0 ? "#1B8A3D" : t.Variance > 0 ? "#1B8A3D" : "#C0392B";
+                                    table.Cell().Text(t.TerminalID).FontSize(9);
+                                    table.Cell().Text(t.CashierName).FontSize(9);
+                                    table.Cell().AlignRight().Text(t.OpeningCash == null ? "—" : $"{currency} {t.OpeningCash:N2}").FontSize(9);
+                                    table.Cell().AlignRight().Text(t.ExpectedCash == null ? "—" : $"{currency} {t.ExpectedCash:N2}").FontSize(9);
+                                    table.Cell().AlignRight().Text(t.ClosingCash == null ? "—" : $"{currency} {t.ClosingCash:N2}").FontSize(9);
+                                    table.Cell().AlignRight().Text(t.Variance == null ? "—" : $"{currency} {t.Variance:N2}").FontSize(9).FontColor(varianceColor);
+                                }
+                            });
+                        }
+
+                        if (s.TopItems.Count > 0)
+                        {
+                            col.Item().PaddingTop(14).PaddingBottom(6).Text("TOP ITEMS SOLD").FontSize(11).Bold().FontColor("#0E5E5A");
+                            var i = 1;
+                            foreach (var item in s.TopItems)
+                            {
+                                col.Item().PaddingBottom(3).Row(r =>
+                                {
+                                    r.RelativeItem().Text($"{i}. {item.Name}");
+                                    r.RelativeItem().AlignRight().Text($"{item.Qty:N0} sold");
+                                });
+                                i++;
+                            }
+                        }
+                    });
+
+                    page.Footer().AlignCenter().Text(t =>
+                    {
+                        t.Span("Generated ").FontSize(8).FontColor("#8A8A92");
+                        t.Span(DateTime.Now.ToString("dd MMM yyyy HH:mm")).FontSize(8).FontColor("#8A8A92");
+                    });
+                });
+            }).GeneratePdf();
+        }
+
         /// <summary>Builds the day-end closing report as PDF bytes, for emailing
         /// to the owner - matches the printout layout: takings, payment
         /// breakdown, cashier breakdown, cash drawer reconciliation with the

@@ -16,6 +16,11 @@ namespace Clidapos.Wpf
             // ever stops being true for Clidapos - see https://www.questpdf.com/license/
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
+            // Loads the real store name from Business Profile as early as
+            // possible - fire-and-forget since StoreName has a graceful
+            // fallback if this hasn't completed yet.
+            _ = Services.AppSettings.RefreshStoreNameAsync();
+
             base.OnStartup(e);
         }
 

@@ -131,7 +131,7 @@ namespace Clidapos.Wpf.Services
             }
 
             // ---------------- HEADER ----------------
-            AddCentered(hotel?.HotelName?.Trim() ?? "CLIDAPOS", 16, true);
+            AddCentered(hotel?.HotelName?.Trim() ?? AppSettings.StoreName, 16, true);
             if (!string.IsNullOrWhiteSpace(hotel?.AddressLine1)) AddCentered(hotel.AddressLine1.Trim());
             if (!string.IsNullOrWhiteSpace(hotel?.AddressLine2)) AddCentered(hotel.AddressLine2.Trim());
             if (!string.IsNullOrWhiteSpace(hotel?.ContactNo)) AddCentered($"Tel: {hotel.ContactNo.Trim()}");

@@ -185,7 +185,8 @@ namespace Clidapos.Wpf.Services
                     TA_Status = "Paid",
                     TaxType = "Inclusive",
                     TotalTaxableAmount = taxable,
-                    TotalTaxAmount = vatAmount
+                    TotalTaxAmount = vatAmount,
+                    TerminalID = Environment.MachineName
                 };
                 db.SaleBills.Add(bill);
                 await db.SaveChangesAsync();

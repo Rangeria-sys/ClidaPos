@@ -23,5 +23,6 @@ namespace Clidapos.Wpf.Entities
         public decimal? Card { get; set; }
         public decimal? TotalTaxableAmount { get; set; }
         public decimal? TotalTaxAmount { get; set; }
+        public string? TerminalID { get; set; }
     }
 }

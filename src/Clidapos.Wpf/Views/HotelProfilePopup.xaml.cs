@@ -198,6 +198,7 @@ namespace Clidapos.Wpf.Views
             try
             {
                 await _hotelService.SaveAsync(_hotel);
+                await AppSettings.RefreshStoreNameAsync();
                 await _logService.LogAsync(CurrentSession.UserId,
                     _isExistingProfile ? "Updated Business Profile" : "Set up Business Profile");
                 MessageBox.Show(_isExistingProfile ? "Business profile updated." : "Business profile saved.", "Clidapos");

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -163,6 +164,25 @@ namespace Clidapos.Wpf.Views
         // ---------------- CONFIRM & CLOSE ----------------
         private async void ConfirmClose_Click(object sender, RoutedEventArgs e)
         {
+            var isServer = TerminalRoleService.IsServerTerminal();
+
+            // Hard block: the server must not close until every other
+            // terminal has already closed its own period, since the server's
+            // close is what generates the comprehensive end-of-day report -
+            // an incomplete one would be actively misleading.
+            if (isServer)
+            {
+                var stillOpen = await _shiftService.GetOtherOpenTerminalsAsync();
+                if (stillOpen.Count > 0)
+                {
+                    var names = string.Join(", ", stillOpen.Select(t => $"{t.TerminalID}" + (string.IsNullOrWhiteSpace(t.CashierName) ? "" : $" ({t.CashierName})")));
+                    MessageBox.Show(
+                        $"Cannot close yet - {stillOpen.Count} other terminal{(stillOpen.Count == 1 ? " is" : "s are")} still open: {names}.\n\nEvery terminal must close its own period before the server can close and generate the end-of-day report.",
+                        "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+
             var counted = GetCountedCash();
             var cur = AppSettings.CurrencySymbol;
             var message = "Close this period?";
@@ -189,17 +209,18 @@ namespace Clidapos.Wpf.Views
 
             await _logService.LogAsync(CurrentSession.UserId, $"Ended Work Period - Counted Cash {counted:N2}");
 
-            var emailNote = await SendClosingReportEmailAsync();
+            var emailNote = isServer ? await SendEndOfDayReportEmailAsync() : "";
             MessageBox.Show($"Period closed.{emailNote}", "Clidapos");
             new FrontOfficeHubView(_currentUser).Show();
             Close();
         }
 
-        /// <summary>Re-fetches the final summary (now including the closing
-        /// cash count just entered), generates the PDF, and emails it to the
-        /// owner. Best-effort - a failure here never undoes the already-
-        /// successful close.</summary>
-        private async System.Threading.Tasks.Task<string> SendClosingReportEmailAsync()
+        /// <summary>Only ever called from the server terminal's close - builds
+        /// the comprehensive end-of-day report (combined sales across every
+        /// terminal, plus each terminal's individual cash reconciliation) and
+        /// emails it to the owner. Best-effort - a failure here never undoes
+        /// the already-successful close.</summary>
+        private async System.Threading.Tasks.Task<string> SendEndOfDayReportEmailAsync()
         {
             try
             {
@@ -207,37 +228,28 @@ namespace Clidapos.Wpf.Views
                 if (string.IsNullOrWhiteSpace(hotel.EmailID))
                     return "\n\nNo email could be sent - the owner's email isn't set in Business Profile.";
 
-                var final = await _reportService.GetPeriodSummaryAsync(_periodId);
-                if (final == null)
-                    return "\n\nNo email could be sent - the closed period's summary could not be re-loaded.";
-
+                var today = DateTime.Today;
+                var report = await _reportService.GetEndOfDayReportAsync(today);
                 var cur = AppSettings.CurrencySymbol;
-                var closedAtDisplay = DateTime.Now.ToString("dd MMM yyyy, hh:mm tt");
 
-                var pdfBytes = new ExportService().GenerateDayEndPdfBytes(
-                    AppSettings.StoreName,
-                    $"Period {_periodId}",
-                    final.StartedAt.ToString("dd MMM yyyy, hh:mm tt"),
-                    (final.EndedAt ?? DateTime.Now).ToString("dd MMM yyyy, hh:mm tt"),
-                    cur,
-                    final,
-                    _currentUser.Name.Trim(),
-                    closedAtDisplay);
+                var pdfBytes = new ExportService().GenerateEndOfDayPdfBytes(AppSettings.StoreName, cur, today, report);
 
-                var body = $"Day End Summary for {AppSettings.StoreName} - Period {_periodId}.\n\n" +
-                           $"See the attached PDF for the full report.";
+                var body = $"End of Day Report for {AppSettings.StoreName} — {today:dd MMM yyyy}\n\n" +
+                           "Combined totals across every terminal, plus each terminal's individual cash reconciliation. " +
+                           "See the attached PDF for the full report.";
 
                 var result = await new EmailService().SendAsync(
-                    hotel.EmailID.Trim(), $"Day End Summary - Period {_periodId}", body,
-                    pdfBytes, $"DayEnd_Period{_periodId}.pdf");
+                    hotel.EmailID.Trim(), $"End of Day Report — {today:dd MMM yyyy}", body,
+                    pdfBytes, $"EndOfDay_{today:yyyyMMdd}.pdf");
 
-                return result.Success ? "\n\nSummary emailed to the owner." : $"\n\nCould not email the summary: {result.Message}";
+                return result.Success ? "\n\nEnd-of-day report emailed to the owner." : $"\n\nCould not email the report: {result.Message}";
             }
             catch (Exception ex)
             {
-                return $"\n\nCould not email the summary: {ex.Message}";
+                return $"\n\nCould not email the report: {ex.Message}";
             }
         }
+
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {

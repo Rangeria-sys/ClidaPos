@@ -86,6 +86,32 @@ namespace Clidapos.Wpf.Services
             return true;
         }
 
+        /// <summary>Every terminal (other than this one) that currently has an
+        /// open period, across the whole store - deliberately NOT scoped to
+        /// this terminal, unlike every other method here. Used by the server
+        /// terminal to verify every client terminal has already closed before
+        /// it closes its own and generates the end-of-day report.</summary>
+        public async Task<System.Collections.Generic.List<(string TerminalID, string? CashierName)>> GetOtherOpenTerminalsAsync()
+        {
+            using var db = new ClidaposDbContext();
+
+            var allStarts = await db.WorkPeriodStarts
+                .Where(x => x.TerminalID != null && x.TerminalID != TerminalId)
+                .ToListAsync();
+
+            var allEnds = await db.WorkPeriodEnds.Select(e => e.Id).ToListAsync();
+            var endedIds = new System.Collections.Generic.HashSet<int>(allEnds);
+
+            var latestPerTerminal = allStarts
+                .GroupBy(x => x.TerminalID!)
+                .Select(g => g.OrderByDescending(x => x.ID).First());
+
+            return latestPerTerminal
+                .Where(x => !endedIds.Contains(x.ID))
+                .Select(x => (x.TerminalID!, x.CashierName))
+                .ToList();
+        }
+
         public async Task<bool> EndPeriodAsync(decimal? closingCash = null)
         {
             using var db = new ClidaposDbContext();

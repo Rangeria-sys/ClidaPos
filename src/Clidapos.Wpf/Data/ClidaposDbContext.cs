@@ -250,6 +250,7 @@ namespace Clidapos.Wpf.Data
                 b.Property(x => x.Card).HasColumnType("decimal(18,2)");
                 b.Property(x => x.TotalTaxableAmount).HasColumnName("totalTaxableAmount").HasColumnType("decimal(18,2)");
                 b.Property(x => x.TotalTaxAmount).HasColumnName("totalTaxAmount").HasColumnType("decimal(18,2)");
+                b.Property(x => x.TerminalID).HasColumnType("nvarchar(100)");
             });
 
             modelBuilder.Entity<SaleItem>(b =>

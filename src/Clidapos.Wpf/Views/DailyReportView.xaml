@@ -203,7 +203,7 @@
                     </Border>
                 </Grid>
 
-                <Border Background="White" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                <Border x:Name="CashDrawerCard" Background="White" CornerRadius="12" Padding="24" Margin="0,0,0,16">
                     <StackPanel>
                         <TextBlock Text="CASH DRAWER RECONCILIATION" Style="{StaticResource CardTitle}"/>
                         <Grid Margin="0,0,0,10">

@@ -38,11 +38,16 @@ namespace Clidapos.Wpf.Views
         /// originally requested - selecting it fires PeriodPicker_SelectionChanged,
         /// which loads that period's summary, so there's no separate/duplicate
         /// call to load the summary here.</summary>
+        private const int CombinedViewSentinel = -1;
+
         private async System.Threading.Tasks.Task LoadPeriodPicker()
         {
             var periods = await _shiftService.GetAllPeriodsAsync();
 
-            var items = new List<PeriodPickerItem>();
+            var items = new List<PeriodPickerItem>
+            {
+                new PeriodPickerItem { PeriodId = CombinedViewSentinel, Label = "Today — All Terminals" }
+            };
             foreach (var p in periods)
             {
                 items.Add(new PeriodPickerItem
@@ -62,11 +67,10 @@ namespace Clidapos.Wpf.Views
             if (PeriodPicker.SelectedItem is PeriodPickerItem selected)
             {
                 _periodId = selected.PeriodId;
-                await LoadSummary();
+                await LoadSelectedSummary();
             }
             else
             {
-                // No periods recorded at all yet on this terminal.
                 MessageBox.Show("No sales period has been recorded yet on this terminal.", "Clidapos");
                 Close();
             }
@@ -78,19 +82,31 @@ namespace Clidapos.Wpf.Views
             if (PeriodPicker.SelectedItem is not PeriodPickerItem selected) return;
 
             _periodId = selected.PeriodId;
-            await LoadSummary();
+            await LoadSelectedSummary();
         }
 
-        private async System.Threading.Tasks.Task LoadSummary()
+        private async System.Threading.Tasks.Task LoadSelectedSummary()
         {
+            if (_periodId == CombinedViewSentinel)
+            {
+                _summary = await _reportService.GetCombinedDailySummaryAsync(DateTime.Today);
+                CashDrawerCard.Visibility = Visibility.Collapsed;
+                RenderSummary(_summary, isCombined: true);
+                return;
+            }
+
             _summary = await _reportService.GetPeriodSummaryAsync(_periodId);
             if (_summary == null)
             {
                 MessageBox.Show("This period could not be found.", "Clidapos");
                 return;
             }
+            CashDrawerCard.Visibility = Visibility.Visible;
+            RenderSummary(_summary, isCombined: false);
+        }
 
-            var s = _summary;
+        private void RenderSummary(ShiftSummary s, bool isCombined)
+        {
             var cur = AppSettings.CurrencySymbol;
 
             StoreText.Text = AppSettings.StoreName;
@@ -111,15 +127,19 @@ namespace Clidapos.Wpf.Views
             BuildCashierRows(s, cur);
             BuildTopItemsRows(s);
 
-            OpeningCashText.Text = s.OpeningCash == null ? "Not recorded" : $"{cur} {s.OpeningCash:N2}";
-            ExpectedCashText.Text = s.ExpectedCash == null ? "—" : $"{cur} {s.ExpectedCash:N2}";
-            ClosingCashText.Text = s.ClosingCash == null ? "Not recorded" : $"{cur} {s.ClosingCash:N2}";
+            if (!isCombined)
+            {
+                OpeningCashText.Text = s.OpeningCash == null ? "Not recorded" : $"{cur} {s.OpeningCash:N2}";
+                ExpectedCashText.Text = s.ExpectedCash == null ? "—" : $"{cur} {s.ExpectedCash:N2}";
+                ClosingCashText.Text = s.ClosingCash == null ? "Not recorded" : $"{cur} {s.ClosingCash:N2}";
+                UpdateVarianceCard(s, cur);
+            }
 
-            UpdateVarianceCard(s, cur);
-
-            SignOffText.Text = s.IsOpen
-                ? "Period still open."
-                : $"Signed off by {s.CashierName ?? _currentUser.Name.Trim()} · {s.EndedAt:dd MMM yyyy, hh:mm tt}";
+            SignOffText.Text = isCombined
+                ? $"Combined totals across all terminals for {DateTime.Today:dd MMM yyyy}."
+                : s.IsOpen
+                    ? "Period still open."
+                    : $"Signed off by {s.CashierName ?? _currentUser.Name.Trim()} · {s.EndedAt:dd MMM yyyy, hh:mm tt}";
         }
 
         private void BuildCashierRows(ShiftSummary s, string cur)

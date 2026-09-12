@@ -184,6 +184,29 @@ namespace Clidapos.Wpf.Views
         // it's simply not possible to type a letter into a quantity or price field.
         private static readonly Regex NumericPattern = new(@"^[0-9]*\.?[0-9]*$");
 
+        // Select-all-on-focus: clicking into a number field selects the whole
+        // value, so typing immediately replaces it rather than requiring a
+        // manual select-all or backspace first. GotFocus alone isn't reliable
+        // here - if the field didn't already have focus, the same mouse click
+        // that caused GotFocus to fire would otherwise immediately place the
+        // caret at the click position afterward, undoing the selection. The
+        // PreviewMouseLeftButtonDown handler catches exactly that case.
+        private void SelectAllOnFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb) tb.SelectAll();
+        }
+
+        private void SelectAllOnFocus_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not TextBox tb) return;
+            if (!tb.IsKeyboardFocusWithin)
+            {
+                e.Handled = true;
+                tb.Focus();
+                tb.SelectAll();
+            }
+        }
+
         private void NumericOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (sender is not TextBox textBox)
