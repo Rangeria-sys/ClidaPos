@@ -7,8 +7,7 @@ namespace Clidapos.Wpf.ViewModels
     {
         public Registration CurrentUser { get; }
 
-        public bool IsAdmin => CurrentUser.UserType.Trim()
-            .Equals("Admin", System.StringComparison.OrdinalIgnoreCase);
+        public bool IsAdmin => PermissionService.CanAccessBackOffice(CurrentUser);
 
         public StoreMode Mode => AppSettings.Mode;
 

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Clidapos.Wpf.Entities;
 using Clidapos.Wpf.Services;
@@ -22,6 +23,88 @@ namespace Clidapos.Wpf.Views
             StockTransferTile.Visibility = AppSettings.Mode == StoreMode.Restaurant
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            Loaded += async (s, e) => await ApplyManagerRestrictionsAsync();
+        }
+
+        /// <summary>Maps each tile's Tag to its User Security Roles module
+        /// name. "MasterSetting" and "UserRoles" are deliberately left out of
+        /// this map entirely - they're never granted via rights for Manager,
+        /// they're hard-blocked below regardless of what's configured.
+        /// "RegisterBanks" (bank branches) falls under the same "Finance &amp;
+        /// Banking" module as the main Finance tile, since they're part of
+        /// the same area of the business.</summary>
+        private static readonly System.Collections.Generic.Dictionary<string, string> TileModuleMap = new()
+        {
+            ["CategoryUnit"] = "Category Setup",
+            ["Items"] = "Items",
+            ["PurchaseEntry"] = "Purchase Entry",
+            ["StockLevels"] = "Stock Levels",
+            ["StockAdjustment"] = "Stock Adjustment",
+            ["StockTransfer"] = "Stock Transfer",
+            ["Supplier"] = "Supplier",
+            ["Warehouse"] = "Warehouse Management",
+            ["EmployeeRegistration"] = "Employee Registration",
+            ["HR"] = "HR & Payroll",
+            ["Customers"] = "Customers",
+            ["CustomerLedger"] = "Customer Ledger",
+            ["SupplierLedger"] = "Supplier Ledger",
+            ["Expenses"] = "Expense Log",
+            ["ExpenseMaster"] = "Expense Master",
+            ["Finance"] = "Finance & Banking",
+            ["RegisterBanks"] = "Finance & Banking",
+            ["Loyalty"] = "Loyalty & Membership",
+            ["Vouchers"] = "Vouchers & Promotions",
+            ["SalesReports"] = "Sales Reports",
+            ["StockReports"] = "Stock Reports",
+            ["PurchaseReports"] = "Purchase Reports",
+            ["ExpenseReports"] = "Expense Reports",
+            ["AccountingReports"] = "Accounting Reports",
+            ["Logs"] = "System Logs",
+            ["Profile"] = "Business Profile",
+            ["Backup"] = "Backup Setting"
+        };
+
+        private async System.Threading.Tasks.Task ApplyManagerRestrictionsAsync()
+        {
+            // Super Admin and Admin always see every tile they're otherwise
+            // entitled to (Admin still excluded from Master Setting via
+            // Nav_Click itself) - only Manager gets filtered per-module here.
+            if (!PermissionService.IsManager(_currentUser)) return;
+
+            var rights = await new UserRightsService().GetForUserAsync(_currentUser.UserID.Trim());
+            var allowedModules = new System.Collections.Generic.HashSet<string>(
+                rights.Where(r => r.UR_View == true).Select(r => r.ModuleName ?? ""));
+
+            foreach (var button in FindVisualChildren<Button>(this))
+            {
+                if (button.Tag is not string tag) continue;
+
+                // Hard-blocked for Manager no matter what - never even
+                // considered against their configured rights.
+                if (tag == "MasterSetting" || tag == "UserRoles")
+                {
+                    button.Visibility = Visibility.Collapsed;
+                    continue;
+                }
+
+                if (!TileModuleMap.TryGetValue(tag, out var moduleName)) continue;
+
+                button.Visibility = allowedModules.Contains(moduleName)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        private static System.Collections.Generic.IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < count; i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is T typed) yield return typed;
+                foreach (var grandchild in FindVisualChildren<T>(child)) yield return grandchild;
+            }
         }
 
         private void Nav_Click(object sender, RoutedEventArgs e)
@@ -46,6 +129,12 @@ namespace Clidapos.Wpf.Views
 
             if (tag == "MasterSetting")
             {
+                if (!PermissionService.CanAccessMasterSetting(_currentUser))
+                {
+                    MessageBox.Show("Master Setting is restricted to Super Admin only.", "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 var masterSettingsView = new MasterSettingsView(_currentUser);
                 masterSettingsView.Show();
                 Close();
@@ -137,6 +226,12 @@ namespace Clidapos.Wpf.Views
 
             if (tag == "UserRoles")
             {
+                if (!PermissionService.IsAdmin(_currentUser) && !PermissionService.IsSuperAdmin(_currentUser))
+                {
+                    MessageBox.Show("User Security Roles is restricted to Admin and Super Admin only.", "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 var userRolesPopup = new UserSecurityRolesPopup { Owner = this };
                 userRolesPopup.Show();
                 return;

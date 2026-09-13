@@ -9,5 +9,15 @@
                     Stretch="UniformToFill"/>
 		<!-- Transparent so the photo's original colors show through with no dark wash. -->
 		<SolidColorBrush x:Key="AppOverlay" Color="Transparent"/>
+
+		<!-- Applies to every Window in the app automatically, since this has
+             no x:Key - fixes the taskbar/Task Manager icon, which is a
+             separate WPF setting from the ApplicationIcon in the .csproj
+             (that one only controls the icon embedded in the .exe file
+             itself, which is why File Explorer already showed it correctly
+             while the running window's icon did not). -->
+		<Style TargetType="Window">
+			<Setter Property="Icon" Value="pack://application:,,,/Assets/app.ico"/>
+		</Style>
 	</Application.Resources>
 </Application>

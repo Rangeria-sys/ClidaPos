@@ -19,7 +19,6 @@ namespace Clidapos.Wpf.Views
             _vm = new GatewayViewModel(currentUser);
 
             StoreNameText.Text = AppSettings.StoreName.ToUpper();
-            ModeText.Text = AppSettings.ModeLabel;
             WelcomeText.Text = $"Logged in as {currentUser.Name.Trim()} ({currentUser.UserType.Trim()})";
             BackOfficeButton.IsEnabled = _vm.IsAdmin;
 

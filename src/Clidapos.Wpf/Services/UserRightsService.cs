@@ -20,7 +20,8 @@ namespace Clidapos.Wpf.Services
             "Items", "Purchase Entry", "Stock Levels", "Stock Adjustment", "Stock Transfer", "Supplier", "Warehouse Management",
             "Employee Registration", "HR & Payroll", "Customers", "Customer Ledger", "Supplier Ledger",
             "Expense Log", "Expense Master", "Finance & Banking", "Loyalty & Membership", "Vouchers & Promotions",
-            "Sales Reports", "Stock Reports", "Purchase Reports", "Expense Reports", "Accounting Reports", "System Logs"
+            "Sales Reports", "Stock Reports", "Purchase Reports", "Expense Reports", "Accounting Reports", "System Logs",
+            "Front Office Report"
         };
 
         /// <summary>

@@ -102,10 +102,6 @@
 			<StackPanel>
 				<TextBlock x:Name="StoreNameText" Style="{StaticResource StylishBoldText}" FontSize="26"/>
 				<TextBlock x:Name="WelcomeText" Foreground="#E8E8E8" FontFamily="Segoe UI Semibold" FontSize="15"/>
-				<Border x:Name="ModeBadge" Background="#F3A123" CornerRadius="4" Padding="8,3"
-                        HorizontalAlignment="Left" Margin="0,8,0,0">
-					<TextBlock x:Name="ModeText" Foreground="Black" FontFamily="Segoe UI Black" FontSize="12" FontWeight="Bold"/>
-				</Border>
 			</StackPanel>
 		</Border>
 

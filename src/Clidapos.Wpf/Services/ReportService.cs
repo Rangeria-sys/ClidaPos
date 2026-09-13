@@ -452,7 +452,7 @@ namespace Clidapos.Wpf.Services
                 var terminalCashTotal = await db.SaleBills
                     .Where(b => b.BillDate >= start.WPStart && b.BillDate <= end.WPEnd)
                     .Where(b => b.TerminalID == start.TerminalID)
-                    .Where(b => (b.PaymentMode ?? "").Trim().Equals("Cash", StringComparison.OrdinalIgnoreCase))
+                    .Where(b => (b.PaymentMode ?? "").Trim().ToUpper() == "CASH")
                     .SumAsync(b => b.GrandTotal ?? 0);
 
                 var expected = start.OpeningCash == null ? (decimal?)null : start.OpeningCash.Value + terminalCashTotal;

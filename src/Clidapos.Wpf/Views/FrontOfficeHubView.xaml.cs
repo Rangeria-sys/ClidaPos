@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using Clidapos.Wpf.Entities;
@@ -29,7 +30,22 @@ namespace Clidapos.Wpf.Views
             _clockTimer.Start();
             UpdateClock();
 
-            Loaded += async (s, e) => await RefreshClockStatus();
+            Loaded += async (s, e) =>
+            {
+                await RefreshClockStatus();
+                await ApplyPermissionsAsync();
+            };
+        }
+
+        private async System.Threading.Tasks.Task ApplyPermissionsAsync()
+        {
+            if (PermissionService.IsAdmin(_currentUser) || PermissionService.IsSuperAdmin(_currentUser))
+                return; // Admin and Super Admin always see every tile.
+
+            var rights = await new UserRightsService().GetForUserAsync(_currentUser.UserID.Trim());
+            var reportRight = rights.FirstOrDefault(r => r.ModuleName == "Front Office Report");
+
+            ReportTile.Visibility = reportRight?.UR_View == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateClock()

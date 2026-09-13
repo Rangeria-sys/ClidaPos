@@ -120,6 +120,7 @@
 								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
 							</TextBlock>
 							<ComboBox Grid.Column="1" x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" IsEditable="True">
+								<ComboBoxItem Content="Super Admin"/>
 								<ComboBoxItem Content="Admin"/>
 								<ComboBoxItem Content="Manager"/>
 								<ComboBoxItem Content="Cashier"/>
