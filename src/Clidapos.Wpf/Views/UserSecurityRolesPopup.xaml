@@ -107,7 +107,7 @@
 								<Run Text="PIN / Password "/>
 								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
 							</TextBlock>
-							<TextBox Grid.Column="1" x:Name="PasswordInput" Style="{StaticResource PopupInputRequired}"/>
+							<PasswordBox Grid.Column="1" x:Name="PasswordInput" Style="{StaticResource PopupPasswordRequired}"/>
 						</Grid>
 
 						<Grid Margin="0,0,0,8">
@@ -119,8 +119,8 @@
 								<Run Text="User Type "/>
 								<Run Text="*" Style="{StaticResource PopupRequiredMark}"/>
 							</TextBlock>
-							<ComboBox Grid.Column="1" x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" IsEditable="True">
-								<ComboBoxItem Content="Super Admin"/>
+							<ComboBox Grid.Column="1" x:Name="UserTypeInput" Style="{StaticResource PopupCombo}" IsEditable="True"
+                                      SelectionChanged="UserTypeInput_SelectionChanged">
 								<ComboBoxItem Content="Admin"/>
 								<ComboBoxItem Content="Manager"/>
 								<ComboBoxItem Content="Cashier"/>
@@ -166,11 +166,12 @@
 							<TextBox Grid.Column="1" x:Name="EmailInput" Style="{StaticResource PopupInput}"/>
 						</Grid>
 
-						<TextBlock Text="Module Permissions" Style="{StaticResource PopupFieldLabel}" Margin="0,16,0,4"
+						<StackPanel x:Name="ModulePermissionsSection">
+							<TextBlock Text="Module Permissions" Style="{StaticResource PopupFieldLabel}" Margin="0,16,0,4"
                                    FontSize="14" Foreground="#1E1E24"/>
 
-						<Border BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
-							<DataGrid x:Name="RightsGrid" AutoGenerateColumns="False"
+							<Border BorderBrush="#E4E4E8" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+								<DataGrid x:Name="RightsGrid" AutoGenerateColumns="False"
                                       Background="White" BorderThickness="0"
                                       HeadersVisibility="Column" GridLinesVisibility="Horizontal"
                                       HorizontalGridLinesBrush="#EDEDF0"
@@ -221,6 +222,7 @@
 								</DataGrid.Columns>
 							</DataGrid>
 						</Border>
+						</StackPanel>
 
 						<TextBlock x:Name="ErrorText" Style="{StaticResource PopupErrorText}"/>
 					</StackPanel>

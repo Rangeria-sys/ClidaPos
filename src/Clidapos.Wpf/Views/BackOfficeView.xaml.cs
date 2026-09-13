@@ -232,7 +232,7 @@ namespace Clidapos.Wpf.Views
                     return;
                 }
 
-                var userRolesPopup = new UserSecurityRolesPopup { Owner = this };
+                var userRolesPopup = new UserSecurityRolesPopup(_currentUser) { Owner = this };
                 userRolesPopup.Show();
                 return;
             }

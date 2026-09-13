@@ -11,11 +11,13 @@ namespace Clidapos.Wpf.Views
     public partial class UserSecurityRolesListView : Window
     {
         private readonly RegistrationService _registrationService = new();
+        private readonly Registration _currentUser;
         private List<Registration> _all = new();
 
-        public UserSecurityRolesListView()
+        public UserSecurityRolesListView(Registration currentUser)
         {
             InitializeComponent();
+            _currentUser = currentUser;
             Loaded += async (s, e) => await LoadData();
         }
 
@@ -39,7 +41,13 @@ namespace Clidapos.Wpf.Views
         {
             if (UserGrid.SelectedItem is Registration user)
             {
-                var popup = new UserSecurityRolesPopup(user);
+                if (PermissionService.IsSuperAdmin(user) && !PermissionService.IsSuperAdmin(_currentUser))
+                {
+                    MessageBox.Show("The Super Admin account can only be edited by Super Admin.", "Clidapos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var popup = new UserSecurityRolesPopup(_currentUser, user);
                 popup.Show();
                 Close();
             }

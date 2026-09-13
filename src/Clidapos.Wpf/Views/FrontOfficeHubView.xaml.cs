@@ -42,6 +42,15 @@ namespace Clidapos.Wpf.Views
             if (PermissionService.IsAdmin(_currentUser) || PermissionService.IsSuperAdmin(_currentUser))
                 return; // Admin and Super Admin always see every tile.
 
+            if (!PermissionService.IsManager(_currentUser))
+            {
+                // Cashier (or any other non-Manager role) - hardcoded, not
+                // configurable. The Report tile stays hidden permanently,
+                // with no per-user setting to check.
+                ReportTile.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             var rights = await new UserRightsService().GetForUserAsync(_currentUser.UserID.Trim());
             var reportRight = rights.FirstOrDefault(r => r.ModuleName == "Front Office Report");
 
